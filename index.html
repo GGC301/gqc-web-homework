@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-10-26 14:50
+    使用的大模型：CodeBuddy Auto
+    功能名称：根目录导航首页 —— 汇总并链接仓库中所有 HTML 页面
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="关泉才《高级网页设计》课程作业导航，汇总全部练习页面。">
+    <title>关泉才 · 高级网页设计作业导航</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f6f8;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .yuan_header {
+            padding: 56px 24px 44px;
+            background: linear-gradient(135deg, #2b3a67 0%, #4a5fa5 55%, #6f86d6 100%);
+            color: #ffffff;
+        }
+
+        .yuan_headerInner {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .yuan_kicker {
+            margin: 0 0 10px;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: .75;
+        }
+
+        .yuan_title {
+            margin: 0 0 12px;
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .yuan_sub {
+            margin: 0 0 26px;
+            font-size: 15px;
+            opacity: .85;
+        }
+
+        .yuan_toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .yuan_search {
+            flex: 1 1 280px;
+            min-width: 220px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1f2430;
+            background: rgba(255, 255, 255, .95);
+            border: 1px solid rgba(255, 255, 255, .5);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .yuan_search:focus {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, .35);
+        }
+
+        .yuan_ghlink {
+            padding: 12px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            background: rgba(255, 255, 255, .16);
+            border: 1px solid rgba(255, 255, 255, .45);
+            border-radius: 10px;
+            transition: background .2s ease;
+        }
+
+        .yuan_ghlink:hover {
+            background: rgba(255, 255, 255, .3);
+        }
+
+        .yuan_main {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 40px 24px 60px;
+        }
+
+        .yuan_group {
+            margin-bottom: 42px;
+        }
+
+        .yuan_groupTitle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 18px;
+            font-size: 19px;
+            font-weight: 700;
+            color: #2b3a67;
+        }
+
+        .yuan_dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #6f86d6;
+        }
+
+        .yuan_badge {
+            padding: 2px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5fa5;
+            background: #e8ecf8;
+            border-radius: 999px;
+        }
+
+        .yuan_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 16px;
+        }
+
+        .yuan_card {
+            display: block;
+            padding: 18px 18px 16px;
+            background: #ffffff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 2px 6px rgba(31, 36, 48, .05);
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+
+        .yuan_card:hover {
+            transform: translateY(-3px);
+            border-color: #6f86d6;
+            box-shadow: 0 10px 22px rgba(43, 58, 103, .14);
+        }
+
+        .yuan_cardTop {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .yuan_no {
+            padding: 2px 9px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+            background: #4a5fa5;
+            border-radius: 6px;
+        }
+
+        .yuan_star {
+            font-size: 12px;
+            color: #d98b2b;
+        }
+
+        .yuan_cardTitle {
+            margin: 0 0 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2430;
+        }
+
+        .yuan_path {
+            margin: 0;
+            font-size: 12px;
+            color: #8b93a7;
+            font-family: Consolas, "Courier New", monospace;
+            word-break: break-all;
+        }
+
+        .yuan_empty {
+            margin: 30px 0 0;
+            padding: 26px;
+            text-align: center;
+            color: #8b93a7;
+            background: #ffffff;
+            border: 1px dashed #d7dbe5;
+            border-radius: 12px;
+        }
+
+        .yuan_footer {
+            padding: 26px 24px 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+            border-top: 1px solid #e4e7ee;
+        }
+
+        .yuan_footer p {
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            .yuan_header {
+                padding: 40px 18px 34px;
+            }
+
+            .yuan_title {
+                font-size: 25px;
+            }
+
+            .yuan_main {
+                padding: 28px 18px 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_header">
+        <div class="yuan_headerInner">
+            <p class="yuan_kicker">Advanced Web Design</p>
+            <h1 class="yuan_title">关泉才 的练习页面导航</h1>
+            <p class="yuan_sub">学号 24001010301 · 共 <span id="yuan_count">33</span> 个页面 · 原生 HTML / CSS / JS，无外部依赖</p>
+            <div class="yuan_toolbar">
+                <input id="yuan_search" class="yuan_search" type="search" placeholder="搜索页面名称或文件名…" autocomplete="off">
+                <a class="yuan_ghlink" href="https://github.com/GGC301/gqc-web-homework" target="_blank" rel="noopener">GitHub 仓库</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="yuan_main">
+        <section class="yuan_group">
+            <h2 class="yuan_groupTitle"><span class="yuan_dot"></span>课堂实践总入口<span class="yuan_badge">1</span></h2>
+            <div class="yuan_grid">
+                <a class="yuan_card" href="./tupian/index.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">HUB</span><span class="yuan_star">推荐</span></div>
+                    <h3 class="yuan_cardTitle">《高级网页设计》课堂实践 · 总导航</h3>
+                    <p class="yuan_path">tupian/index.html</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="yuan_group">
+            <h2 class="yuan_groupTitle"><span class="yuan_dot"></span>根目录练习<span class="yuan_badge">10</span></h2>
+            <div class="yuan_grid">
+                <a class="yuan_card" href="./2-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">2-1</span></div>
+                    <h3 class="yuan_cardTitle">301 关泉才</h3>
+                    <p class="yuan_path">2-1.html</p>
+                </a>
+                <a class="yuan_card" href="./2-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">2-2</span></div>
+                    <h3 class="yuan_cardTitle">Document</h3>
+                    <p class="yuan_path">2-2.html</p>
+                </a>
+                <a class="yuan_card" href="./2-21.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">2-21</span></div>
+                    <h3 class="yuan_cardTitle">Document</h3>
+                    <p class="yuan_path">2-21.html</p>
+                </a>
+                <a class="yuan_card" href="./13.1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">13.1</span></div>
+                    <h3 class="yuan_cardTitle">Font Awesome 字体图标</h3>
+                    <p class="yuan_path">13.1.html</p>
+                </a>
+                <a class="yuan_card" href="./13.2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">13.2</span></div>
+                    <h3 class="yuan_cardTitle">Lucide SVG 图标</h3>
+                    <p class="yuan_path">13.2.html</p>
+                </a>
+                <a class="yuan_card" href="./13-3.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">13-3</span></div>
+                    <h3 class="yuan_cardTitle">移动端固定底部导航</h3>
+                    <p class="yuan_path">13-3.html</p>
+                </a>
+                <a class="yuan_card" href="./14.1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">14.1</span></div>
+                    <h3 class="yuan_cardTitle">document</h3>
+                    <p class="yuan_path">14.1.html</p>
+                </a>
+                <a class="yuan_card" href="./14.2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">14.2</span></div>
+                    <h3 class="yuan_cardTitle">JavaScript 六种基本数据类型</h3>
+                    <p class="yuan_path">14.2.html</p>
+                </a>
+                <a class="yuan_card" href="./15-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">15-1</span></div>
+                    <h3 class="yuan_cardTitle">数7游戏 · 一百个盒子</h3>
+                    <p class="yuan_path">15-1.html</p>
+                </a>
+                <a class="yuan_card" href="./15-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">15-2</span></div>
+                    <h3 class="yuan_cardTitle">JavaScript 程序结构 · 条件与循环</h3>
+                    <p class="yuan_path">15-2.html</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="yuan_group">
+            <h2 class="yuan_groupTitle"><span class="yuan_dot"></span>tupian 目录练习<span class="yuan_badge">18</span></h2>
+            <div class="yuan_grid">
+                <a class="yuan_card" href="./tupian/3-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">3-1</span></div>
+                    <h3 class="yuan_cardTitle">Document</h3>
+                    <p class="yuan_path">tupian/3-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/3-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">3-2</span></div>
+                    <h3 class="yuan_cardTitle">301关泉才</h3>
+                    <p class="yuan_path">tupian/3-2.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/4-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">4-1</span></div>
+                    <h3 class="yuan_cardTitle">Document</h3>
+                    <p class="yuan_path">tupian/4-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/4-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">4-2</span></div>
+                    <h3 class="yuan_cardTitle">《高级网页设计》课堂实践</h3>
+                    <p class="yuan_path">tupian/4-2.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/5-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">5-1</span></div>
+                    <h3 class="yuan_cardTitle">Document</h3>
+                    <p class="yuan_path">tupian/5-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/5-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">5-2</span></div>
+                    <h3 class="yuan_cardTitle">盒子模型、框模型 box model</h3>
+                    <p class="yuan_path">tupian/5-2.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/6-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">6-1</span></div>
+                    <h3 class="yuan_cardTitle">Flex布局演示</h3>
+                    <p class="yuan_path">tupian/6-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/6-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">6-2</span></div>
+                    <h3 class="yuan_cardTitle">Document</h3>
+                    <p class="yuan_path">tupian/6-2.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/7-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">7-1</span></div>
+                    <h3 class="yuan_cardTitle">上图下文</h3>
+                    <p class="yuan_path">tupian/7-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/7-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">7-2</span></div>
+                    <h3 class="yuan_cardTitle">左图右文</h3>
+                    <p class="yuan_path">tupian/7-2.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/8-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">8-1</span></div>
+                    <h3 class="yuan_cardTitle">flex盒子示例</h3>
+                    <p class="yuan_path">tupian/8-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/9-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">9-1</span></div>
+                    <h3 class="yuan_cardTitle">关泉才的 transition 过渡效果</h3>
+                    <p class="yuan_path">tupian/9-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/10-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">10-1</span></div>
+                    <h3 class="yuan_cardTitle">CSS 动画幻灯片</h3>
+                    <p class="yuan_path">tupian/10-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/10-2.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">10-2</span></div>
+                    <h3 class="yuan_cardTitle">纯 CSS 颜色动画</h3>
+                    <p class="yuan_path">tupian/10-2.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/10-3.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">10-3</span></div>
+                    <h3 class="yuan_cardTitle">响应式图片盒子——关泉才</h3>
+                    <p class="yuan_path">tupian/10-3.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/10-4.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">10-4</span></div>
+                    <h3 class="yuan_cardTitle">Media Query 布局 · 八个盒子</h3>
+                    <p class="yuan_path">tupian/10-4.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/11-1.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">11-1</span></div>
+                    <h3 class="yuan_cardTitle">CSS 长度单位</h3>
+                    <p class="yuan_path">tupian/11-1.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/11-3.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">11-3</span></div>
+                    <h3 class="yuan_cardTitle">CSS3 3D 动画</h3>
+                    <p class="yuan_path">tupian/11-3.html</p>
+                </a>
+                <a class="yuan_card" href="./tupian/elements.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">ELM</span></div>
+                    <h3 class="yuan_cardTitle">网页元素设计 - 关泉才</h3>
+                    <p class="yuan_path">tupian/elements.html</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="yuan_group">
+            <h2 class="yuan_groupTitle"><span class="yuan_dot"></span>素材与图标<span class="yuan_badge">4</span></h2>
+            <div class="yuan_grid">
+                <a class="yuan_card" href="./images-solution/index.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">素材</span></div>
+                    <h3 class="yuan_cardTitle">菜鸟教程手机版 · 图像解决方案</h3>
+                    <p class="yuan_path">images-solution/index.html</p>
+                </a>
+                <a class="yuan_card" href="./images-solution/icon-show.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">图标</span></div>
+                    <h3 class="yuan_cardTitle">iconfont 项目 gqc301 · 全部图标</h3>
+                    <p class="yuan_path">images-solution/icon-show.html</p>
+                </a>
+                <a class="yuan_card" href="./font/demo_index.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">图标</span></div>
+                    <h3 class="yuan_cardTitle">iconfont Demo（font）</h3>
+                    <p class="yuan_path">font/demo_index.html</p>
+                </a>
+                <a class="yuan_card" href="./images-solution/demo_index.html">
+                    <div class="yuan_cardTop"><span class="yuan_no">图标</span></div>
+                    <h3 class="yuan_cardTitle">iconfont Demo（images-solution）</h3>
+                    <p class="yuan_path">images-solution/demo_index.html</p>
+                </a>
+            </div>
+        </section>
+
+        <p id="yuan_empty" class="yuan_empty" hidden>没有匹配的页面，换个关键词试试。</p>
+    </main>
+
+    <footer class="yuan_footer">
+        <p>关泉才 · 24001010301 · 《高级网页设计》 · 全部页面均为原生实现</p>
+    </footer>
+
+    <script>
+        const yuan_cards = document.querySelectorAll('.yuan_card');
+        const yuan_groups = document.querySelectorAll('.yuan_group');
+        const yuan_input = document.getElementById('yuan_search');
+        const yuan_empty = document.getElementById('yuan_empty');
+        const yuan_total = document.getElementById('yuan_count');
+
+        yuan_total.textContent = String(yuan_cards.length);
+
+        yuan_input.addEventListener('input', function () {
+            const yuan_keyword = yuan_input.value.trim().toLowerCase();
+            let yuan_shown = 0;
+
+            yuan_cards.forEach(function (yuan_item) {
+                const yuan_hit = yuan_keyword === '' || yuan_item.textContent.toLowerCase().indexOf(yuan_keyword) !== -1;
+                yuan_item.style.display = yuan_hit ? '' : 'none';
+                if (yuan_hit) {
+                    yuan_shown += 1;
+                }
+            });
+
+            yuan_groups.forEach(function (yuan_group) {
+                const yuan_visible = yuan_group.querySelectorAll('.yuan_card');
+                let yuan_has = false;
+                yuan_visible.forEach(function (yuan_item) {
+                    if (yuan_item.style.display !== 'none') {
+                        yuan_has = true;
+                    }
+                });
+                yuan_group.style.display = yuan_has ? '' : 'none';
+            });
+
+            yuan_empty.hidden = yuan_shown !== 0;
+        });
+    </script>
+</body>
+</html>

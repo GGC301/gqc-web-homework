@@ -149,3 +149,14 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINjWB4dU6tQJ8JQ/WqMB05a8dO9h6xVBesbSegFcgB9C
 ```text
 完成15-2.html，展示javascript程序结构：循环，条件。然后提交到github。
 ```
+
+---
+
+## 2026-10-26 14:51:35 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+帮你在根目录建一个 index.html 导航页
+```
+
