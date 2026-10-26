@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-10-26 13:34
+    使用的大模型：GLM-5.3-Flash
+    功能名称：数7游戏 —— 一百个盒子，满足数7规则的显示空盒子
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数7游戏 · 一百个盒子</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #e5e7eb;
+            color: #1f2937;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_app {
+            max-width: 760px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #f3f4f6;
+            box-shadow: 0 0 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .yuan_header {
+            padding: 1.1rem 1rem 1rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #ffffff;
+        }
+
+        .yuan_header_title {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .yuan_header_sub {
+            margin: 0.15rem 0 0;
+            font-size: 0.8rem;
+            opacity: 0.85;
+        }
+
+        .yuan_main {
+            padding: 0.75rem;
+        }
+
+        .yuan_card {
+            margin-bottom: 0.75rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .yuan_card_title {
+            margin: 0 0 0.4rem;
+            font-size: 1rem;
+        }
+
+        .yuan_card_text {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.88rem;
+        }
+
+        .yuan_card_text code {
+            padding: 0.05rem 0.3rem;
+            border-radius: 0.25rem;
+            background: #eef2ff;
+            color: #4338ca;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.82rem;
+        }
+
+        .yuan_legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .yuan_legend_item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .yuan_legend_box {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 0.25rem;
+            border: 1.5px solid #2563eb;
+            background: #ffffff;
+        }
+
+        .yuan_legend_box.yuan_legend_skip {
+            border: 1.5px dashed #f59e0b;
+            background: #fef3c7;
+        }
+
+        .yuan_grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 0.5rem;
+        }
+
+        .yuan_box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1;
+            border: 1.5px solid #2563eb;
+            border-radius: 0.5rem;
+            background: #ffffff;
+            color: #1d4ed8;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .yuan_box.yuan_box_skip {
+            border: 1.5px dashed #f59e0b;
+            background: #fef3c7;
+        }
+
+        .yuan_stat {
+            margin-top: 0.75rem;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="yuan_app">
+        <header class="yuan_header">
+            <h1 class="yuan_header_title">数7游戏</h1>
+            <p class="yuan_header_sub">一百个盒子 · 15-1</p>
+        </header>
+
+        <main class="yuan_main">
+            <section class="yuan_card">
+                <h2 class="yuan_card_title">规则说明</h2>
+                <p class="yuan_card_text">
+                    依次报数 1~100，凡是 <code>7 的倍数</code> 或者 <code>数字中含有 7</code> 的，
+                    就算"满足要求"（要拍手跳过），盒子里什么都不放；其余不满足要求的盒子正常显示数字。
+                </p>
+                <div class="yuan_legend">
+                    <span class="yuan_legend_item"><span class="yuan_legend_box"></span>不满足要求 · 显示数字</span>
+                    <span class="yuan_legend_item"><span class="yuan_legend_box yuan_legend_skip"></span>满足要求 · 空盒子</span>
+                </div>
+            </section>
+
+            <section class="yuan_card">
+                <div class="yuan_grid" id="yuan_grid"></div>
+                <p class="yuan_stat" id="yuan_stat"></p>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        var yuan_total = 100;
+        var yuan_grid = document.getElementById("yuan_grid");
+        var yuan_skip_count = 0;
+        var yuan_html = "";
+
+        for (var yuan_num = 1; yuan_num <= yuan_total; yuan_num++) {
+            // 数7规则：7 的倍数，或者数字中含有 7，都算"满足要求"
+            var yuan_isMultiple = yuan_num % 7 === 0;
+            var yuan_hasSeven = String(yuan_num).indexOf("7") !== -1;
+            var yuan_isSkip = yuan_isMultiple || yuan_hasSeven;
+
+            if (yuan_isSkip) {
+                yuan_skip_count++;
+                yuan_html += '<div class="yuan_box yuan_box_skip" title="' + yuan_num + '：要拍手跳过"></div>';
+            } else {
+                yuan_html += '<div class="yuan_box" title="' + yuan_num + '">' + yuan_num + '</div>';
+            }
+        }
+
+        yuan_grid.innerHTML = yuan_html;
+        document.getElementById("yuan_stat").innerText =
+            "共 " + yuan_total + " 个盒子，其中 " + yuan_skip_count + " 个满足数7要求（空盒子），" +
+            (yuan_total - yuan_skip_count) + " 个显示数字。";
+    </script>
+</body>
+</html>
