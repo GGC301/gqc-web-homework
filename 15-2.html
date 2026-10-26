@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-10-26 14:39
+    使用的大模型：GLM-5.3-Flash
+    功能名称：演示 JavaScript 程序结构 —— 条件与循环
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 程序结构 · 条件与循环</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+        .yuan_wrapper {
+            max-width: 960px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+        }
+        .yuan_title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .yuan_subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: -18px;
+            margin-bottom: 30px;
+        }
+        .yuan_section {
+            margin-bottom: 30px;
+        }
+        .yuan_section_title {
+            font-size: 1.4em;
+            color: #fff;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            padding: 10px 18px;
+            border-radius: 8px;
+            margin: 0 0 16px;
+        }
+        .yuan_section_title.yuan_section_loop {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+        }
+        .yuan_card {
+            border-left: 5px solid #3498db;
+            background: #fafafa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .yuan_card0 { border-left-color: #e74c3c; }
+        .yuan_card1 { border-left-color: #e67e22; }
+        .yuan_card2 { border-left-color: #f1c40f; }
+        .yuan_card3 { border-left-color: #2ecc71; }
+        .yuan_card4 { border-left-color: #1abc9c; }
+        .yuan_card5 { border-left-color: #3498db; }
+        .yuan_card6 { border-left-color: #9b59b6; }
+        .yuan_card7 { border-left-color: #34495e; }
+
+        .yuan_syntax {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .yuan_desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 4px;
+        }
+        .yuan_code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-family: Consolas, monospace;
+            font-size: 0.92em;
+            margin-top: 10px;
+            white-space: pre;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        .yuan_output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            background: #fffbe6;
+            border: 1px dashed #f39c12;
+            color: #8a6d00;
+            font-family: Consolas, monospace;
+            font-size: 0.92em;
+            min-height: 1.2em;
+            white-space: pre-wrap;
+        }
+        .yuan_output_label {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 2px 8px;
+            background: #f39c12;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="yuan_wrapper">
+        <h1 class="yuan_title">JavaScript 程序结构</h1>
+        <p class="yuan_subtitle">条件判断 if / switch  ·  循环 for / while / do...while  ·  break / continue</p>
+
+        <!-- ========== 条件判断 ========== -->
+        <div class="yuan_section">
+            <h2 class="yuan_section_title">一、条件判断</h2>
+
+            <div class="yuan_card yuan_card0">
+                <div class="yuan_syntax">1. if ... else</div>
+                <div class="yuan_desc">最基本的条件分支。条件为真执行 if 块，否则执行 else 块。</div>
+                <div class="yuan_code">// 判断一个数是奇数还是偶数
+var yuan_num = 7;
+if (yuan_num % 2 === 0) {
+    yuan_output += yuan_num + " 是偶数\n";
+} else {
+    yuan_output += yuan_num + " 是奇数\n";
+}</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_if"></div>
+            </div>
+
+            <div class="yuan_card yuan_card1">
+                <div class="yuan_syntax">2. if ... else if ... else</div>
+                <div class="yuan_desc">多分支判断，从上往下依次检查条件，命中即执行。</div>
+                <div class="yuan_code">// 根据分数输出等级
+var yuan_score = 85;
+if (yuan_score >= 90) {
+    yuan_output += yuan_score + " 分 → 优秀\n";
+} else if (yuan_score >= 80) {
+    yuan_output += yuan_score + " 分 → 良好\n";
+} else if (yuan_score >= 60) {
+    yuan_output += yuan_score + " 分 → 及格\n";
+} else {
+    yuan_output += yuan_score + " 分 → 不及格\n";
+}</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_elseif"></div>
+            </div>
+
+            <div class="yuan_card yuan_card2">
+                <div class="yuan_syntax">3. switch ... case</div>
+                <div class="yuan_desc">适合判断"一个值对多种情况"，每个 case 要记得加 break。</div>
+                <div class="yuan_code">// 根据今天是星期几输出安排
+var yuan_day = new Date().getDay();   // 0=周日, 1=周一 ... 6=周六
+var yuan_plan = "";
+switch (yuan_day) {
+    case 1:
+    case 3:
+    case 5: yuan_plan = "上课"; break;
+    case 2:
+    case 4: yuan_plan = "自习"; break;
+    case 6: yuan_plan = "出去玩"; break;
+    case 0: yuan_plan = "睡懒觉"; break;
+}
+yuan_output += "今天是周" + ["日","一","二","三","四","五","六"][yuan_day]
+             + "，安排：" + yuan_plan;</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_switch"></div>
+            </div>
+        </div>
+
+        <!-- ========== 循环 ========== -->
+        <div class="yuan_section">
+            <h2 class="yuan_section_title yuan_section_loop">二、循环</h2>
+
+            <div class="yuan_card yuan_card3">
+                <div class="yuan_syntax">1. for 循环</div>
+                <div class="yuan_desc">计数型循环，三部分：初始化；条件；增量。最常用的循环方式。</div>
+                <div class="yuan_code">// 输出 1 到 5
+var yuan_text = "";
+for (var yuan_i = 1; yuan_i <= 5; yuan_i++) {
+    yuan_text += yuan_i + " ";
+}
+yuan_output += "1~5：" + yuan_text.trim() + "\n";
+
+// 求 1 到 100 的和
+var yuan_sum = 0;
+for (var yuan_j = 1; yuan_j <= 100; yuan_j++) {
+    yuan_sum += yuan_j;
+}
+yuan_output += "1+2+...+100 = " + yuan_sum;</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_for"></div>
+            </div>
+
+            <div class="yuan_card yuan_card4">
+                <div class="yuan_syntax">2. while 循环</div>
+                <div class="yuan_desc">先判断条件，条件为真就一直执行循环体。</div>
+                <div class="yuan_code">// 计算 2 的 0~4 次幂
+var yuan_k = 0;
+while (yuan_k <= 4) {
+    yuan_output += "2^" + yuan_k + " = " + Math.pow(2, yuan_k) + "\n";
+    yuan_k++;
+}</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_while"></div>
+            </div>
+
+            <div class="yuan_card yuan_card5">
+                <div class="yuan_syntax">3. do ... while 循环</div>
+                <div class="yuan_desc">先执行一次循环体，再判断条件。至少执行一次。</div>
+                <div class="yuan_code">// 至少打印一次，然后累加直到和 ≥ 10
+var yuan_n = 1;
+var yuan_total = 0;
+do {
+    yuan_total += yuan_n;
+    yuan_n++;
+} while (yuan_total < 10);
+yuan_output += "累加停止于 n=" + yuan_n + "，总和=" + yuan_total;</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_dowhile"></div>
+            </div>
+
+            <div class="yuan_card yuan_card6">
+                <div class="yuan_syntax">4. for...of 循环（遍历数组）</div>
+                <div class="yuan_desc">ES6 语法，直接取数组里的每个值，比传统 for 更简洁。</div>
+                <div class="yuan_code">// 遍历一个数组
+var yuan_fruits = ["苹果", "香蕉", "橙子", "西瓜"];
+for (var yuan_fruit of yuan_fruits) {
+    yuan_output += yuan_fruit + " ";
+}</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_forof"></div>
+            </div>
+        </div>
+
+        <!-- ========== 循环控制 ========== -->
+        <div class="yuan_section">
+            <h2 class="yuan_section_title yuan_section_loop">三、循环控制 break / continue</h2>
+
+            <div class="yuan_card yuan_card7">
+                <div class="yuan_syntax">break —— 立刻跳出整个循环</div>
+                <div class="yuan_desc">数7规则里，遇到 7 的倍数或含 7 的数就"跳过"，这里演示找到第一个超过 50 且能被 7 整除的数。</div>
+                <div class="yuan_code">for (var yuan_m = 1; yuan_m <= 100; yuan_m++) {
+    if (yuan_m > 50 && yuan_m % 7 === 0) {
+        yuan_output += "第一个 >50 且能被 7 整除的数是：" + yuan_m;
+        break;   // 找到后立即跳出循环
+    }
+}</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_break"></div>
+            </div>
+
+            <div class="yuan_card yuan_card0">
+                <div class="yuan_syntax">continue —— 跳过本次循环，进入下一轮</div>
+                <div class="yuan_desc">输出 1~20 中所有偶数，遇到奇数直接 continue 不打印。</div>
+                <div class="yuan_code">var yuan_even = "";
+for (var yuan_p = 1; yuan_p <= 20; yuan_p++) {
+    if (yuan_p % 2 !== 0) {
+        continue;   // 奇数跳过
+    }
+    yuan_even += yuan_p + " ";
+}
+yuan_output += "1~20 的偶数：" + yuan_even.trim();</div>
+                <span class="yuan_output_label">运行结果</span>
+                <div class="yuan_output" id="yuan_out_continue"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 1. if ... else =====
+        (function () {
+            var yuan_output = "";
+            var yuan_num = 7;
+            if (yuan_num % 2 === 0) {
+                yuan_output += yuan_num + " 是偶数\n";
+            } else {
+                yuan_output += yuan_num + " 是奇数\n";
+            }
+            document.getElementById("yuan_out_if").innerText = yuan_output;
+        })();
+
+        // ===== 2. if ... else if ... else =====
+        (function () {
+            var yuan_output = "";
+            var yuan_score = 85;
+            if (yuan_score >= 90) {
+                yuan_output += yuan_score + " 分 → 优秀\n";
+            } else if (yuan_score >= 80) {
+                yuan_output += yuan_score + " 分 → 良好\n";
+            } else if (yuan_score >= 60) {
+                yuan_output += yuan_score + " 分 → 及格\n";
+            } else {
+                yuan_output += yuan_score + " 分 → 不及格\n";
+            }
+            document.getElementById("yuan_out_elseif").innerText = yuan_output;
+        })();
+
+        // ===== 3. switch ... case =====
+        (function () {
+            var yuan_output = "";
+            var yuan_day = new Date().getDay();
+            var yuan_plan = "";
+            switch (yuan_day) {
+                case 1:
+                case 3:
+                case 5: yuan_plan = "上课"; break;
+                case 2:
+                case 4: yuan_plan = "自习"; break;
+                case 6: yuan_plan = "出去玩"; break;
+                case 0: yuan_plan = "睡懒觉"; break;
+            }
+            yuan_output += "今天是周" + ["日","一","二","三","四","五","六"][yuan_day]
+                         + "，安排：" + yuan_plan;
+            document.getElementById("yuan_out_switch").innerText = yuan_output;
+        })();
+
+        // ===== 4. for 循环 =====
+        (function () {
+            var yuan_output = "";
+            var yuan_text = "";
+            for (var yuan_i = 1; yuan_i <= 5; yuan_i++) {
+                yuan_text += yuan_i + " ";
+            }
+            yuan_output += "1~5：" + yuan_text.trim() + "\n";
+            var yuan_sum = 0;
+            for (var yuan_j = 1; yuan_j <= 100; yuan_j++) {
+                yuan_sum += yuan_j;
+            }
+            yuan_output += "1+2+...+100 = " + yuan_sum;
+            document.getElementById("yuan_out_for").innerText = yuan_output;
+        })();
+
+        // ===== 5. while 循环 =====
+        (function () {
+            var yuan_output = "";
+            var yuan_k = 0;
+            while (yuan_k <= 4) {
+                yuan_output += "2^" + yuan_k + " = " + Math.pow(2, yuan_k) + "\n";
+                yuan_k++;
+            }
+            document.getElementById("yuan_out_while").innerText = yuan_output;
+        })();
+
+        // ===== 6. do ... while =====
+        (function () {
+            var yuan_output = "";
+            var yuan_n = 1;
+            var yuan_total = 0;
+            do {
+                yuan_total += yuan_n;
+                yuan_n++;
+            } while (yuan_total < 10);
+            yuan_output += "累加停止于 n=" + yuan_n + "，总和=" + yuan_total;
+            document.getElementById("yuan_out_dowhile").innerText = yuan_output;
+        })();
+
+        // ===== 7. for...of =====
+        (function () {
+            var yuan_output = "";
+            var yuan_fruits = ["苹果", "香蕉", "橙子", "西瓜"];
+            for (var yuan_fruit of yuan_fruits) {
+                yuan_output += yuan_fruit + " ";
+            }
+            document.getElementById("yuan_out_forof").innerText = yuan_output;
+        })();
+
+        // ===== 8. break =====
+        (function () {
+            var yuan_output = "";
+            for (var yuan_m = 1; yuan_m <= 100; yuan_m++) {
+                if (yuan_m > 50 && yuan_m % 7 === 0) {
+                    yuan_output += "第一个 >50 且能被 7 整除的数是：" + yuan_m;
+                    break;
+                }
+            }
+            document.getElementById("yuan_out_break").innerText = yuan_output;
+        })();
+
+        // ===== 9. continue =====
+        (function () {
+            var yuan_output = "";
+            var yuan_even = "";
+            for (var yuan_p = 1; yuan_p <= 20; yuan_p++) {
+                if (yuan_p % 2 !== 0) {
+                    continue;
+                }
+                yuan_even += yuan_p + " ";
+            }
+            yuan_output += "1~20 的偶数：" + yuan_even.trim();
+            document.getElementById("yuan_out_continue").innerText = yuan_output;
+        })();
+    </script>
+</body>
+</html>

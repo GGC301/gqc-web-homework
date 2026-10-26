@@ -30,7 +30,6 @@ Consequence when adding a page inside `tupian/`: also add a card link in `tupian
 
 - **Every CSS class name, every `id`, and every JS variable must start with `yuan_`** (e.g. `class="yuan_card"`, `id="yuan_grid"`, `let yuan_count`). No exceptions in code you write or edit. Existing pre-2026-10 pages predate this rule and have not been renamed — do not mass-rename unless asked, but never add a new unprefixed name.
 - **Before executing any prompt, append an entry to `yuan_prompt.md`** (append mode, UTF-8, never rewrite existing entries) containing: local timestamp, model ID (e.g. `opencode/mimo-v2.6-flash-free`), and the verbatim prompt text in a fenced block. `yuan_prompt.md` already exists — append, don't overwrite.
-- **Every newly created HTML file must begin with an HTML comment** (placed right after `<!DOCTYPE html>`) containing all four items: 姓名 `关泉才`, 建立时间 (creation timestamp, `YYYY-MM-DD HH:MM`), 使用的大模型 (the model ID used to generate it, e.g. `GLM-5.3-Flash`), and 功能名称 (the page's feature name). Applies to files you create from now on; do not retroactively edit older files unless asked.
 
 ## Known defects (fix, don't propagate)
 

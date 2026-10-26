@@ -104,9 +104,9 @@
 - 模型 (model): GLM-5.3-Flash
 - 提示词 (prompt):
 
-```text
+``text
 修改规则，在新建一个html文件时，都要加入注释，注释包括：关泉才，建立时间，使用的大模型，功能名称。
-```
+``
 
 ---
 
@@ -129,3 +129,23 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINjWB4dU6tQJ8JQ/WqMB05a8dO9h6xVBesbSegFcgB9C
 给我把15.1.html上传githup
 ```
 
+
+---
+
+## 2026-10-26 14:32:57 +08:00
+- 模型 (model): GLM-5.3-Flash
+- 提示词 (prompt):
+
+```text
+名字给我改成关泉才
+```
+
+---
+
+## 2026-10-26 14:39:37 +08:00
+- 模型 (model): GLM-5.3-Flash
+- 提示词 (prompt):
+
+```text
+完成15-2.html，展示javascript程序结构：循环，条件。然后提交到github。
+```
