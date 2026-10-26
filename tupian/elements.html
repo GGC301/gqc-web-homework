@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页元素设计 - 关泉才 24001010301</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: #f5f6fa;
+            color: #333;
+            padding: 30px 20px;
+        }
+        .wrap { max-width: 900px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 26px;
+            color: #2c3e50;
+        }
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-left: 12px;
+            border-left: 4px solid #3498db;
+        }
+
+        /* 1. 上图下文 */
+        .top-bottom {
+            width: 280px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .top-bottom img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .top-bottom .info {
+            padding: 15px;
+        }
+        .top-bottom .info h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .top-bottom .info p {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* 2. 左图右文 */
+        .left-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .left-right img {
+            width: 260px;
+            height: 160px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .left-right .info { padding: 10px 15px; }
+        .left-right .info h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+        .left-right .info p {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* 3. 导航栏 */
+        .nav {
+            display: flex;
+            background: #2c3e50;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .nav a {
+            flex: 1;
+            text-align: center;
+            padding: 14px 0;
+            color: #fff;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background 0.3s;
+        }
+        .nav a:hover { background: #3498db; }
+        .nav a.active { background: #3498db; }
+
+        /* 4. Tab */
+        .tab-btns {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 15px;
+        }
+        .tab-btns span {
+            padding: 10px 24px;
+            cursor: pointer;
+            font-size: 15px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        .tab-btns span.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+            font-weight: bold;
+        }
+        .tab-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            padding: 10px 0;
+        }
+
+        /* 5. 新闻列表 */
+        .news-list { list-style: none; }
+        .news-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .news-list li:last-child { border-bottom: none; }
+        .news-list .title {
+            font-size: 14px;
+            color: #333;
+        }
+        .news-list .title::before {
+            content: "·";
+            color: #3498db;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .news-list .date {
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>网页元素设计实验 — 关泉才 24001010301</h1>
+
+    <!-- 1. 上图下文 -->
+    <div class="section">
+        <div class="section-title">元素一：上图下文</div>
+        <div class="top-bottom">
+            <img src="./img/1.jpg">
+            <div class="info">
+                <h3>梦天实验舱发射成功</h3>
+                <p>长征五号B遥四运载火箭在文昌点火升空，搭载梦天实验舱进入预定轨道。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 左图右文 -->
+    <div class="section">
+        <div class="section-title">元素二：左图右文</div>
+        <div class="left-right">
+            <img src="./img/2.jpg">
+            <div class="info">
+                <h3>上海陆家嘴夜景璀璨</h3>
+                <p>东方明珠与上海中心大厦交相辉映，黄浦江两岸灯火辉煌，霓虹倒影映在江面，展现国际大都市的繁华夜景。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 导航栏 -->
+    <div class="section">
+        <div class="section-title">元素三：导航栏</div>
+        <div class="nav">
+            <a href="#" class="active">首页</a>
+            <a href="#">新闻</a>
+            <a href="#">军事</a>
+            <a href="#">科技</a>
+            <a href="#">体育</a>
+            <a href="#">关于</a>
+        </div>
+    </div>
+
+    <!-- 4. Tab -->
+    <div class="section">
+        <div class="section-title">元素四：Tab 标签页</div>
+        <div class="tab-btns">
+            <span class="active">热点</span>
+            <span>推荐</span>
+            <span>军事</span>
+        </div>
+        <div class="tab-content">
+            长征五号B火箭成功发射梦天实验舱，中国空间站"T"字基本构型组装完成。这是中国载人航天工程的重要里程碑，标志着中国空间站在轨建造迈出关键一步。
+        </div>
+    </div>
+
+    <!-- 5. 新闻列表 -->
+    <div class="section">
+        <div class="section-title">元素五：新闻列表</div>
+        <ul class="news-list">
+            <li><span class="title">长征五号B成功发射梦天实验舱</span><span class="date">2026-09-25</span></li>
+            <li><span class="title">银兰高铁全线贯通运营</span><span class="date">2026-09-24</span></li>
+            <li><span class="title">上海陆家嘴夜景灯光秀上演</span><span class="date">2026-09-23</span></li>
+            <li><span class="title">京沪高铁累计发送旅客突破20亿</span><span class="date">2026-09-22</span></li>
+            <li><span class="title">中国空间站完成在轨建造</span><span class="date">2026-09-21</span></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

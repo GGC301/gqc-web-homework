@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Query 布局 · 八个盒子</title>
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            color: #ffffff;
+            background: #0f172a;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+
+        .page {
+            width: min(100%, 80rem);
+            margin: 0 auto;
+        }
+
+        .page-title {
+            margin: 0 0 1.5rem;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            text-align: center;
+        }
+
+        .box-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+        }
+
+        .box {
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: #1e293b;
+            box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.25);
+        }
+
+        .box img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        .box:hover img {
+            transform: scale(1.04);
+        }
+
+        .box span {
+            display: block;
+            padding: 0.75rem 0.9rem;
+            color: #ffffff;
+            background: rgba(15, 23, 42, 0.92);
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        @media (max-width: 1024px) {
+            .box-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1.25rem 0.75rem;
+            }
+
+            .box-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <h1 class="page-title">Media Query 布局</h1>
+        <section class="box-grid" aria-label="八个响应式盒子">
+            <figure class="box">
+                <img src="./img/1.jpg" alt="图片 1">
+                <span>盒子 1</span>
+            </figure>
+            <figure class="box">
+                <img src="./img/2.jpg" alt="图片 2">
+                <span>盒子 2</span>
+            </figure>
+            <figure class="box">
+                <img src="./img/3.jpg" alt="图片 3">
+                <span>盒子 3</span>
+            </figure>
+            <figure class="box">
+                <img src="./img/4.jpg" alt="图片 4">
+                <span>盒子 4</span>
+            </figure>
+            <figure class="box">
+                <img src="./img/5.jpg" alt="图片 5">
+                <span>盒子 5</span>
+            </figure>
+            <figure class="box">
+                <img src="./img/6.jpg" alt="图片 6">
+                <span>盒子 6</span>
+            </figure>
+            <figure class="box">
+                <img src="./img/7.jpg" alt="图片 7">
+                <span>盒子 7</span>
+            </figure>
+            <figure class="box">
+                <img src="./img/8.jpg" alt="图片 8">
+                <span>盒子 8</span>
+            </figure>
+        </section>
+    </main>
+</body>
+</html>

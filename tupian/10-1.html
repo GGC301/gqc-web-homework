@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 动画幻灯片</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            background: transparent;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        .slideshow {
+            position: relative;
+            width: min(1000px, 92vw);
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-radius: 18px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+            background: transparent;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            margin: 0;
+            transform: translateX(110%);
+            animation: slide-move 5s linear infinite;
+            animation-delay: calc(var(--index) * 5s);
+            will-change: transform;
+        }
+
+        .slide img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .picture-caption {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            z-index: 2;
+            max-width: 88%;
+            margin: 0;
+            color: #fff;
+            font-size: clamp(1rem, 3vw, 2.25rem);
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: 0.04em;
+            text-align: center;
+            text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8);
+            background: transparent;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .author-name {
+            position: absolute;
+            bottom: 2%;
+            left: 50%;
+            z-index: 2;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.92);
+            font-size: clamp(0.75rem, 1.8vw, 1.2rem);
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+            background: transparent;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        @keyframes slide-move {
+            0% {
+                transform: translateX(110%);
+            }
+            12% {
+                transform: translateX(0);
+            }
+            68% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-110%);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .slide {
+                animation: none;
+                transform: translateX(0);
+            }
+
+            .slide:not(:first-child) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="slideshow" aria-label="7 张相关图片幻灯片">
+        <figure class="slide" style="--index: 0">
+            <img src="./img/1.jpg" alt="梦天实验舱发射成功">
+            <figcaption class="picture-caption">梦天实验舱发射成功</figcaption>
+            <p class="author-name">关泉才</p>
+        </figure>
+        <figure class="slide" style="--index: 1">
+            <img src="./img/2.jpg" alt="上海陆家嘴夜景璀璨">
+            <figcaption class="picture-caption">上海陆家嘴夜景璀璨</figcaption>
+            <p class="author-name">关泉才</p>
+        </figure>
+        <figure class="slide" style="--index: 2">
+            <img src="./img/3.jpg" alt="京沪高铁穿越大好河山">
+            <figcaption class="picture-caption">京沪高铁穿越大好河山</figcaption>
+            <p class="author-name">关泉才</p>
+        </figure>
+        <figure class="slide" style="--index: 3">
+            <img src="./img/1.jpg" alt="梦天实验舱发射成功">
+            <figcaption class="picture-caption">梦天实验舱发射成功</figcaption>
+            <p class="author-name">关泉才</p>
+        </figure>
+        <figure class="slide" style="--index: 4">
+            <img src="./img/2.jpg" alt="上海陆家嘴夜景璀璨">
+            <figcaption class="picture-caption">上海陆家嘴夜景璀璨</figcaption>
+            <p class="author-name">关泉才</p>
+        </figure>
+        <figure class="slide" style="--index: 5">
+            <img src="./img/3.jpg" alt="京沪高铁穿越大好河山">
+            <figcaption class="picture-caption">京沪高铁穿越大好河山</figcaption>
+            <p class="author-name">关泉才</p>
+        </figure>
+        <figure class="slide" style="--index: 6">
+            <img src="./img/1.jpg" alt="梦天实验舱发射成功">
+            <figcaption class="picture-caption">梦天实验舱发射成功</figcaption>
+            <p class="author-name">关泉才</p>
+        </figure>
+    </main>
+</body>
+</html>

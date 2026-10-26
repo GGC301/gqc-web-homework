@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucide SVG 图标</title>
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            color: #1f2937;
+            background: #f3f4f6;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_page {
+            width: min(100%, 70rem);
+            margin: 0 auto;
+        }
+
+        .yuan_title {
+            margin: 0 0 0.5rem;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            text-align: center;
+        }
+
+        .yuan_sub {
+            margin: 0 0 2rem;
+            color: #6b7280;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            margin: 0 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.3rem;
+        }
+
+        .yuan_note {
+            margin: 0.5rem 0;
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+
+        code {
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            background: #eef2ff;
+            color: #4338ca;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        pre {
+            margin: 1rem 0 0;
+            padding: 1rem;
+            border-radius: 0.6rem;
+            background: #111827;
+            color: #e5e7eb;
+            overflow: auto;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        pre code {
+            padding: 0;
+            background: none;
+            color: inherit;
+        }
+
+        .yuan_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .yuan_item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.6rem;
+            background: #f8fafc;
+            text-align: center;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .yuan_item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .yuan_slot {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1f2937;
+        }
+
+        .yuan_slot svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .yuan_item:hover .yuan_slot {
+            color: #2563eb;
+        }
+
+        .yuan_name {
+            font-size: 0.78rem;
+            color: #6b7280;
+            font-family: Consolas, "Courier New", monospace;
+            word-break: break-all;
+        }
+
+        .yuan_row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .yuan_demo_box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.6rem;
+            background: #f8fafc;
+        }
+
+        .yuan_caption {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .yuan_sz_sm svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .yuan_sz_md svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .yuan_sz_lg svg {
+            width: 3.5rem;
+            height: 3.5rem;
+        }
+
+        .yuan_c_red {
+            color: #ef4444;
+        }
+
+        .yuan_c_blue {
+            color: #2563eb;
+        }
+
+        .yuan_c_green {
+            color: #16a34a;
+        }
+
+        .yuan_stroke_thin svg {
+            stroke-width: 1;
+        }
+
+        .yuan_stroke_thick svg {
+            stroke-width: 3.5;
+        }
+
+        .yuan_thick .yuan_slot svg {
+            stroke-width: 3.5;
+        }
+
+        .yuan_btn {
+            padding: 0.45rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .yuan_btn:hover {
+            background: #1d4ed8;
+        }
+
+        .yuan_files {
+            margin: 0.5rem 0 0;
+            padding-left: 1.2rem;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .yuan_files li {
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="yuan_page">
+        <h1 class="yuan_title">Lucide 图标（SVG 方式）</h1>
+        <p class="yuan_sub">13.2 · 图标是内联 &lt;svg&gt; 矢量图形，脚本来自本地 cdn/lucide 目录，不请求任何外部网络</p>
+
+        <section>
+            <h2>原理说明</h2>
+            <p class="yuan_note">
+                Lucide 把每个图标存成一段 SVG 路径数据：页面里只写占位元素
+                <code>&lt;i data-lucide="house"&gt;&lt;/i&gt;</code>，引入本地的
+                <code>lucide.min.js</code> 后调用 <code>lucide.createIcons()</code>，
+                脚本会把每个占位元素替换成真正的 <code>&lt;svg&gt;</code> 内联进页面。
+                SVG 是矢量图形，描边使用 <code>stroke="currentColor"</code>，
+                可以直接用 CSS 控制宽高、颜色、描边粗细，也可以用 JS 随意操作。
+            </p>
+            <pre><code>&lt;script src="./cdn/lucide/lucide.min.js"&gt;&lt;/script&gt;
+
+&lt;i data-lucide="house"&gt;&lt;/i&gt;
+&lt;i data-lucide="heart"&gt;&lt;/i&gt;
+
+&lt;script&gt;
+  lucide.createIcons();
+&lt;/script&gt;</code></pre>
+        </section>
+
+        <section>
+            <h2>常用图标</h2>
+            <p class="yuan_note">每个占位符 <code>&lt;i data-lucide="…"&gt;</code> 生成一个 24×24 的内联 SVG。</p>
+            <div class="yuan_grid">
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="house"></i></span><span class="yuan_name">house</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="user"></i></span><span class="yuan_name">user</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="mail"></i></span><span class="yuan_name">mail</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="phone"></i></span><span class="yuan_name">phone</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="calendar"></i></span><span class="yuan_name">calendar</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="camera"></i></span><span class="yuan_name">camera</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="search"></i></span><span class="yuan_name">search</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="settings"></i></span><span class="yuan_name">settings</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="download"></i></span><span class="yuan_name">download</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="play"></i></span><span class="yuan_name">play</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="check"></i></span><span class="yuan_name">check</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="x"></i></span><span class="yuan_name">x</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="lock"></i></span><span class="yuan_name">lock</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="map-pin"></i></span><span class="yuan_name">map-pin</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="pencil"></i></span><span class="yuan_name">pencil</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="trash-2"></i></span><span class="yuan_name">trash-2</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="bell"></i></span><span class="yuan_name">bell</span></div>
+                <div class="yuan_item"><span class="yuan_slot"><i data-lucide="star"></i></span><span class="yuan_name">star</span></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>SVG 特性演示</h2>
+            <p class="yuan_note">
+                因为图标现在是真正的 SVG 元素，宽高、颜色、描边粗细都可以交给 CSS；
+                下面第三个示例还可以通过按钮用 JS 切换描边。
+            </p>
+            <div class="yuan_row">
+                <div class="yuan_demo_box">
+                    <div class="yuan_row">
+                        <span class="yuan_slot yuan_sz_sm"><i data-lucide="camera"></i></span>
+                        <span class="yuan_slot yuan_sz_md"><i data-lucide="camera"></i></span>
+                        <span class="yuan_slot yuan_sz_lg"><i data-lucide="camera"></i></span>
+                    </div>
+                    <span class="yuan_caption">尺寸：width / height</span>
+                </div>
+                <div class="yuan_demo_box">
+                    <div class="yuan_row">
+                        <span class="yuan_slot yuan_sz_md yuan_c_red"><i data-lucide="heart"></i></span>
+                        <span class="yuan_slot yuan_sz_md yuan_c_blue"><i data-lucide="star"></i></span>
+                        <span class="yuan_slot yuan_sz_md yuan_c_green"><i data-lucide="leaf"></i></span>
+                    </div>
+                    <span class="yuan_caption">颜色：color → stroke="currentColor"</span>
+                </div>
+                <div class="yuan_demo_box" id="yuan_demo">
+                    <div class="yuan_row">
+                        <span class="yuan_slot yuan_sz_md yuan_stroke_thin"><i data-lucide="heart"></i></span>
+                        <span class="yuan_slot yuan_sz_md"><i data-lucide="heart"></i></span>
+                        <span class="yuan_slot yuan_sz_md yuan_stroke_thick"><i data-lucide="heart"></i></span>
+                    </div>
+                    <span class="yuan_caption">描边：stroke-width（按钮切换）</span>
+                    <button class="yuan_btn" id="yuan_toggle" type="button">切换描边粗细</button>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>本地文件清单</h2>
+            <ul class="yuan_files">
+                <li><code>cdn/lucide/lucide.min.js</code> —— Lucide v0.469.0（ISC 许可），含全部图标数据与 createIcons 方法</li>
+            </ul>
+        </section>
+    </div>
+
+    <script src="./cdn/lucide/lucide.min.js"></script>
+    <script>
+        lucide.createIcons();
+
+        document.getElementById("yuan_toggle").addEventListener("click", function () {
+            document.getElementById("yuan_demo").classList.toggle("yuan_thick");
+        });
+    </script>
+</body>
+</html>

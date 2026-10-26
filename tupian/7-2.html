@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>左图右文</title>
+    <style>
+        .list{
+            display: flex;
+            list-style: none;
+            padding: 0;
+            gap: 20px;
+        }
+        .list li{
+            width: 320px;
+            border:1px solid #999;
+            display: flex;
+            align-items: center;
+            padding:10px;
+        }
+        .list li img{
+            width:120px;
+            height:90px;
+            margin-right:12px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <ul class="list">
+        <li>
+            <img src="https://picsum.photos/id/237/120/90" alt="小狗">
+            <p>可爱小狗，毛茸茸的宠物</p>
+        </li>
+        <li>
+            <img src="https://picsum.photos/id/10/120/90" alt="山脉">
+            <p>山间风景，远处连绵的群山</p>
+        </li>
+        <li>
+            <img src="https://picsum.photos/id/15/120/90" alt="海边">
+            <p>海岸风光，蔚蓝的大海</p>
+        </li>
+    </ul>
+</body>
+</html>

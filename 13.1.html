@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Awesome 字体图标</title>
+    <link rel="stylesheet" href="./cdn/fontawesome/css/all.min.css">
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            color: #1f2937;
+            background: #f3f4f6;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_page {
+            width: min(100%, 70rem);
+            margin: 0 auto;
+        }
+
+        .yuan_title {
+            margin: 0 0 0.5rem;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            text-align: center;
+        }
+
+        .yuan_sub {
+            margin: 0 0 2rem;
+            color: #6b7280;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            margin: 0 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.3rem;
+        }
+
+        .yuan_note {
+            margin: 0.5rem 0;
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+
+        code {
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            background: #eef2ff;
+            color: #4338ca;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        pre {
+            margin: 1rem 0 0;
+            padding: 1rem;
+            border-radius: 0.6rem;
+            background: #111827;
+            color: #e5e7eb;
+            overflow: auto;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        pre code {
+            padding: 0;
+            background: none;
+            color: inherit;
+        }
+
+        .yuan_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .yuan_item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.6rem;
+            background: #f8fafc;
+            text-align: center;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .yuan_item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .yuan_glyph {
+            font-size: 2rem;
+            color: #1f2937;
+        }
+
+        .yuan_name {
+            font-size: 0.78rem;
+            color: #6b7280;
+            font-family: Consolas, "Courier New", monospace;
+            word-break: break-all;
+        }
+
+        .yuan_row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .yuan_demo_box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.6rem;
+            background: #f8fafc;
+        }
+
+        .yuan_caption {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .yuan_sz_sm {
+            font-size: 1rem;
+        }
+
+        .yuan_sz_md {
+            font-size: 2rem;
+        }
+
+        .yuan_sz_lg {
+            font-size: 3.5rem;
+        }
+
+        .yuan_c_red {
+            color: #ef4444;
+        }
+
+        .yuan_c_blue {
+            color: #2563eb;
+        }
+
+        .yuan_c_green {
+            color: #16a34a;
+        }
+
+        .yuan_files {
+            margin: 0.5rem 0 0;
+            padding-left: 1.2rem;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .yuan_files li {
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="yuan_page">
+        <h1 class="yuan_title">Font Awesome 图标（字体图标方式）</h1>
+        <p class="yuan_sub">13.1 · 图标是字体文件里的字符，字体资源全部来自本地 cdn/fontawesome 目录，不请求任何外部网络</p>
+
+        <section>
+            <h2>原理说明</h2>
+            <p class="yuan_note">
+                Font Awesome 把每个图标做成字体（Font）中的一个字符：样式表通过 <code>@font-face</code> 加载本地的
+                woff2 / ttf 字体文件，图标标签的 <code>::before</code> 伪元素写入对应字符码，浏览器再用这套字体把字符"画"出来。
+                因此图标本质上就是文字，可以像文字一样用 <code>font-size</code>、<code>color</code>、
+                <code>transform</code> 等属性控制，放大缩小都不会失真。
+            </p>
+            <pre><code>&lt;link rel="stylesheet" href="./cdn/fontawesome/css/all.min.css"&gt;
+
+&lt;i class="fa-solid fa-house"&gt;&lt;/i&gt;      &lt;!-- 实心 --&gt;
+&lt;i class="fa-regular fa-heart"&gt;&lt;/i&gt;    &lt;!-- 线性 --&gt;
+&lt;i class="fa-brands fa-github"&gt;&lt;/i&gt;    &lt;!-- 品牌 --&gt;</code></pre>
+        </section>
+
+        <section>
+            <h2>实心图标（fa-solid）</h2>
+            <p class="yuan_note">字重 900，来自 <code>fa-solid-900.woff2 / .ttf</code> 字体文件。</p>
+            <div class="yuan_grid">
+                <div class="yuan_item"><i class="fa-solid fa-house yuan_glyph"></i><span class="yuan_name">fa-solid fa-house</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-user yuan_glyph"></i><span class="yuan_name">fa-solid fa-user</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-envelope yuan_glyph"></i><span class="yuan_name">fa-solid fa-envelope</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-phone yuan_glyph"></i><span class="yuan_name">fa-solid fa-phone</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-calendar yuan_glyph"></i><span class="yuan_name">fa-solid fa-calendar</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-camera yuan_glyph"></i><span class="yuan_name">fa-solid fa-camera</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-magnifying-glass yuan_glyph"></i><span class="yuan_name">fa-solid fa-magnifying-glass</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-gear yuan_glyph"></i><span class="yuan_name">fa-solid fa-gear</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-download yuan_glyph"></i><span class="yuan_name">fa-solid fa-download</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-play yuan_glyph"></i><span class="yuan_name">fa-solid fa-play</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-check yuan_glyph"></i><span class="yuan_name">fa-solid fa-check</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-xmark yuan_glyph"></i><span class="yuan_name">fa-solid fa-xmark</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-lock yuan_glyph"></i><span class="yuan_name">fa-solid fa-lock</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-location-dot yuan_glyph"></i><span class="yuan_name">fa-solid fa-location-dot</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-pen yuan_glyph"></i><span class="yuan_name">fa-solid fa-pen</span></div>
+                <div class="yuan_item"><i class="fa-solid fa-trash yuan_glyph"></i><span class="yuan_name">fa-solid fa-trash</span></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>线性图标（fa-regular）</h2>
+            <p class="yuan_note">字重 400，来自 <code>fa-regular-400.woff2 / .ttf</code> 字体文件，线条更轻。</p>
+            <div class="yuan_grid">
+                <div class="yuan_item"><i class="fa-regular fa-circle yuan_glyph"></i><span class="yuan_name">fa-regular fa-circle</span></div>
+                <div class="yuan_item"><i class="fa-regular fa-star yuan_glyph"></i><span class="yuan_name">fa-regular fa-star</span></div>
+                <div class="yuan_item"><i class="fa-regular fa-heart yuan_glyph"></i><span class="yuan_name">fa-regular fa-heart</span></div>
+                <div class="yuan_item"><i class="fa-regular fa-bell yuan_glyph"></i><span class="yuan_name">fa-regular fa-bell</span></div>
+                <div class="yuan_item"><i class="fa-regular fa-envelope yuan_glyph"></i><span class="yuan_name">fa-regular fa-envelope</span></div>
+                <div class="yuan_item"><i class="fa-regular fa-comment yuan_glyph"></i><span class="yuan_name">fa-regular fa-comment</span></div>
+                <div class="yuan_item"><i class="fa-regular fa-eye yuan_glyph"></i><span class="yuan_name">fa-regular fa-eye</span></div>
+                <div class="yuan_item"><i class="fa-regular fa-face-smile yuan_glyph"></i><span class="yuan_name">fa-regular fa-face-smile</span></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>品牌图标（fa-brands）</h2>
+            <p class="yuan_note">来自 <code>fa-brands-400.woff2 / .ttf</code> 字体文件。</p>
+            <div class="yuan_grid">
+                <div class="yuan_item"><i class="fa-brands fa-github yuan_glyph"></i><span class="yuan_name">fa-brands fa-github</span></div>
+                <div class="yuan_item"><i class="fa-brands fa-twitter yuan_glyph"></i><span class="yuan_name">fa-brands fa-twitter</span></div>
+                <div class="yuan_item"><i class="fa-brands fa-weixin yuan_glyph"></i><span class="yuan_name">fa-brands fa-weixin</span></div>
+                <div class="yuan_item"><i class="fa-brands fa-qq yuan_glyph"></i><span class="yuan_name">fa-brands fa-qq</span></div>
+                <div class="yuan_item"><i class="fa-brands fa-android yuan_glyph"></i><span class="yuan_name">fa-brands fa-android</span></div>
+                <div class="yuan_item"><i class="fa-brands fa-apple yuan_glyph"></i><span class="yuan_name">fa-brands fa-apple</span></div>
+                <div class="yuan_item"><i class="fa-brands fa-facebook yuan_glyph"></i><span class="yuan_name">fa-brands fa-facebook</span></div>
+                <div class="yuan_item"><i class="fa-brands fa-instagram yuan_glyph"></i><span class="yuan_name">fa-brands fa-instagram</span></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>字体特性演示</h2>
+            <p class="yuan_note">图标既然就是文字，字号、颜色、动画这些"文字属性"都可以直接作用在它身上。</p>
+            <div class="yuan_row">
+                <div class="yuan_demo_box">
+                    <div class="yuan_row">
+                        <i class="fa-solid fa-camera yuan_sz_sm"></i>
+                        <i class="fa-solid fa-camera yuan_sz_md"></i>
+                        <i class="fa-solid fa-camera yuan_sz_lg"></i>
+                    </div>
+                    <span class="yuan_caption">字号：1rem / 2rem / 3.5rem</span>
+                </div>
+                <div class="yuan_demo_box">
+                    <div class="yuan_row">
+                        <i class="fa-solid fa-heart yuan_sz_md yuan_c_red"></i>
+                        <i class="fa-solid fa-heart yuan_sz_md yuan_c_blue"></i>
+                        <i class="fa-solid fa-heart yuan_sz_md yuan_c_green"></i>
+                    </div>
+                    <span class="yuan_caption">颜色：color 属性</span>
+                </div>
+                <div class="yuan_demo_box">
+                    <div class="yuan_row">
+                        <i class="fa-solid fa-spinner fa-spin yuan_sz_md"></i>
+                        <i class="fa-solid fa-heart fa-beat yuan_sz_md yuan_c_red"></i>
+                        <i class="fa-solid fa-bell fa-pulse yuan_sz_md yuan_c_blue"></i>
+                    </div>
+                    <span class="yuan_caption">动画：fa-spin / fa-beat / fa-pulse</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>本地文件清单</h2>
+            <ul class="yuan_files">
+                <li><code>cdn/fontawesome/css/all.min.css</code> —— 样式表，内含 @font-face 声明与全部图标类名</li>
+                <li><code>cdn/fontawesome/webfonts/fa-solid-900.woff2 / .ttf</code> —— 实心图标字体</li>
+                <li><code>cdn/fontawesome/webfonts/fa-regular-400.woff2 / .ttf</code> —— 线性图标字体</li>
+                <li><code>cdn/fontawesome/webfonts/fa-brands-400.woff2 / .ttf</code> —— 品牌图标字体</li>
+                <li><code>cdn/fontawesome/webfonts/fa-v4compatibility.woff2 / .ttf</code> —— v4 兼容字体</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS3 3D 动画</title>
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            color: #1f2937;
+            background: #f3f4f6;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_page {
+            width: min(100%, 70rem);
+            margin: 0 auto;
+        }
+
+        .yuan_page_title {
+            margin: 0 0 0.5rem;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            text-align: center;
+        }
+
+        .yuan_page_sub {
+            margin: 0 0 2rem;
+            color: #6b7280;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            margin: 0 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.3rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 0.6rem 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+        code {
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            background: #eef2ff;
+            color: #4338ca;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        .yuan_demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .yuan_demo_item {
+            flex: 1 1 200px;
+            padding: 0.75rem;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+            font-size: 0.85rem;
+        }
+
+        .yuan_hint {
+            margin: 0.3rem 0 0.8rem;
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .yuan_note {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-left: 4px solid #6366f1;
+            background: #eef2ff;
+            border-radius: 0 0.4rem 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        /* 一、透视对比 */
+        .yuan_persp_scene {
+            display: flex;
+            justify-content: center;
+            padding: 0.75rem 0 0.25rem;
+        }
+
+        .yuan_persp_scene_deep {
+            perspective: 600px;
+        }
+
+        .yuan_persp_card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 90px;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            box-shadow: 0 8px 18px rgba(99, 102, 241, 0.35);
+            color: #ffffff;
+            font-size: 0.85rem;
+            transform: rotateY(-35deg);
+        }
+
+        /* 二、旋转立方体 */
+        .yuan_stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            margin-top: 1rem;
+            overflow: hidden;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            background: radial-gradient(circle at 50% 30%, #ffffff, #eef2ff);
+        }
+
+        .yuan_cube_scene,
+        .yuan_carousel_scene {
+            perspective: 700px;
+        }
+
+        .yuan_cube {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            transform-style: preserve-3d;
+            animation: yuan_cube_spin 12s linear infinite;
+        }
+
+        .yuan_cube_scene:hover .yuan_cube {
+            animation-play-state: paused;
+        }
+
+        .yuan_cube_face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        }
+
+        .yuan_face_front {
+            background: rgba(99, 102, 241, 0.92);
+            transform: translateZ(70px);
+        }
+
+        .yuan_face_back {
+            background: rgba(34, 211, 238, 0.92);
+            transform: rotateY(180deg) translateZ(70px);
+        }
+
+        .yuan_face_right {
+            background: rgba(245, 158, 11, 0.92);
+            transform: rotateY(90deg) translateZ(70px);
+        }
+
+        .yuan_face_left {
+            background: rgba(16, 185, 129, 0.92);
+            transform: rotateY(-90deg) translateZ(70px);
+        }
+
+        .yuan_face_top {
+            background: rgba(236, 72, 153, 0.92);
+            transform: rotateX(90deg) translateZ(70px);
+        }
+
+        .yuan_face_bottom {
+            background: rgba(59, 130, 246, 0.92);
+            transform: rotateX(-90deg) translateZ(70px);
+        }
+
+        @keyframes yuan_cube_spin {
+            from {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+            to {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        /* 三、翻转卡片 */
+        .yuan_flip {
+            width: 240px;
+            height: 160px;
+            margin: 1rem auto 0.25rem;
+            perspective: 800px;
+        }
+
+        .yuan_flip_inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .yuan_flip:hover .yuan_flip_inner {
+            transform: rotateY(180deg);
+        }
+
+        .yuan_flip_face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            backface-visibility: hidden;
+            text-align: center;
+        }
+
+        .yuan_flip_front {
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .yuan_flip_back {
+            background: #1f2937;
+            color: #f9fafb;
+            font-size: 0.85rem;
+            transform: rotateY(180deg);
+        }
+
+        /* 四、3D 旋转相册 */
+        .yuan_carousel_ring {
+            position: relative;
+            width: 170px;
+            height: 120px;
+            transform-style: preserve-3d;
+            animation: yuan_ring_spin 18s linear infinite;
+        }
+
+        .yuan_carousel_scene:hover .yuan_carousel_ring {
+            animation-play-state: paused;
+        }
+
+        .yuan_carousel_item {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border: 2px solid #ffffff;
+            border-radius: 0.6rem;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            backface-visibility: hidden;
+        }
+
+        .yuan_carousel_item img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .yuan_slide_1 {
+            transform: rotateY(0deg) translateZ(150px);
+        }
+
+        .yuan_slide_2 {
+            transform: rotateY(60deg) translateZ(150px);
+        }
+
+        .yuan_slide_3 {
+            transform: rotateY(120deg) translateZ(150px);
+        }
+
+        .yuan_slide_4 {
+            transform: rotateY(180deg) translateZ(150px);
+        }
+
+        .yuan_slide_5 {
+            transform: rotateY(240deg) translateZ(150px);
+        }
+
+        .yuan_slide_6 {
+            transform: rotateY(300deg) translateZ(150px);
+        }
+
+        @keyframes yuan_ring_spin {
+            from {
+                transform: rotateY(0deg);
+            }
+            to {
+                transform: rotateY(360deg);
+            }
+        }
+
+        /* 五、按压按钮与悬浮卡片 */
+        .yuan_btn3d {
+            padding: 0.7rem 1.8rem;
+            border: 0;
+            border-radius: 0.5rem;
+            background: linear-gradient(90deg, #6366f1, #22d3ee);
+            box-shadow: 0 6px 0 #4338ca;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+
+        .yuan_btn3d:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #4338ca;
+        }
+
+        .yuan_btn3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #4338ca;
+        }
+
+        .yuan_tilt_scene {
+            display: flex;
+            justify-content: center;
+            perspective: 700px;
+        }
+
+        .yuan_tilt_card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            height: 130px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            color: #4338ca;
+            font-weight: 700;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .yuan_tilt_card:hover {
+            transform: rotateX(14deg) rotateY(-18deg) translateY(-6px);
+            box-shadow: 0 18px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 1rem;
+            }
+
+            .yuan_cube_scene,
+            .yuan_carousel_scene {
+                transform: scale(0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="yuan_page">
+        <h1 class="yuan_page_title">CSS3 3D 动画</h1>
+        <p class="yuan_page_sub">透视 perspective、立体空间 preserve-3d 与关键帧 animation 的综合运用</p>
+
+        <section>
+            <h2>一、3D 转换核心属性</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>属性 / 方法</th>
+                        <th>说明</th>
+                        <th>典型用法</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>perspective</code></td>
+                        <td>为子元素建立透视空间，值越小立体感越强</td>
+                        <td><code>perspective: 700px</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>transform-style</code></td>
+                        <td><code>preserve-3d</code> 让子元素处在同一个 3D 空间</td>
+                        <td>立方体的 6 个面</td>
+                    </tr>
+                    <tr>
+                        <td><code>backface-visibility</code></td>
+                        <td><code>hidden</code> 隐藏背面，翻转时看不到镜像文字</td>
+                        <td>翻转卡片的背面</td>
+                    </tr>
+                    <tr>
+                        <td><code>rotateX / rotateY / rotateZ</code></td>
+                        <td>分别绕 X（水平轴）、Y（竖直轴）、Z 轴旋转</td>
+                        <td><code>transform: rotateY(180deg)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>translateZ</code></td>
+                        <td>沿 Z 轴移动，正值表示靠近观察者</td>
+                        <td>决定立方体面与相册半径</td>
+                    </tr>
+                    <tr>
+                        <td><code>@keyframes</code></td>
+                        <td>定义关键帧，由 <code>animation</code> 驱动连续变化</td>
+                        <td>立方体自动旋转</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="yuan_demo">
+                <div class="yuan_demo_item">
+                    <strong>未设置 perspective</strong>
+                    <div class="yuan_persp_scene">
+                        <div class="yuan_persp_card">rotateY(-35deg)</div>
+                    </div>
+                </div>
+                <div class="yuan_demo_item">
+                    <strong>perspective: 600px</strong>
+                    <div class="yuan_persp_scene yuan_persp_scene_deep">
+                        <div class="yuan_persp_card">rotateY(-35deg)</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="yuan_note">两张卡片的旋转角度完全相同：左侧没有透视，只是被"压扁"；右侧建立了 perspective，近的一边大、远的一边小，这才产生立体感。</p>
+        </section>
+
+        <section>
+            <h2>二、旋转立方体（自动播放）</h2>
+            <div class="yuan_stage">
+                <div class="yuan_cube_scene">
+                    <div class="yuan_cube">
+                        <div class="yuan_cube_face yuan_face_front">前</div>
+                        <div class="yuan_cube_face yuan_face_back">后</div>
+                        <div class="yuan_cube_face yuan_face_right">右</div>
+                        <div class="yuan_cube_face yuan_face_left">左</div>
+                        <div class="yuan_cube_face yuan_face_top">上</div>
+                        <div class="yuan_cube_face yuan_face_bottom">下</div>
+                    </div>
+                </div>
+            </div>
+            <p class="yuan_note">6 个面都是绝对定位的正方形，用 <code>translateZ(70px)</code> 推到立方体表面；外层 <code>preserve-3d</code> 让它们共享同一 3D 空间，<code>animation</code> 让立方体同时绕 X、Y 轴匀速旋转。鼠标移入可暂停，移出继续。</p>
+        </section>
+
+        <section>
+            <h2>三、翻转卡片（鼠标悬停）</h2>
+            <div class="yuan_demo">
+                <div class="yuan_demo_item">
+                    <div class="yuan_flip">
+                        <div class="yuan_flip_inner">
+                            <div class="yuan_flip_face yuan_flip_front">CSS3 3D 翻转</div>
+                            <div class="yuan_flip_face yuan_flip_back">
+                                背面靠 <code>rotateY(180deg)</code> 翻出，<br>
+                                <code>backface-visibility: hidden</code> 隐藏了镜像。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="yuan_note">正反两面都绝对定位重叠在一起，父容器 <code>preserve-3d</code> + <code>transition</code>，鼠标悬停时内层旋转 180° 完成翻转。</p>
+        </section>
+
+        <section>
+            <h2>四、3D 旋转相册</h2>
+            <div class="yuan_stage">
+                <div class="yuan_carousel_scene">
+                    <div class="yuan_carousel_ring">
+                        <div class="yuan_carousel_item yuan_slide_1"><img src="./img/1.jpg" alt="图片 1"></div>
+                        <div class="yuan_carousel_item yuan_slide_2"><img src="./img/2.jpg" alt="图片 2"></div>
+                        <div class="yuan_carousel_item yuan_slide_3"><img src="./img/3.jpg" alt="图片 3"></div>
+                        <div class="yuan_carousel_item yuan_slide_4"><img src="./img/4.jpg" alt="图片 4"></div>
+                        <div class="yuan_carousel_item yuan_slide_5"><img src="./img/5.jpg" alt="图片 5"></div>
+                        <div class="yuan_carousel_item yuan_slide_6"><img src="./img/6.jpg" alt="图片 6"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="yuan_note">6 张图片每 60° 放一张，<code>translateZ(150px)</code> 决定旋转半径（半径 ≈ 边长 ÷ 2÷tan30° 时首尾相接）；<code>backface-visibility: hidden</code> 让背对你的图片自动消失。图片取自本目录 <code>img/</code>，全部本地引用、无外链。鼠标移入可暂停。</p>
+        </section>
+
+        <section>
+            <h2>五、按压按钮与悬浮卡片</h2>
+            <div class="yuan_demo">
+                <div class="yuan_demo_item">
+                    <strong>3D 按压按钮</strong>
+                    <p class="yuan_hint">按下时下沉 4px，底部实心阴影同步缩短</p>
+                    <button class="yuan_btn3d" type="button">点我试试</button>
+                </div>
+                <div class="yuan_demo_item">
+                    <strong>悬浮倾斜卡片</strong>
+                    <p class="yuan_hint">鼠标移入后沿 X、Y 轴倾斜并抬起</p>
+                    <div class="yuan_tilt_scene">
+                        <div class="yuan_tilt_card">hover 试试</div>
+                    </div>
+                </div>
+            </div>
+            <p class="yuan_note">没有 <code>@keyframes</code>，只用 <code>transition</code> + <code>:hover</code> / <code>:active</code> 伪类切换 <code>transform</code>，即可得到轻量的 3D 交互反馈。</p>
+        </section>
+    </main>
+</body>
+</html>

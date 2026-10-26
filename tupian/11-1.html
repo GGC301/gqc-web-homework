@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 长度单位</title>
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            color: #1f2937;
+            background: #f3f4f6;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        .page {
+            width: min(100%, 70rem);
+            margin: 0 auto;
+        }
+
+        .page-title {
+            margin: 0 0 0.5rem;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            text-align: center;
+        }
+
+        .page-sub {
+            margin: 0 0 2rem;
+            color: #6b7280;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            margin: 0 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.3rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 0.6rem 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+        code {
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            background: #eef2ff;
+            color: #4338ca;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        .demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .demo-item {
+            flex: 1 1 200px;
+            padding: 0.75rem;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+            font-size: 0.85rem;
+        }
+
+        .bar {
+            height: 1.5rem;
+            margin-top: 0.4rem;
+            border-radius: 0.3rem;
+            background: linear-gradient(90deg, #6366f1, #22d3ee);
+        }
+
+        .box-1in { width: 1in; }
+        .box-1cm { width: 1cm; }
+        .box-10mm { width: 10mm; }
+        .box-72pt { width: 72pt; }
+        .box-6pc { width: 6pc; }
+        .box-96px { width: 96px; }
+
+        .em-demo {
+            width: 10em;
+            font-size: 14px;
+            background: #dcfce7;
+        }
+
+        .em-demo .big {
+            font-size: 2em;
+        }
+
+        .rem-demo {
+            width: 10rem;
+            background: #fef9c3;
+        }
+
+        .parent {
+            width: 400px;
+            max-width: 100%;
+            padding: 1rem;
+            background: #e0e7ff;
+        }
+
+        .child {
+            width: 50%;
+            height: 60px;
+            background: #6366f1;
+            color: #fff;
+            font-size: 0.85rem;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .viewport-bars {
+            display: grid;
+            gap: 0.6rem;
+        }
+
+        .viewport-bars .bar {
+            margin-top: 0;
+        }
+
+        .bar-50vw { width: 50vw; }
+        .bar-80vw { width: 80vw; max-width: 100%; }
+        .bar-25vh { width: 25%; height: 1.5rem; }
+        .bar-10vmin { width: 10vmin; }
+        .bar-40vmax { width: 40vmax; max-width: 100%; }
+
+        .ch-demo {
+            width: 20ch;
+            background: #ffe4e6;
+        }
+
+        .ex-demo {
+            width: 20ex;
+            background: #fce7f3;
+        }
+
+        .note {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-left: 4px solid #6366f1;
+            background: #eef2ff;
+            border-radius: 0 0.4rem 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 1rem;
+            }
+
+            .parent {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <h1 class="page-title">Web 前端长度单位</h1>
+        <p class="page-sub">CSS 中的长度单位分为绝对单位与相对单位两大类</p>
+
+        <section>
+            <h2>一、绝对长度单位</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>单位</th>
+                        <th>说明</th>
+                        <th>换算关系</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>px</code></td>
+                        <td>像素，最常用的单位</td>
+                        <td>1in = 96px</td>
+                    </tr>
+                    <tr>
+                        <td><code>cm</code></td>
+                        <td>厘米</td>
+                        <td>1cm ≈ 37.8px</td>
+                    </tr>
+                    <tr>
+                        <td><code>mm</code></td>
+                        <td>毫米</td>
+                        <td>10mm = 1cm</td>
+                    </tr>
+                    <tr>
+                        <td><code>in</code></td>
+                        <td>英寸</td>
+                        <td>1in = 2.54cm = 96px</td>
+                    </tr>
+                    <tr>
+                        <td><code>pt</code></td>
+                        <td>磅（打印排版单位）</td>
+                        <td>1pt = 96/72 px ≈ 1.33px</td>
+                    </tr>
+                    <tr>
+                        <td><code>pc</code></td>
+                        <td>派卡</td>
+                        <td>1pc = 12pt = 16px</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="demo">
+                <div class="demo-item">96px<div class="bar box-96px"></div></div>
+                <div class="demo-item">1in<div class="bar box-1in"></div></div>
+                <div class="demo-item">1cm<div class="bar box-1cm"></div></div>
+                <div class="demo-item">10mm<div class="bar box-10mm"></div></div>
+                <div class="demo-item">72pt<div class="bar box-72pt"></div></div>
+                <div class="demo-item">6pc<div class="bar box-6pc"></div></div>
+            </div>
+
+            <p class="note">提示：上排色条宽度相等，可见 96px = 1in = 2.54cm = 10mm × 10 ≈ 72pt × 4/3 ≈ 6pc。</p>
+        </section>
+
+        <section>
+            <h2>二、相对长度单位</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>单位</th>
+                        <th>相对于</th>
+                        <th>典型用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>em</code></td>
+                        <td>当前元素的父元素字号</td>
+                        <td>段落内的间距、缩进</td>
+                    </tr>
+                    <tr>
+                        <td><code>rem</code></td>
+                        <td>根元素（html）字号</td>
+                        <td>全局统一尺寸，避免层层继承</td>
+                    </tr>
+                    <tr>
+                        <td><code>%</code></td>
+                        <td>父元素对应尺寸</td>
+                        <td>流式布局、宽度自适应</td>
+                    </tr>
+                    <tr>
+                        <td><code>vw</code></td>
+                        <td>视口宽度的 1%</td>
+                        <td>大标题、全屏区块</td>
+                    </tr>
+                    <tr>
+                        <td><code>vh</code></td>
+                        <td>视口高度的 1%</td>
+                        <td>首屏满屏布局</td>
+                    </tr>
+                    <tr>
+                        <td><code>vmin</code></td>
+                        <td>视口宽、高中较小值的 1%</td>
+                        <td>横竖屏通用缩放</td>
+                    </tr>
+                    <tr>
+                        <td><code>vmax</code></td>
+                        <td>视口宽、高中较大值的 1%</td>
+                        <td>横竖屏通用缩放</td>
+                    </tr>
+                    <tr>
+                        <td><code>ch</code></td>
+                        <td>字体中数字 "0" 的宽度</td>
+                        <td>按字符数限制行宽</td>
+                    </tr>
+                    <tr>
+                        <td><code>ex</code></td>
+                        <td>字体中 x 的高度</td>
+                        <td>与小写字母对齐</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="demo">
+                <div class="demo-item">
+                    <strong>em</strong>：父级 14px，色块宽 10em
+                    <div class="bar em-demo"></div>
+                    <div class="em-demo big">字号 2em 的文字</div>
+                </div>
+                <div class="demo-item">
+                    <strong>rem</strong>：根字号 16px，色块宽 10rem
+                    <div class="bar rem-demo"></div>
+                </div>
+                <div class="demo-item">
+                    <strong>ch</strong>：宽 20ch
+                    <div class="ch-demo">01234567890123456789</div>
+                </div>
+                <div class="demo-item">
+                    <strong>ex</strong>：宽 20ex
+                    <div class="ex-demo">xxxxxxxxxxxxxxxxxxxx</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>三、百分比 %（相对父元素）</h2>
+            <div class="parent">
+                父容器（.parent）
+                <div class="child">子元素 width: 50%</div>
+            </div>
+            <p class="note">子元素宽度 = 父容器宽度 × 50%，父容器改变时子元素随之变化。</p>
+        </section>
+
+        <section>
+            <h2>四、视口单位（vw / vh / vmin / vmax）</h2>
+            <div class="viewport-bars">
+                <div class="demo-item">width: 50vw<div class="bar bar-50vw"></div></div>
+                <div class="demo-item">width: 80vw<div class="bar bar-80vw"></div></div>
+                <div class="demo-item">width: 10vmin<div class="bar bar-10vmin"></div></div>
+                <div class="demo-item">width: 40vmax<div class="bar bar-40vmax"></div></div>
+            </div>
+            <p class="note">拖动浏览器窗口大小，上面的色条会随视口实时变化；当前视口为 <span id="vp">--</span>。</p>
+        </section>
+    </main>
+
+    <script>
+        var vp = document.getElementById("vp");
+
+        function showViewport() {
+            vp.textContent = window.innerWidth + " × " + window.innerHeight +
+                " px（1vw = " + (window.innerWidth / 100).toFixed(2) +
+                "px，1vh = " + (window.innerHeight / 100).toFixed(2) + "px）";
+        }
+
+        showViewport();
+        window.addEventListener("resize", showViewport);
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菜鸟教程手机版 - 图像解决方案 24001010301 关泉才</title>
+<link rel="stylesheet" href="font/iconfont.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Microsoft YaHei",sans-serif; background:#f4f4f4; color:#333; padding-bottom:56px; }
+a { text-decoration:none; color:inherit; }
+ul { list-style:none; }
+
+/* ============ 顶部：logo + 搜索 ============ */
+.gqc-m-header { background:#fff; padding:12px 16px; display:flex; align-items:center; gap:10px;
+  position:sticky; top:0; z-index:10; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+.gqc-m-logo { font-size:20px; font-weight:900; color:#333; letter-spacing:-1px; white-space:nowrap; }
+.gqc-m-logo span { color:#73a857; }
+.gqc-m-search { flex:1; display:flex; align-items:center; background:#f2f2f2; border-radius:16px;
+  padding:7px 12px; gap:6px; }
+/* SVG 搜索图标（图像解决方案-内联SVG） */
+.gqc-m-search svg { width:14px; height:14px; fill:#999; flex-shrink:0; }
+.gqc-m-search input { border:none; outline:none; background:transparent; flex:1; font-size:13px; }
+.gqc-m-user { font-size:24px; color:#73a857; }
+
+/* ============ 轮播 banner（SVG渐变背景 + 文字） ============ */
+.gqc-m-banner { margin:10px 12px; border-radius:10px; overflow:hidden; position:relative;
+  height:120px; display:flex; align-items:center; justify-content:center; }
+.gqc-m-banner svg { position:absolute; inset:0; width:100%; height:100%; }
+.gqc-m-banner__text { position:relative; color:#fff; text-align:center; z-index:1; }
+.gqc-m-banner__text b { display:block; font-size:18px; margin-bottom:4px; text-shadow:0 1px 3px rgba(0,0,0,.3); }
+.gqc-m-banner__text span { font-size:12px; opacity:.9; }
+
+/* ============ 教程快捷入口（iconfont 字体图标） ============ */
+.gqc-m-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; background:#fff;
+  margin:0 12px; border-radius:10px; padding:14px 6px; }
+.gqc-m-grid a { display:flex; flex-direction:column; align-items:center; gap:6px; padding:6px 0; }
+.gqc-m-grid .iconfont { font-size:26px; color:#73a857; }
+.gqc-m-grid a:nth-child(2) .iconfont { color:#5b9bd5; }
+.gqc-m-grid a:nth-child(3) .iconfont { color:#ed7d31; }
+.gqc-m-grid a:nth-child(4) .iconfont { color:#8064a2; }
+.gqc-m-grid span { font-size:12px; color:#555; }
+
+/* ============ 教程列表 ============ */
+.gqc-m-section { margin:12px; }
+.gqc-m-section__title { font-size:15px; font-weight:bold; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.gqc-m-section__title .iconfont { color:#73a857; }
+.gqc-m-card { background:#fff; border-radius:10px; padding:12px; margin-bottom:10px; display:flex; gap:12px; align-items:center; }
+.gqc-m-card__icon { width:44px; height:44px; border-radius:8px; display:flex; align-items:center;
+  justify-content:center; font-size:22px; color:#fff; flex-shrink:0; }
+.gqc-m-card__icon--green { background:#73a857; }
+.gqc-m-card__icon--blue { background:#5b9bd5; }
+.gqc-m-card__icon--orange { background:#ed7d31; }
+.gqc-m-card__icon--purple { background:#8064a2; }
+.gqc-m-card__body { flex:1; min-width:0; }
+.gqc-m-card__body b { display:block; font-size:14px; margin-bottom:3px; }
+.gqc-m-card__body span { font-size:12px; color:#888; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gqc-m-card .iconfont--go { color:#ccc; font-size:16px; }
+
+/* ============ 下导航（自适应宽度 + 固定底部） ============ */
+.gqc-m-tabbar { position:fixed; bottom:0; left:0; right:0; height:56px; background:#fff;
+  border-top:1px solid #e8e8e8; display:flex; z-index:100;
+  box-shadow:0 -2px 8px rgba(0,0,0,.05); }
+.gqc-m-tabbar a { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  color:#999; transition:color .2s; min-width:0; }
+/* 字体图标默认样式（CSS修饰：大小、颜色） */
+.gqc-m-tabbar .iconfont { font-size:22px; line-height:1; }
+.gqc-m-tabbar span { font-size:10px; }
+/* 激活态：颜色 + 放大（CSS修饰字体图标） */
+.gqc-m-tabbar a.gqc-active { color:#73a857; }
+.gqc-m-tabbar a.gqc-active .iconfont { font-size:26px; }
+.gqc-m-tabbar a:active { opacity:.7; }
+</style>
+</head>
+<body>
+
+<!-- 顶部 -->
+<header class="gqc-m-header">
+  <div class="gqc-m-logo">菜鸟教程<span>.COM</span></div>
+  <div class="gqc-m-search">
+    <!-- 内联SVG搜索图标 -->
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+    <input type="text" placeholder="搜索教程关键字">
+  </div>
+  <!-- iconfont 用户图标 -->
+  <div class="gqc-m-user iconfont icon-yonghu"></div>
+</header>
+
+<!-- banner（SVG 渐变背景） -->
+<div class="gqc-m-banner">
+  <svg viewBox="0 0 400 120" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="gqcGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#8bc34a"/>
+        <stop offset="100%" stop-color="#3f7d20"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="120" fill="url(#gqcGrad)"/>
+  </svg>
+  <div class="gqc-m-banner__text">
+    <b>学编程，菜鸟教程就够了</b>
+    <span>HTML / CSS / JS / Python / Java 全系列教程 · 24001010301 关泉才</span>
+  </div>
+</div>
+
+<!-- 快捷入口（iconfont 字体图标） -->
+<div class="gqc-m-grid">
+  <a href="#"><i class="iconfont icon-shouye"></i><span>首页</span></a>
+  <a href="#"><i class="iconfont icon-luntan"></i><span>论坛</span></a>
+  <a href="#"><i class="iconfont icon-a-049_zhibo"></i><span>直播</span></a>
+  <a href="#"><i class="iconfont icon-a-049_gouwuche"></i><span>购物车</span></a>
+</div>
+
+<!-- 教程列表 -->
+<div class="gqc-m-section">
+  <div class="gqc-m-section__title"><i class="iconfont icon-gengduo"></i>热门教程</div>
+
+  <div class="gqc-m-card">
+    <div class="gqc-m-card__icon gqc-m-card__icon--green">H</div>
+    <div class="gqc-m-card__body"><b>HTML 教程</b><span>超文本标记语言，网页结构基础入门</span></div>
+    <i class="iconfont icon-fanhui iconfont--go"></i>
+  </div>
+
+  <div class="gqc-m-card">
+    <div class="gqc-m-card__icon gqc-m-card__icon--blue">C</div>
+    <div class="gqc-m-card__body"><b>CSS 教程</b><span>层叠样式表，让网页更美观</span></div>
+    <i class="iconfont icon-fanhui iconfont--go"></i>
+  </div>
+
+  <div class="gqc-m-card">
+    <div class="gqc-m-card__icon gqc-m-card__icon--orange">J</div>
+    <div class="gqc-m-card__body"><b>JavaScript 教程</b><span>前端交互脚本语言，浏览器运行</span></div>
+    <i class="iconfont icon-fanhui iconfont--go"></i>
+  </div>
+
+  <div class="gqc-m-card">
+    <div class="gqc-m-card__icon gqc-m-card__icon--purple">P</div>
+    <div class="gqc-m-card__body"><b>Python3 教程</b><span>人工智能时代最流行的编程语言</span></div>
+    <i class="iconfont icon-fanhui iconfont--go"></i>
+  </div>
+</div>
+
+<!-- ============ 下导航（自适应宽度 + 固定底部，iconfont 字体图标） ============ -->
+<nav class="gqc-m-tabbar">
+  <a href="#" class="gqc-active">
+    <i class="iconfont icon-shouye"></i><span>首页</span>
+  </a>
+  <a href="#">
+    <i class="iconfont icon-gengduo"></i><span>教程</span>
+  </a>
+  <a href="#">
+    <i class="iconfont icon-luntan"></i><span>论坛</span>
+  </a>
+  <a href="#">
+    <i class="iconfont icon-xihuan"></i><span>收藏</span>
+  </a>
+  <a href="#">
+    <i class="iconfont icon-gerenzhongxin-zhihui"></i><span>我的</span>
+  </a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <title>响应式图片盒子——关泉才</title>
+    <style>
+        :root {
+            --page-bg: #0f172a;
+            --page-bg-secondary: #172554;
+            --text-color: #ffffff;
+            --muted-color: #cbd5e1;
+            --card-bg: rgba(15, 23, 42, 0.72);
+            --card-border: rgba(255, 255, 255, 0.18);
+            --shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.28);
+            --radius: 1rem;
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-color);
+            background:
+                radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.2), transparent 30%),
+                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.22), transparent 32%),
+                var(--page-bg);
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            transition: background-color 0.35s ease;
+        }
+
+        .page {
+            width: 100%;
+            min-height: 100vh;
+            padding: 2rem clamp(1rem, 3vw, 3rem) 3rem;
+        }
+
+        .page-header {
+            width: min(100%, 80rem);
+            margin: 0 auto 1.5rem;
+            text-align: center;
+        }
+
+        .eyebrow {
+            margin: 0 0 0.35rem;
+            color: #67e8f9;
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.75rem, 5vw, 3.25rem);
+            line-height: 1.15;
+            letter-spacing: 0.02em;
+        }
+
+        .author {
+            margin: 0.65rem 0 0;
+            color: var(--muted-color);
+            font-size: clamp(0.95rem, 2vw, 1.2rem);
+        }
+
+        .author strong {
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: clamp(0.75rem, 1.5vw, 1.25rem);
+            width: min(100%, 80rem);
+            margin: 0 auto;
+        }
+
+        .image-card {
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+            border: 0.0625rem solid var(--card-border);
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            isolation: isolate;
+        }
+
+        .image-card::after {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(to top, rgba(2, 6, 23, 0.78), transparent 55%);
+            content: "";
+            pointer-events: none;
+        }
+
+        .image-card img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            transition: transform 0.4s ease, filter 0.4s ease;
+        }
+
+        .image-card:hover img {
+            transform: scale(1.04);
+            filter: saturate(1.1);
+        }
+
+        .card-caption {
+            position: absolute;
+            right: 0.8rem;
+            bottom: 0.75rem;
+            left: 0.8rem;
+            z-index: 2;
+            margin: 0;
+            overflow: hidden;
+            font-size: clamp(0.8rem, 1.4vw, 1rem);
+            font-weight: 600;
+            line-height: 1.4;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.8);
+        }
+
+        @media (max-width: 1024px) {
+            :root {
+                --page-bg: #16213f;
+                --page-bg-secondary: #312e81;
+            }
+
+            body {
+                background:
+                    radial-gradient(circle at 20% 0%, rgba(244, 114, 182, 0.22), transparent 32%),
+                    radial-gradient(circle at 85% 80%, rgba(34, 211, 238, 0.2), transparent 34%),
+                    var(--page-bg);
+            }
+
+            .image-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --page-bg: #4c0519;
+                --page-bg-secondary: #7c2d12;
+            }
+
+            body {
+                background:
+                    radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.25), transparent 38%),
+                    linear-gradient(145deg, var(--page-bg), var(--page-bg-secondary));
+            }
+
+            .page {
+                padding: 1.5rem 1rem 2rem;
+            }
+
+            .page-header {
+                margin-bottom: 1rem;
+            }
+
+            .image-grid {
+                grid-template-columns: 1fr;
+                gap: 0.9rem;
+            }
+
+            .image-card img {
+                aspect-ratio: 16 / 10;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <p class="eyebrow">Responsive Layout</p>
+            <h1>图片集合 · 视口响应式展示</h1>
+            <p class="author">摄影与整理：<strong>关泉才</strong></p>
+        </header>
+
+        <section class="image-grid" aria-label="8 张图片的响应式网格">
+            <figure class="image-card">
+                <img src="./img/1.jpg" alt="图片 1">
+                <figcaption class="card-caption">图片 1</figcaption>
+            </figure>
+            <figure class="image-card">
+                <img src="./img/2.jpg" alt="图片 2">
+                <figcaption class="card-caption">图片 2</figcaption>
+            </figure>
+            <figure class="image-card">
+                <img src="./img/3.jpg" alt="图片 3">
+                <figcaption class="card-caption">图片 3</figcaption>
+            </figure>
+            <figure class="image-card">
+                <img src="./img/4.jpg" alt="图片 4">
+                <figcaption class="card-caption">图片 4</figcaption>
+            </figure>
+            <figure class="image-card">
+                <img src="./img/5.jpg" alt="图片 5">
+                <figcaption class="card-caption">图片 5</figcaption>
+            </figure>
+            <figure class="image-card">
+                <img src="./img/6.jpg" alt="图片 6">
+                <figcaption class="card-caption">图片 6</figcaption>
+            </figure>
+            <figure class="image-card">
+                <img src="./img/7.jpg" alt="图片 7">
+                <figcaption class="card-caption">图片 7</figcaption>
+            </figure>
+            <figure class="image-card">
+                <img src="./img/8.jpg" alt="图片 8">
+                <figcaption class="card-caption">图片 8</figcaption>
+            </figure>
+        </section>
+    </main>
+</body>
+</html>

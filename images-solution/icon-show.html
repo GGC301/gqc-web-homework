@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iconfont 项目 gqc301 - 全部图标</title>
+<link rel="stylesheet" href="iconfont.css">
+<style>
+body { font-family:"Microsoft YaHei",sans-serif; background:#f7f8fa; margin:0; padding:24px; }
+h1 { font-size:22px; color:#333; }
+.sub { color:#999; font-size:13px; margin-bottom:20px; }
+.grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+.card { background:#fff; border-radius:10px; padding:18px 8px; text-align:center;
+  box-shadow:0 1px 4px rgba(0,0,0,.06); }
+.card .iconfont { font-size:34px; color:#333; }
+.card .name { margin-top:10px; font-size:13px; color:#555; }
+.card .cls { font-size:11px; color:#aaa; margin-top:4px; }
+</style>
+</head>
+<body>
+<h1>iconfont 项目：gqc301（项目ID 5244718）</h1>
+<div class="sub">从 iconfont.cn 在线下载，共 20 个字体图标 · 24001010301 关泉才</div>
+<div class="grid" id="grid"></div>
+<script>
+var icons = [
+  ["icon-xihuan","喜欢"], ["icon-gengduo","更多"],
+  ["icon-gerenzhongxin-zhihui","个人中心-置灰"], ["icon-a-fenxiang2","分享 2"],
+  ["icon-a-049_kefu","049_客服"], ["icon-a-049_lianxiren","049_联系人"],
+  ["icon-a-049_zhibo","049_直播"], ["icon-a-049_gouwuche","049_购物车"],
+  ["icon-yonghu","用户"], ["icon-zengjia","增加"],
+  ["icon-fanhui","返回"], ["icon-yonghu1","用户"],
+  ["icon-14","论坛"], ["icon-fanhui1","返回"],
+  ["icon-luntan","论坛"], ["icon-huochepiao1","论坛"],
+  ["icon-B--copy-copy","首页"], ["icon-zengjia1","增加"],
+  ["icon-shouye","首页"], ["icon-fanhui2","返回"]
+];
+var html = '';
+icons.forEach(function(it){
+  html += '<div class="card"><i class="iconfont ' + it[0] + '"></i>'
+       + '<div class="name">' + it[1] + '</div>'
+       + '<div class="cls">' + it[0] + '</div></div>';
+});
+document.getElementById('grid').innerHTML = html;
+</script>
+</body>
+</html>

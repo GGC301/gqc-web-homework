@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex布局演示</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            padding: 30px;
+        }
+        h1{
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        /* 最外层容器，4个大框横向排列 */
+        .outer{
+            display: flex;
+            gap:20px;
+        }
+        /* 每一个大外框 */
+        .box{
+            width:220px;
+            height:220px;
+            border:1px solid #333;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+        /* 第1个：里面1个方块 */
+        .box1 .inner{
+            width:60px;
+            height:60px;
+            border:1px solid #333;
+        }
+        /* 第2个：里面2个上下方块 */
+        .box2{
+            flex-direction: column;
+            gap:10px;
+        }
+        .box2 .inner{
+            width:80px;
+            height:50px;
+            border:1px solid #333;
+        }
+        /* 第3个：4个方块，2行2列 */
+        .box3{
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+        }
+        .box3 .inner{
+            width:80px;
+            height:50px;
+            border:1px solid #333;
+        }
+        /* 第4个：上1个，下2个 */
+        .box4{
+            flex-direction: column;
+            gap:10px;
+        }
+        .box4 .row{
+            display:flex;
+            gap:10px;
+        }
+        .box4 .inner-top{
+            width:170px;
+            height:50px;
+            border:1px solid #333;
+        }
+        .box4 .inner-bottom{
+            width:80px;
+            height:50px;
+            border:1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flex布局演示</h1>
+    <div class="outer">
+        <!-- 第一个框：1个方块 -->
+        <div class="box box1">
+            <div class="inner"></div>
+        </div>
+        <!-- 第二个框：上下2个方块 -->
+        <div class="box box2">
+            <div class="inner"></div>
+            <div class="inner"></div>
+        </div>
+        <!-- 第三个框：2行2列共4个方块 -->
+        <div class="box box3">
+            <div class="inner"></div>
+            <div class="inner"></div>
+            <div class="inner"></div>
+            <div class="inner"></div>
+        </div>
+        <!-- 第四个框：上面1个，下面2个 -->
+        <div class="box box4">
+            <div class="inner-top"></div>
+            <div class="row">
+                <div class="inner-bottom"></div>
+                <div class="inner-bottom"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>移动端固定底部导航</title>
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: #e5e7eb;
+            color: #1f2937;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .yuan_app {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: #f3f4f6;
+            box-shadow: 0 0 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .yuan_header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 1.1rem 1rem 1rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #ffffff;
+        }
+
+        .yuan_header_title {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .yuan_header_sub {
+            margin: 0.15rem 0 0;
+            font-size: 0.8rem;
+            opacity: 0.85;
+        }
+
+        .yuan_main {
+            padding: 0.75rem 0.75rem calc(4.75rem + env(safe-area-inset-bottom));
+        }
+
+        .yuan_card {
+            margin-bottom: 0.75rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .yuan_card_title {
+            margin: 0 0 0.4rem;
+            font-size: 1rem;
+        }
+
+        .yuan_card_text {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.88rem;
+        }
+
+        .yuan_card_text code {
+            padding: 0.05rem 0.3rem;
+            border-radius: 0.25rem;
+            background: #eef2ff;
+            color: #4338ca;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.82rem;
+        }
+
+        .yuan_card_cover {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 6.5rem;
+            margin-bottom: 0.6rem;
+            border-radius: 0.6rem;
+            background: linear-gradient(135deg, #e0e7ff, #fce7f3);
+            color: #4338ca;
+            font-size: 1rem;
+        }
+
+        .yuan_card_meta {
+            display: flex;
+            gap: 1.25rem;
+            margin-top: 0.65rem;
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        .yuan_meta_item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .yuan_meta_icon {
+            font-size: 1rem;
+        }
+
+        .yuan_tabbar {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            width: 100%;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+            padding-bottom: env(safe-area-inset-bottom);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .yuan_tab {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.15rem;
+            padding: 0.5rem 0 0.4rem;
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .yuan_tab.yuan_active {
+            color: #2563eb;
+        }
+
+        .yuan_icon_wrap {
+            position: relative;
+            display: inline-flex;
+            padding: 0.15rem;
+        }
+
+        .yuan_icon {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .yuan_tab_label {
+            font-size: 0.7rem;
+            line-height: 1.2;
+        }
+
+        .yuan_badge {
+            position: absolute;
+            top: -0.35rem;
+            right: -0.95rem;
+            min-width: 1.1rem;
+            height: 1.1rem;
+            padding: 0 0.25rem;
+            border: 1.5px solid #ffffff;
+            border-radius: 0.55rem;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-style: normal;
+            line-height: 1rem;
+            text-align: center;
+        }
+
+        .yuan_dot {
+            position: absolute;
+            top: -0.1rem;
+            right: -0.3rem;
+            width: 0.55rem;
+            height: 0.55rem;
+            border: 1.5px solid #ffffff;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="yuan_app">
+        <header class="yuan_header">
+            <h1 class="yuan_header_title">校园社区</h1>
+            <p class="yuan_header_sub">移动端固定自适应底部导航 · 13-3</p>
+        </header>
+
+        <main class="yuan_main">
+            <section class="yuan_card">
+                <h2 class="yuan_card_title">实现说明</h2>
+                <p class="yuan_card_text">
+                    导航栏使用 <code>position: fixed</code> 固定在屏幕底部，宽度
+                    <code>width: 100%</code> 铺满整个屏幕宽度；4 个导航项目用
+                    <code>flex: 1</code> 等分，宽度随屏幕自适应；角标数字与红点用
+                    <code>position: absolute</code> 定位在图标右上角，并用 <code>env(safe-area-inset-bottom)</code>
+                    适配 iPhone 底部安全区。图标来自 <code>font/iconfont</code> 字体图标。
+                </p>
+            </section>
+
+            <section class="yuan_card">
+                <div class="yuan_card_cover">周末校园市集开始啦</div>
+                <h2 class="yuan_card_title">社团招新汇总，30+ 社团等你来</h2>
+                <p class="yuan_card_text">学生会整理了本学期全部社团的招新时间与地点，快来看看有没有你感兴趣的吧。</p>
+                <div class="yuan_card_meta">
+                    <span class="yuan_meta_item"><i class="iconfont icon-xihuan yuan_meta_icon"></i>128</span>
+                    <span class="yuan_meta_item"><i class="iconfont icon-a-fenxiang2 yuan_meta_icon"></i>36</span>
+                </div>
+            </section>
+
+            <section class="yuan_card">
+                <div class="yuan_card_cover">图书馆自习座位预约攻略</div>
+                <h2 class="yuan_card_title">自习室抢座小技巧，亲测有效</h2>
+                <p class="yuan_card_text">开放时间、预约规则、捡漏时段，一篇讲清楚，帮你天天坐到靠窗的位置。</p>
+                <div class="yuan_card_meta">
+                    <span class="yuan_meta_item"><i class="iconfont icon-xihuan yuan_meta_icon"></i>96</span>
+                    <span class="yuan_meta_item"><i class="iconfont icon-a-fenxiang2 yuan_meta_icon"></i>21</span>
+                </div>
+            </section>
+
+            <section class="yuan_card">
+                <div class="yuan_card_cover">食堂新窗口测评</div>
+                <h2 class="yuan_card_title">二食堂三楼新窗口，到底值不值得排队？</h2>
+                <p class="yuan_card_text">价格、口味、排队时长三项打分，附真实照片，帮你避开踩雷。</p>
+                <div class="yuan_card_meta">
+                    <span class="yuan_meta_item"><i class="iconfont icon-xihuan yuan_meta_icon"></i>254</span>
+                    <span class="yuan_meta_item"><i class="iconfont icon-a-fenxiang2 yuan_meta_icon"></i>58</span>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <nav class="yuan_tabbar" id="yuan_tabbar">
+        <a class="yuan_tab yuan_active" href="#">
+            <span class="yuan_icon_wrap">
+                <i class="iconfont icon-shouye yuan_icon"></i>
+            </span>
+            <span class="yuan_tab_label">首页</span>
+        </a>
+        <a class="yuan_tab" href="#">
+            <span class="yuan_icon_wrap">
+                <i class="iconfont icon-luntan yuan_icon"></i>
+                <i class="yuan_badge">6</i>
+            </span>
+            <span class="yuan_tab_label">论坛</span>
+        </a>
+        <a class="yuan_tab" href="#">
+            <span class="yuan_icon_wrap">
+                <i class="iconfont icon-a-049_gouwuche yuan_icon"></i>
+                <i class="yuan_badge">5</i>
+            </span>
+            <span class="yuan_tab_label">购物车</span>
+        </a>
+        <a class="yuan_tab" href="#">
+            <span class="yuan_icon_wrap">
+                <i class="iconfont icon-yonghu1 yuan_icon"></i>
+                <i class="yuan_dot"></i>
+            </span>
+            <span class="yuan_tab_label">我的</span>
+        </a>
+    </nav>
+
+    <script>
+        var yuan_tabs = document.querySelectorAll(".yuan_tab");
+
+        yuan_tabs.forEach(function (yuan_tab) {
+            yuan_tab.addEventListener("click", function (yuan_event) {
+                yuan_event.preventDefault();
+                yuan_tabs.forEach(function (yuan_item) {
+                    yuan_item.classList.remove("yuan_active");
+                });
+                yuan_tab.classList.add("yuan_active");
+            });
+        });
+    </script>
+</body>
+</html>

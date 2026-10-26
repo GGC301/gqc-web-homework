@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css.css">
+    <style>
+        p{
+            color: #f00;
+            font-size:100px;
+        }
+        .text{
+            color: green;
+        }
+        #text{
+            color: purple;
+        }
+        .box p{
+            color: orange;
+        }
+        #box #text{
+            color: silver;
+            
+        }
+        .text{
+            color: yellow!important; /* !important优先级最高 */
+        }
+        #box .text{
+            width: 1400px; /* !important优先级最高 */
+            height: 400px; /* !important优先级最高 */
+            background-color: gray; /* !important优先级最高 */
+            margin: 10px; /* !important优先级最高 */
+            padding: 10px; /* !important优先级最高 */
+            letter-spacing: 25px; /* !important优先级最高 */
+            border-radius: 25px;
+
+        }
+    </style>
+    <!-- 后定义的覆盖前定义的 -->
+</head>
+<body>
+    <h2>层叠与继承</h2>
+    <div id="box" class="box">
+        <p>301 关泉才</p>
+        <p>层叠与继承的优先级</p>
+    </div>
+</body>
+</html>

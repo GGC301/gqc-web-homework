@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>flex盒子示例</title>
+    <style>
+        .box{
+            width: 150px;
+            height: 159px;
+            border: 1px solid #ccc;
+            margin: 10px;
+            background-color: white;
+            font-size:40px;
+            display: flex;
+            /* 水平垂直居中 */
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s;
+            box-sizing: border-box;
+            /* width包含了padding和border */
+        }
+        /* 鼠标悬浮效果 */
+        .box:hover{
+            background-color: orange;
+            color: #fff;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">1</div>
+</body>
+</html>

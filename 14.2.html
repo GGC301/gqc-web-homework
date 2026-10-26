@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-10-26 13:43
+    使用的大模型：GLM-5.3-Flash
+    功能名称：演示 JavaScript 六种基本数据类型
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 六种基本数据类型</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+        .yuan_wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+        }
+        .yuan_title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .yuan_subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: -18px;
+            margin-bottom: 30px;
+        }
+        .yuan_card {
+            border-left: 5px solid #3498db;
+            background: #fafafa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .yuan_card0 {
+            border-left-color: #e74c3c;
+        }
+        .yuan_card1 {
+            border-left-color: #e67e22;
+        }
+        .yuan_card2 {
+            border-left-color: #f1c40f;
+        }
+        .yuan_card3 {
+            border-left-color: #2ecc71;
+        }
+        .yuan_card4 {
+            border-left-color: #9b59b6;
+        }
+        .yuan_card5 {
+            border-left-color: #34495e;
+        }
+        .yuan_type {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .yuan_desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .yuan_code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-family: Consolas, monospace;
+            font-size: 0.95em;
+            margin-top: 10px;
+        }
+        .yuan_value {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        button {
+            cursor: pointer;
+        }
+        .yuan_btn {
+            background: #3498db;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            margin-top: 10px;
+        }
+        .yuan_btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="yuan_wrapper">
+        <h1 class="yuan_title">JavaScript 六种基本数据类型</h1>
+        <p class="yuan_subtitle">Number / String / Boolean / Null / Undefined / Symbol</p>
+
+        <div class="yuan_card0" id="yuan_types"></div>
+    </div>
+
+    <script>
+        // ===== 定义六种基本数据类型的示例 =====
+        var yuan_num = 42;                 // Number 数字类型
+        var yuan_str = "你好，关泉才";      // String 字符串类型
+        var yuan_bool = true;              // Boolean 布尔类型
+        var yuan_null = null;              // Null 空类型
+        var yuan_undefined;                // Undefined 未定义类型
+        var yuan_symbol = Symbol("id");    // Symbol 符号类型
+
+        // ===== 数组用于渲染 =====
+        var yuan_types = [
+            { name: "Number（数字类型）", desc: "表示整数或浮点数", value: yuan_num, code: 'var yuan_num = 42;', cls: "yuan_card0" },
+            { name: "String（字符串类型）", desc: "表示文本字符的序列", value: yuan_str, code: 'var yuan_str = "你好，关斯译";', cls: "yuan_card1" },
+            { name: "Boolean（布尔类型）", desc: "只有 true 或 false 两个值", value: yuan_bool, code: 'var yuan_bool = true;', cls: "yuan_card2" },
+            { name: "Null（空类型）", desc: "表示一个空值或空对象引用", value: yuan_null, code: "var yuan_null = null;", cls: "yuan_card3" },
+            { name: "Undefined（未定义类型）", desc: "变量声明但未赋值时的值", value: yuan_undefined, code: "var yuan_undefined;", cls: "yuan_card4" },
+            { name: "Symbol（符号类型）", desc: "唯一的、不可变的值，常用于对象属性键", value: String(yuan_symbol), code: 'var yuan_symbol = Symbol("id");', cls: "yuan_card5" }
+        ];
+
+        // ===== 动态渲染卡片到页面 =====
+        function yuan_renderTypes(yuan_data) {
+            var yuan_html = "";
+            for (var yuan_i = 0; yuan_i < yuan_data.length; yuan_i++) {
+                var yuan_item = yuan_data[yuan_i];
+                yuan_html += '<div class="yuan_card ' + yuan_item.cls + '">';
+                yuan_html += '<div class="yuan_type">' + yuan_item.name + '</div>';
+                yuan_html += '<div class="yuan_desc">' + yuan_item.desc + '</div>';
+                yuan_html += '<div class="yuan_code">' + yuan_item.code + '<br>值：<span class="yuan_value">' + yuan_item.value + '</span></div>';
+                yuan_html += '</div>';
+            }
+            document.getElementById("yuan_types").innerHTML = yuan_html;
+        }
+        yuan_renderTypes(yuan_types);
+
+        // ===== 控制台输出六种数据类型及 typeof 结果 =====
+        console.log("Number 类型：", yuan_num, "| typeof:", typeof yuan_num);
+        console.log("String 类型：", yuan_str, "| typeof:", typeof yuan_str);
+        console.log("Boolean 类型：", yuan_bool, "| typeof:", typeof yuan_bool);
+        console.log("Null 类型：", yuan_null, "| typeof:", typeof yuan_null);
+        console.log("Undefined 类型：", yuan_undefined, "| typeof:", typeof yuan_undefined);
+        console.log("Symbol 类型：", yuan_symbol, "| typeof:", typeof yuan_symbol);
+    </script>
+</body>
+</html>

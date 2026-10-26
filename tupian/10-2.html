@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纯 CSS 颜色动画</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            background: #f1f4f2;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        .color-box {
+            width: min(280px, 72vw);
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            box-shadow: 0 18px 40px rgb(25 40 35 / 18%);
+            animation: color-cycle 8s steps(1, end) infinite;
+        }
+
+        @keyframes color-cycle {
+            0%, 100% { background-color: #e45b4f; }
+            25% { background-color: #e6a23c; }
+            50% { background-color: #2e9c82; }
+            75% { background-color: #3978b8; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .color-box {
+                animation: none;
+                background-color: #e45b4f;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="color-box">COLOR LOOP</div>
+</body>
+</html>

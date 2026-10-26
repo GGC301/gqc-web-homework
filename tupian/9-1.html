@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关泉才的transition过渡效果</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: #fff;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin: 0;
+            padding: 0;
+        }
+        .grid li {
+            position: relative;
+            list-style: none;
+            height: 300px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .grid li img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .grid li:hover img {
+            transform: scale(1.1);
+        }
+        .grid li:nth-child(3n):hover img {
+            transform: none;
+        }
+        .text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            color: #fff;
+            padding: 40px 20px 20px;
+            transform: translateY(60%);
+            transition: transform 0.4s ease;
+        }
+        .grid li:hover .text {
+            transform: translateY(0);
+        }
+        .text h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .text p {
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0;
+            transition: opacity 0.4s ease 0.1s;
+        }
+        .grid li:hover .text p {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<ul class="grid">
+    <li>
+        <img src="./img/1.jpg">
+        <div class="text">
+            <h3>梦天实验舱发射成功</h3>
+            <p>长征五号B遥四运载火箭在文昌点火升空，搭载梦天实验舱进入预定轨道。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/2.jpg">
+        <div class="text">
+            <h3>上海陆家嘴夜景璀璨</h3>
+            <p>东方明珠与上海中心大厦交相辉映，黄浦江两岸灯火辉煌。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/3.jpg">
+        <div class="text">
+            <h3>京沪高铁穿越大好河山</h3>
+            <p>和谐号动车组行驶在京沪高铁滕州段，在青山绿水间疾驰。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/4.jpg">
+        <div class="text">
+            <h3>长征五号B托举问天舱</h3>
+            <p>"胖五"发射问天实验舱，重达23吨，送入预定轨道。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/5.jpg">
+        <div class="text">
+            <h3>陆家嘴天际线镜像之美</h3>
+            <p>夜幕下陆家嘴建筑群灯火通明，江面倒映出东方明珠。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/6.jpg">
+        <div class="text">
+            <h3>银兰高铁穿越戈壁大漠</h3>
+            <p>动车组行驶在银兰高铁宁夏段，在茫茫戈壁中穿行。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/7.jpg">
+        <div class="text">
+            <h3>问天实验舱一飞冲天</h3>
+            <p>长征五号B遥三火箭从文昌发射场升空，蓝色火焰照亮天际。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/8.jpg">
+        <div class="text">
+            <h3>蓝调时刻的魔都陆家嘴</h3>
+            <p>暮色中陆家嘴笼罩在薄雾里，摩天大楼灯火初上。</p>
+        </div>
+    </li>
+    <li>
+        <img src="./img/9.jpg">
+        <div class="text">
+            <h3>高铁高架桥跨越高速公路</h3>
+            <p>动车组行驶在高架桥上，下方高速公路车流不息。</p>
+        </div>
+    </li>
+</ul>
+
+</body>
+</html>
