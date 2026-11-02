@@ -160,3 +160,67 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINjWB4dU6tQJ8JQ/WqMB05a8dO9h6xVBesbSegFcgB9C
 帮你在根目录建一个 index.html 导航页
 ```
 
+
+---
+
+## 2026-10-28 00:00:00 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+@C:\Users\GGC\Desktop\项目指导书.docx 给我做一下这问题
+```
+
+---
+
+## 2026-10-29 13:50:24 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+完成 16-1.html，展示 javascript 数组的主要方法，形象一些。
+```
+
+---
+
+## 2026-11-02 13:44:14 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+http://jsonplaceholder.typicode.com/users17-1.html 展示 JSON17-2.html fetch 获取跨域接口展示（用题目里的 jsonplaceholder）
+```
+
+---
+
+## 2026-11-02 13:52:48 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+、完成 17-3.html 和 17-3-detail.html，显示列表和列表详情，数据来源于接口，使用 fetch
+列表：https://dummyjson.com/products?limit=8 ，默认商品列表。
+详情：https://dummyjson.com/products/1 ，根据 ID 获取单个商品。
+```
+
+---
+
+## 2026-11-02 14:26:28 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+、完成 17-4.html，对远程数据接口进行测试，支持 get、post 等，显示返回的数据和错误提示信息，
+示例 post 接口：https://jsonplaceholder.typicode.com/posts
+```
+
+---
+
+## 2026-11-02 14:31:05 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+完成 17-5.html，展示 javascript 的两种定时器。
+6、完成 17-6.html，使用 promise 和 async 完成异步操作的演示包饺子的流程。先买原料，买完原料之后同时和面、和馅，两个活动都完成之后包饺子，包完饺子吃饺子。
+```

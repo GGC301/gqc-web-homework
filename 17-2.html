@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-02 13:44
+    使用的大模型：CodeBuddy Auto
+    功能名称：fetch 获取跨域接口数据（jsonplaceholder.typicode.com/users）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fetch 跨域请求 · JSONPlaceholder 用户列表</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_hero {
+            padding: 40px 24px 30px;
+            background: linear-gradient(135deg, #1d3557 0%, #457b9d 55%, #2a9d8f 100%);
+            color: #fff;
+            text-align: center;
+        }
+
+        .yuan_hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(22px, 4vw, 34px);
+            letter-spacing: 1px;
+        }
+
+        .yuan_api {
+            display: inline-block;
+            margin: 6px 0 10px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, .16);
+            border: 1px solid rgba(255, 255, 255, .45);
+            border-radius: 999px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .yuan_hero p {
+            margin: 0 auto;
+            max-width: 780px;
+            font-size: 14.5px;
+            opacity: .9;
+        }
+
+        .yuan_wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            margin-top: 34px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #1d3557;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #457b9d;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        /* ===== 控制面板 ===== */
+        .yuan_panel {
+            padding: 18px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .yuan_btn {
+            padding: 9px 16px;
+            font-size: 14px;
+            color: #1d3557;
+            background: #eef3fa;
+            border: 1px solid #c9d6e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .yuan_btn:hover {
+            transform: translateY(-2px);
+            background: #457b9d;
+            color: #fff;
+        }
+
+        .yuan_btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .yuan_btn.yuan_gray:hover { background: #64748b; }
+        .yuan_btn.yuan_red:hover { background: #e63946; }
+
+        .yuan_search {
+            flex: 1 1 200px;
+            min-width: 180px;
+            padding: 9px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #1f2430;
+            background: #fbfcfe;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .yuan_search:focus {
+            border-color: #457b9d;
+            box-shadow: 0 0 0 3px rgba(69, 123, 157, .16);
+        }
+
+        .yuan_status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .yuan_tag {
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-family: Consolas, monospace;
+            background: #eef3fa;
+            border: 1px solid #d7e1ef;
+            color: #33405c;
+        }
+
+        .yuan_tag.yuan_wait { background: #f1f5f9; }
+        .yuan_tag.yuan_load { background: #fff4e5; border-color: #f0a500; color: #8a6d00; }
+        .yuan_tag.yuan_ok { background: #eaf7f2; border-color: #2a9d8f; color: #127368; }
+        .yuan_tag.yuan_err { background: #fdeceb; border-color: #e63946; color: #a4161a; }
+
+        /* ===== 加载骨架 ===== */
+        .yuan_skeleton {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .yuan_skCard {
+            height: 150px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #eef2f7 25%, #e2e8f0 37%, #eef2f7 63%);
+            background-size: 400% 100%;
+            animation: yuan_sweep 1.2s ease infinite;
+        }
+
+        @keyframes yuan_sweep {
+            0% { background-position: 100% 50%; }
+            100% { background-position: 0 50%; }
+        }
+
+        /* ===== 用户卡片 ===== */
+        .yuan_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .yuan_user {
+            padding: 16px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 3px 10px rgba(31, 36, 48, .05);
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+
+        .yuan_user:hover {
+            transform: translateY(-3px);
+            border-color: #457b9d;
+            box-shadow: 0 10px 22px rgba(29, 53, 87, .14);
+        }
+
+        .yuan_userTop {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .yuan_avatar {
+            flex: 0 0 46px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .yuan_name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1d3557;
+        }
+
+        .yuan_uname {
+            margin: 0;
+            font-size: 12.5px;
+            color: #8b93a7;
+            font-family: Consolas, monospace;
+        }
+
+        .yuan_row {
+            display: flex;
+            gap: 8px;
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: #4a5568;
+        }
+
+        .yuan_row span {
+            flex: 0 0 52px;
+            color: #8b93a7;
+        }
+
+        .yuan_row b {
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .yuan_detail {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: #1d3557;
+            color: #eaf1fb;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 220px;
+            overflow: auto;
+            display: none;
+        }
+
+        .yuan_user.yuan_open .yuan_detail {
+            display: block;
+        }
+
+        /* ===== 提示 / 错误 ===== */
+        .yuan_msg {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .yuan_msg.yuan_show { display: block; }
+        .yuan_msg.yuan_errMsg { background: #fdeceb; border: 1px dashed #e63946; color: #a4161a; }
+        .yuan_msg.yuan_infoMsg { background: #eaf3fb; border: 1px dashed #457b9d; color: #1d3557; }
+
+        .yuan_msg ul {
+            margin: 8px 0 0;
+            padding-left: 20px;
+        }
+
+        /* ===== 代码 / 原始响应 ===== */
+        .yuan_code {
+            padding: 14px 16px;
+            background: #1d3557;
+            color: #eaf1fb;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .yuan_raw {
+            margin-top: 12px;
+            padding: 14px 16px;
+            max-height: 320px;
+            overflow: auto;
+            background: #fbfcfe;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 12.5px;
+            color: #33405c;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* ===== 跨域知识 ===== */
+        .yuan_grid2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .yuan_card {
+            padding: 16px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-left: 5px solid #457b9d;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(31, 36, 48, .05);
+        }
+
+        .yuan_card h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            color: #1d3557;
+        }
+
+        .yuan_card p {
+            margin: 0;
+            font-size: 13.5px;
+            color: #4a5568;
+        }
+
+        .yuan_card code {
+            font-family: Consolas, monospace;
+            color: #a4161a;
+            background: #f1f5f9;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1>fetch 跨域请求 · 真实接口实战</h1>
+        <div class="yuan_api">GET https://jsonplaceholder.typicode.com/users</div>
+        <p>JSONPlaceholder 是一个免费的在线测试 API。本页用原生 <b>fetch</b> 跨域请求它，拿到 10 个用户数据并渲染成卡片 —— 点卡片还能看这条记录的原始 JSON。</p>
+    </header>
+
+    <div class="yuan_wrap">
+
+        <!-- ============ 控制台 ============ -->
+        <section>
+            <h2 class="yuan_h2">一、请求控制台 <small>状态、耗时、HTTP 状态码一目了然</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_btns">
+                    <button class="yuan_btn" id="yuan_btnLoad" onclick="yuan_load()">发起 fetch 请求</button>
+                    <button class="yuan_btn yuan_gray" onclick="yuan_clear()">清空结果</button>
+                    <input class="yuan_search" id="yuan_search" type="search" placeholder="按姓名 / 用户名 / 邮箱 / 城市 过滤…" autocomplete="off">
+                </div>
+
+                <div class="yuan_status">
+                    <span class="yuan_tag yuan_wait" id="yuan_tagState">状态：待发起</span>
+                    <span class="yuan_tag" id="yuan_tagCode">HTTP：—</span>
+                    <span class="yuan_tag" id="yuan_tagTime">耗时：—</span>
+                    <span class="yuan_tag" id="yuan_tagCount">条数：—</span>
+                    <span class="yuan_tag" id="yuan_tagSize">大小：—</span>
+                </div>
+
+                <div class="yuan_msg yuan_infoMsg yuan_show" id="yuan_msgInfo">
+                    提示：该接口公开允许跨域（响应头带 <b>Access-Control-Allow-Origin: *</b>），所以本页直接用 fetch 就能拿到数据。
+                    需要联网；若浏览器拦截了 <b>file://</b> 页面发起的请求，可用本地服务器打开，例如在本目录执行
+                    <b>python -m http.server</b> 后访问 <b>http://localhost:8000/17-2.html</b>。
+                </div>
+                <div class="yuan_msg yuan_errMsg" id="yuan_msgErr"></div>
+            </div>
+        </section>
+
+        <!-- ============ 用户卡片 ============ -->
+        <section>
+            <h2 class="yuan_h2">二、接口返回的用户数据 <small>点卡片展开原始 JSON</small></h2>
+            <div class="yuan_skeleton" id="yuan_skeleton" hidden>
+                <div class="yuan_skCard"></div>
+                <div class="yuan_skCard"></div>
+                <div class="yuan_skCard"></div>
+                <div class="yuan_skCard"></div>
+                <div class="yuan_skCard"></div>
+                <div class="yuan_skCard"></div>
+            </div>
+            <div class="yuan_grid" id="yuan_grid"></div>
+            <div class="yuan_msg yuan_infoMsg" id="yuan_empty">没有匹配的用户，换个关键词试试。</div>
+        </section>
+
+        <!-- ============ 原始响应 ============ -->
+        <section>
+            <h2 class="yuan_h2">三、原始响应文本 <small>response.json() 之前，它只是一段字符串</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_raw" id="yuan_raw">还没有数据，先点上面的「发起 fetch 请求」。</div>
+            </div>
+        </section>
+
+        <!-- ============ 代码 ============ -->
+        <section>
+            <h2 class="yuan_h2">四、本项目用到的核心代码</h2>
+            <div class="yuan_panel">
+                <div class="yuan_code">// 1) async / await 写法（推荐，本页实际使用）
+async function yuan_loadUsers() {
+    try {
+        const yuan_res = await fetch('https://jsonplaceholder.typicode.com/users');
+
+        // 注意：fetch 只在网络失败时 reject，404 / 500 不会，要自己检查 ok
+        if (!yuan_res.ok) {
+            throw new Error('HTTP ' + yuan_res.status);
+        }
+
+        const yuan_users = await yuan_res.json();   // 文本 → JS 数组
+        yuan_render(yuan_users);                    // 渲染卡片
+    } catch (yuan_err) {
+        console.error('请求失败：', yuan_err.message);
+    }
+}
+
+// 2) Promise 链式写法，效果完全一样
+fetch('https://jsonplaceholder.typicode.com/users')
+    .then(function (res) {
+        if (!res.ok) { throw new Error('HTTP ' + res.status); }
+        return res.json();
+    })
+    .then(function (users) {
+        console.log(users.length);   // 10
+    })
+    .catch(function (err) {
+        console.error(err.message);
+    });</div>
+            </div>
+        </section>
+
+        <!-- ============ 跨域知识 ============ -->
+        <section>
+            <h2 class="yuan_h2">五、跨域那点事 <small>为什么有的接口能拿，有的被拦</small></h2>
+            <div class="yuan_grid2">
+                <div class="yuan_card">
+                    <h3>同源策略</h3>
+                    <p>浏览器规定：协议、域名、端口三者完全相同才算"同源"。本页来自本地文件，而接口在 <code>jsonplaceholder.typicode.com</code>，属于跨域请求。</p>
+                </div>
+                <div class="yuan_card">
+                    <h3>CORS 是服务器的"通行证"</h3>
+                    <p>接口在响应头里写上 <code>Access-Control-Allow-Origin: *</code>，浏览器才肯把数据交给 JS。这是服务器的事，前端改不了。</p>
+                </div>
+                <div class="yuan_card">
+                    <h3>预检请求 OPTIONS</h3>
+                    <p>带自定义头或 <code>application/json</code> 的 POST 会先发一个 OPTIONS 预检，服务器同意后才会发真正的请求。</p>
+                </div>
+                <div class="yuan_card">
+                    <h3>fetch 的两个坑</h3>
+                    <p>① HTTP 404 / 500 不会触发 catch，必须判断 <code>response.ok</code>；② 默认不携带 Cookie，需要时加 <code>credentials: 'include'</code>。</p>
+                </div>
+                <div class="yuan_card">
+                    <h3>拿到的是文本不是对象</h3>
+                    <p><code>await res.json()</code> 才是把响应体按 JSON 解析成数组 / 对象；<code>await res.text()</code> 则拿到原始字符串（见第三节）。</p>
+                </div>
+                <div class="yuan_card">
+                    <h3>跨域不等于后端不能要</h3>
+                    <p>浏览器拦，服务器/抓包工具不拦。真实项目中也可用同源代理（Nginx、Vite proxy）绕过浏览器限制。</p>
+                </div>
+            </div>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · 原生 HTML / CSS / JS 实现（数据来自公开测试接口 JSONPlaceholder）</p>
+    </div>
+
+    <script>
+        var yuan_api = "https://jsonplaceholder.typicode.com/users";
+        var yuan_users = [];
+        var yuan_colors = ["#457b9d", "#2a9d8f", "#e63946", "#8e44ad", "#d97706", "#0b7285", "#c2410c", "#1d3557"];
+
+        var yuan_grid = document.getElementById("yuan_grid");
+        var yuan_raw = document.getElementById("yuan_raw");
+        var yuan_skeleton = document.getElementById("yuan_skeleton");
+        var yuan_msgErr = document.getElementById("yuan_msgErr");
+        var yuan_empty = document.getElementById("yuan_empty");
+        var yuan_btnLoad = document.getElementById("yuan_btnLoad");
+        var yuan_search = document.getElementById("yuan_search");
+
+        function yuan_setTag(yuan_id, yuan_text, yuan_cls) {
+            var yuan_el = document.getElementById(yuan_id);
+            yuan_el.textContent = yuan_text;
+            yuan_el.className = "yuan_tag " + (yuan_cls || "");
+        }
+
+        function yuan_escape(yuan_s) {
+            return String(yuan_s)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+        /* ===== 渲染用户卡片 ===== */
+        function yuan_render(yuan_list) {
+            var yuan_html = "";
+
+            for (var yuan_i = 0; yuan_i < yuan_list.length; yuan_i++) {
+                var yuan_u = yuan_list[yuan_i];
+                var yuan_color = yuan_colors[yuan_i % yuan_colors.length];
+                var yuan_initial = (yuan_u.name || "?").substring(0, 2).toUpperCase();
+
+                yuan_html += '<div class="yuan_user" id="yuan_user_' + yuan_u.id + '">';
+                yuan_html +=   '<div class="yuan_userTop">';
+                yuan_html +=     '<div class="yuan_avatar" style="background:' + yuan_color + '">' + yuan_escape(yuan_initial) + "</div>";
+                yuan_html +=     '<div><p class="yuan_name">' + yuan_escape(yuan_u.name) + "</p>";
+                yuan_html +=     '<p class="yuan_uname">@' + yuan_escape(yuan_u.username) + " · id=" + yuan_u.id + "</p></div>";
+                yuan_html +=   "</div>";
+                yuan_html +=   '<div class="yuan_row"><span>邮箱</span><b>' + yuan_escape(yuan_u.email) + "</b></div>";
+                yuan_html +=   '<div class="yuan_row"><span>电话</span><b>' + yuan_escape(yuan_u.phone) + "</b></div>";
+                yuan_html +=   '<div class="yuan_row"><span>城市</span><b>' + yuan_escape(yuan_u.address ? yuan_u.address.city : "") + "</b></div>";
+                yuan_html +=   '<div class="yuan_row"><span>公司</span><b>' + yuan_escape(yuan_u.company ? yuan_u.company.name : "") + "</b></div>";
+                yuan_html +=   '<div class="yuan_detail">' + yuan_escape(JSON.stringify(yuan_u, null, 2)) + "</div>";
+                yuan_html += "</div>";
+            }
+
+            yuan_grid.innerHTML = yuan_html;
+            yuan_empty.className = "yuan_msg yuan_infoMsg" + (yuan_list.length === 0 ? " yuan_show" : "");
+
+            var yuan_cards = yuan_grid.querySelectorAll(".yuan_user");
+            for (var yuan_j = 0; yuan_j < yuan_cards.length; yuan_j++) {
+                yuan_cards[yuan_j].addEventListener("click", function () {
+                    this.classList.toggle("yuan_open");
+                });
+            }
+        }
+
+        /* ===== 过滤 ===== */
+        function yuan_filter() {
+            if (yuan_users.length === 0) { return; }
+            var yuan_key = yuan_search.value.trim().toLowerCase();
+            if (yuan_key === "") {
+                yuan_setTag("yuan_tagCount", "条数：" + yuan_users.length, "yuan_ok");
+                yuan_render(yuan_users);
+                return;
+            }
+            var yuan_hit = yuan_users.filter(function (yuan_u) {
+                var yuan_all = (yuan_u.name + " " + yuan_u.username + " " + yuan_u.email + " " +
+                    (yuan_u.address ? yuan_u.address.city : "") + " " +
+                    (yuan_u.company ? yuan_u.company.name : "")).toLowerCase();
+                return yuan_all.indexOf(yuan_key) !== -1;
+            });
+            yuan_setTag("yuan_tagCount", "条数：" + yuan_hit.length + " / " + yuan_users.length, "yuan_ok");
+            yuan_render(yuan_hit);
+        }
+
+        yuan_search.addEventListener("input", yuan_filter);
+
+        /* ===== 发起请求 ===== */
+        async function yuan_load() {
+            yuan_msgErr.className = "yuan_msg yuan_errMsg";
+            yuan_msgErr.textContent = "";
+            yuan_skeleton.hidden = false;
+            yuan_grid.innerHTML = "";
+            yuan_empty.className = "yuan_msg yuan_infoMsg";
+            yuan_btnLoad.disabled = true;
+
+            yuan_setTag("yuan_tagState", "状态：请求中…", "yuan_load");
+            yuan_setTag("yuan_tagCode", "HTTP：—", "");
+            yuan_setTag("yuan_tagTime", "耗时：—", "");
+            yuan_setTag("yuan_tagCount", "条数：—", "");
+            yuan_setTag("yuan_tagSize", "大小：—", "");
+
+            var yuan_start = Date.now();
+
+            try {
+                var yuan_res = await fetch(yuan_api);
+
+                var yuan_ms = Date.now() - yuan_start;
+                yuan_setTag("yuan_tagCode", "HTTP：" + yuan_res.status + " " + yuan_res.statusText,
+                    yuan_res.ok ? "yuan_ok" : "yuan_err");
+                yuan_setTag("yuan_tagTime", "耗时：" + yuan_ms + " ms", "yuan_ok");
+
+                if (!yuan_res.ok) {
+                    throw new Error("服务器返回 HTTP " + yuan_res.status);
+                }
+
+                var yuan_text = await yuan_res.text();
+                yuan_raw.textContent = yuan_text;
+                yuan_users = JSON.parse(yuan_text);
+
+                yuan_setTag("yuan_tagState", "状态：成功 ✓", "yuan_ok");
+                yuan_setTag("yuan_tagCount", "条数：" + yuan_users.length, "yuan_ok");
+                yuan_setTag("yuan_tagSize", "大小：" + (yuan_text.length / 1024).toFixed(1) + " KB", "yuan_ok");
+
+                yuan_render(yuan_users);
+                yuan_search.value = "";
+            } catch (yuan_err) {
+                yuan_setTag("yuan_tagState", "状态：失败 ✗", "yuan_err");
+                yuan_msgErr.className = "yuan_msg yuan_errMsg yuan_show";
+                yuan_msgErr.innerHTML = "请求失败：" + yuan_escape(yuan_err.message) +
+                    "<ul>" +
+                    "<li>检查电脑是否联网，接口地址是否能访问</li>" +
+                    "<li>若用 file:// 打开被浏览器拦截，改用本地服务器：本目录执行 <b>python -m http.server</b></li>" +
+                    "<li>接口是否返回了 CORS 响应头（Access-Control-Allow-Origin）</li>" +
+                    "</ul>";
+                yuan_raw.textContent = "请求失败，没有拿到响应。";
+            } finally {
+                yuan_skeleton.hidden = true;
+                yuan_btnLoad.disabled = false;
+            }
+        }
+
+        function yuan_clear() {
+            yuan_users = [];
+            yuan_grid.innerHTML = "";
+            yuan_raw.textContent = "已清空，重新点「发起 fetch 请求」。";
+            yuan_search.value = "";
+            yuan_empty.className = "yuan_msg yuan_infoMsg";
+            yuan_setTag("yuan_tagState", "状态：待发起", "yuan_wait");
+            yuan_setTag("yuan_tagCode", "HTTP：—", "");
+            yuan_setTag("yuan_tagTime", "耗时：—", "");
+            yuan_setTag("yuan_tagCount", "条数：—", "");
+            yuan_setTag("yuan_tagSize", "大小：—", "");
+        }
+
+        /* 打开页面先自动请求一次 */
+        yuan_load();
+    </script>
+</body>
+</html>

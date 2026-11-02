@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-02 14:31
+    使用的大模型：CodeBuddy Auto
+    功能名称：JavaScript 两种定时器演示（setTimeout 一次性 / setInterval 周期性）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 定时器 · setTimeout 与 setInterval</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_hero {
+            padding: 40px 24px 32px;
+            background: linear-gradient(135deg, #3b0764 0%, #7c3aed 55%, #06b6d4 130%);
+            color: #fff;
+            text-align: center;
+        }
+
+        .yuan_hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(24px, 4vw, 36px);
+            letter-spacing: 1px;
+        }
+
+        .yuan_hero p {
+            margin: 0 auto;
+            max-width: 760px;
+            font-size: 15px;
+            opacity: .92;
+        }
+
+        .yuan_wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            margin-top: 32px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #3b0764;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #7c3aed;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        .yuan_panel {
+            padding: 18px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_intro {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .yuan_concept {
+            padding: 18px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-top: 5px solid #7c3aed;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_concept.yuan_teal {
+            border-top-color: #06b6d4;
+        }
+
+        .yuan_concept h3 {
+            margin: 0 0 4px;
+            font-size: 18px;
+            font-family: Consolas, monospace;
+            color: #3b0764;
+        }
+
+        .yuan_concept .yuan_sub2 {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        .yuan_concept dl {
+            margin: 0;
+            font-size: 13.5px;
+        }
+
+        .yuan_concept dt {
+            margin-top: 8px;
+            font-weight: 700;
+            color: #4a5568;
+            font-size: 12.5px;
+        }
+
+        .yuan_concept dd {
+            margin: 2px 0 0;
+            color: #33405c;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        /* ===== 通用 demo 卡片 ===== */
+        .yuan_demo {
+            margin-bottom: 18px;
+            padding: 18px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-left: 5px solid #7c3aed;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_demo.yuan_teal { border-left-color: #06b6d4; }
+        .yuan_demo.yuan_amber { border-left-color: #f59e0b; }
+        .yuan_demo.yuan_rose { border-left-color: #e11d48; }
+
+        .yuan_demoHead {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .yuan_demoHead h3 {
+            margin: 0;
+            font-size: 17px;
+            color: #1f2430;
+        }
+
+        .yuan_apiTag {
+            padding: 1px 9px;
+            font-size: 12px;
+            font-family: Consolas, monospace;
+            color: #5b21b6;
+            background: #f3e8ff;
+            border: 1px solid #ddd6fe;
+            border-radius: 999px;
+        }
+
+        .yuan_apiTag.yuan_t { color: #0e7490; background: #ecfeff; border-color: #a5f3fc; }
+
+        .yuan_demo p {
+            margin: 0 0 12px;
+            font-size: 13.5px;
+            color: #6b7280;
+        }
+
+        .yuan_btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .yuan_btn {
+            padding: 8px 16px;
+            font-size: 13.5px;
+            color: #3b0764;
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .yuan_btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            background: #7c3aed;
+            color: #fff;
+        }
+
+        .yuan_btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .yuan_btn.yuan_teal {
+            color: #0e7490;
+            background: #ecfeff;
+            border-color: #a5f3fc;
+        }
+
+        .yuan_btn.yuan_teal:hover:not(:disabled) {
+            background: #06b6d4;
+            color: #fff;
+        }
+
+        .yuan_btn.yuan_rose {
+            color: #9f1239;
+            background: #fff1f2;
+            border-color: #fecdd3;
+        }
+
+        .yuan_btn.yuan_rose:hover:not(:disabled) {
+            background: #e11d48;
+            color: #fff;
+        }
+
+        /* 进度条 */
+        .yuan_track {
+            height: 12px;
+            background: #eef2f7;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .yuan_fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #7c3aed, #a855f7);
+            border-radius: 999px;
+            transition: width .08s linear;
+        }
+
+        .yuan_fill.yuan_tealFill {
+            background: linear-gradient(90deg, #06b6d4, #22d3ee);
+        }
+
+        .yuan_readout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .yuan_tag {
+            padding: 3px 11px;
+            font-family: Consolas, monospace;
+            font-size: 12.5px;
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            border-radius: 999px;
+            color: #5b21b6;
+        }
+
+        .yuan_tag.yuan_ok { background: #eaf7f2; border-color: #bfe0da; color: #127368; }
+        .yuan_tag.yuan_err { background: #fdeceb; border-color: #f6c6c3; color: #a4161a; }
+
+        /* 秒表 */
+        .yuan_watch {
+            font-family: Consolas, monospace;
+            font-size: 44px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #3b0764;
+            text-align: center;
+            padding: 6px 0 10px;
+        }
+
+        /* 红绿灯 */
+        .yuan_lightBox {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .yuan_traffic {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 14px;
+            background: #1f2430;
+            border-radius: 16px;
+        }
+
+        .yuan_bulb {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #374151;
+            transition: background .2s ease, box-shadow .2s ease;
+        }
+
+        .yuan_bulb.yuan_onRed {
+            background: #ef4444;
+            box-shadow: 0 0 22px rgba(239, 68, 68, .85);
+        }
+
+        .yuan_bulb.yuan_onGreen {
+            background: #22c55e;
+            box-shadow: 0 0 22px rgba(34, 197, 94, .85);
+        }
+
+        .yuan_bulb.yuan_onYellow {
+            background: #f59e0b;
+            box-shadow: 0 0 22px rgba(245, 158, 11, .85);
+        }
+
+        .yuan_lightInfo {
+            flex: 1 1 200px;
+        }
+
+        .yuan_lightText {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2430;
+            margin-bottom: 6px;
+        }
+
+        .yuan_lightTip {
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        /* 时钟 */
+        .yuan_clockBox {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .yuan_clockTime {
+            font-family: Consolas, monospace;
+            font-size: 40px;
+            font-weight: 700;
+            color: #0e7490;
+            letter-spacing: 2px;
+        }
+
+        .yuan_clockDate {
+            font-size: 13.5px;
+            color: #8b93a7;
+        }
+
+        /* 坑 */
+        .yuan_pits {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+
+        .yuan_pit {
+            padding: 14px 16px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-left: 4px solid #f59e0b;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(31, 36, 48, .05);
+        }
+
+        .yuan_pit b {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14.5px;
+            color: #1f2430;
+        }
+
+        .yuan_pit span {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .yuan_pit code {
+            font-family: Consolas, monospace;
+            color: #a4161a;
+            background: #f8fafc;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        /* 表格 / 代码 */
+        .yuan_table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(31, 36, 48, .05);
+            font-size: 14px;
+        }
+
+        .yuan_table th,
+        .yuan_table td {
+            padding: 10px 12px;
+            border: 1px solid #e4e7ee;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .yuan_table th {
+            background: #3b0764;
+            color: #fff;
+        }
+
+        .yuan_table code {
+            font-family: Consolas, monospace;
+            color: #a4161a;
+        }
+
+        .yuan_code {
+            padding: 14px 16px;
+            background: #1e1b4b;
+            color: #dbeafe;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        @media (max-width: 780px) {
+            .yuan_intro { grid-template-columns: 1fr; }
+            .yuan_watch { font-size: 34px; }
+            .yuan_clockTime { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1>JavaScript 的两种定时器</h1>
+        <p><b>setTimeout</b>：等一会儿，只做一次；<b>setInterval</b>：每隔一会儿，反复地做。它们都在"时间到了"才执行，<b>不阻塞</b>后面的代码。</p>
+    </header>
+
+    <div class="yuan_wrap">
+
+        <!-- ============ 概念 ============ -->
+        <section>
+            <h2 class="yuan_h2">一、先认识这两位 <small>一次性 vs 周期性</small></h2>
+            <div class="yuan_intro">
+                <div class="yuan_concept">
+                    <h3>setTimeout(函数, 毫秒)</h3>
+                    <p class="yuan_sub2">一次性定时器 —— 像"闹钟"，响一次就完事</p>
+                    <dl>
+                        <dt>语法</dt>
+                        <dd>var id = setTimeout(fn, 1000);</dd>
+                        <dt>取消</dt>
+                        <dd>clearTimeout(id);</dd>
+                        <dt>返回</dt>
+                        <dd>数字 id（从 1 开始自增），取消时要用它</dd>
+                        <dt>典型场景</dt>
+                        <dd>延迟提示、动画延时、防抖、模拟网络延时</dd>
+                    </dl>
+                </div>
+
+                <div class="yuan_concept yuan_teal">
+                    <h3>setInterval(函数, 毫秒)</h3>
+                    <p class="yuan_sub2">周期性定时器 —— 像"心跳"，不停地重复</p>
+                    <dl>
+                        <dt>语法</dt>
+                        <dd>var id = setInterval(fn, 1000);</dd>
+                        <dt>取消</dt>
+                        <dd>clearInterval(id);</dd>
+                        <dt>返回</dt>
+                        <dd>数字 id，不清理就会一直跑下去</dd>
+                        <dt>典型场景</dt>
+                        <dd>时钟、秒表、轮播图、进度条、倒计时</dd>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ Demo1 ============ -->
+        <section>
+            <h2 class="yuan_h2">二、setTimeout：延迟 3 秒再动手</h2>
+
+            <div class="yuan_demo">
+                <div class="yuan_demoHead">
+                    <h3>3 秒后弹出提示</h3>
+                    <span class="yuan_apiTag">setTimeout</span>
+                    <span class="yuan_apiTag yuan_t">clearTimeout</span>
+                </div>
+                <p>点按钮后立刻返回，代码继续往下走；3 秒后回调才执行。中途可以取消，取消靠的是 <b>clearTimeout(id)</b>。</p>
+
+                <div class="yuan_btns">
+                    <button class="yuan_btn" id="yuan_btnDelay" onclick="yuan_startDelay()">开始（3 秒后提示）</button>
+                    <button class="yuan_btn yuan_rose" id="yuan_btnDelayStop" onclick="yuan_stopDelay()" disabled>取消</button>
+                </div>
+
+                <div class="yuan_track"><div class="yuan_fill" id="yuan_delayFill"></div></div>
+
+                <div class="yuan_readout">
+                    <span class="yuan_tag" id="yuan_delayState">状态：未开始</span>
+                    <span class="yuan_tag" id="yuan_delayId">timerId：—</span>
+                    <span id="yuan_delayText" style="font-size:13.5px;color:#4a5568;">等待开始…</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ Demo2 ============ -->
+        <section>
+            <h2 class="yuan_h2">三、setInterval：每 1 秒走一格</h2>
+
+            <div class="yuan_demo yuan_teal">
+                <div class="yuan_demoHead">
+                    <h3>秒表</h3>
+                    <span class="yuan_apiTag yuan_t">setInterval</span>
+                    <span class="yuan_apiTag yuan_t">clearInterval</span>
+                </div>
+                <p>点「开始」用 setInterval 每秒 +1；「暂停」用 clearInterval 停住但保留数字；「重置」清空重新来。</p>
+
+                <div class="yuan_watch" id="yuan_watchTime">00 : 00</div>
+
+                <div class="yuan_btns">
+                    <button class="yuan_btn yuan_teal" id="yuan_btnWatch" onclick="yuan_toggleWatch()">开始</button>
+                    <button class="yuan_btn yuan_rose" onclick="yuan_resetWatch()">重置</button>
+                </div>
+
+                <div class="yuan_readout">
+                    <span class="yuan_tag" id="yuan_watchState">状态：未开始</span>
+                    <span class="yuan_tag" id="yuan_watchId">intervalId：—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ Demo3 ============ -->
+        <section>
+            <h2 class="yuan_h2">四、setTimeout 接力：红绿灯</h2>
+
+            <div class="yuan_demo yuan_amber">
+                <div class="yuan_demoHead">
+                    <h3>红 → 绿 → 黄 → 红 …</h3>
+                    <span class="yuan_apiTag">setTimeout 递归</span>
+                </div>
+                <p>每次只安排"下一次"的定时器，回调里再调用自己 —— 这正是 <b>Promise 延时</b> 的底层写法，比 setInterval 更可控。</p>
+
+                <div class="yuan_lightBox">
+                    <div class="yuan_traffic">
+                        <div class="yuan_bulb" id="yuan_bulbRed"></div>
+                        <div class="yuan_bulb" id="yuan_bulbYellow"></div>
+                        <div class="yuan_bulb" id="yuan_bulbGreen"></div>
+                    </div>
+                    <div class="yuan_lightInfo">
+                        <div class="yuan_lightText" id="yuan_lightText">未启动</div>
+                        <div class="yuan_lightTip" id="yuan_lightTip">点下面的按钮，灯会自己循环切换。</div>
+                    </div>
+                </div>
+
+                <div class="yuan_btns" style="margin-top:14px;">
+                    <button class="yuan_btn" id="yuan_btnLight" onclick="yuan_toggleLight()">启动红绿灯</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ Demo4 ============ -->
+        <section>
+            <h2 class="yuan_h2">五、setInterval：数字时钟 <small>页面一打开就一直在跑</small></h2>
+            <div class="yuan_demo yuan_rose">
+                <div class="yuan_clockBox">
+                    <div>
+                        <div class="yuan_clockTime" id="yuan_clockTime">-- : -- : --</div>
+                        <div class="yuan_clockDate" id="yuan_clockDate">正在读取系统时间…</div>
+                    </div>
+                    <div style="flex:1 1 220px;font-size:13px;color:#6b7280;">
+                        用 <b>setInterval</b> 每 1000 毫秒刷新一次 <b>new Date()</b>。时钟本身不"走"，是定时器让它每秒重新画一遍。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ 坑 ============ -->
+        <section>
+            <h2 class="yuan_h2">六、必须知道的几点 <small>定时器不是"精确的闹钟"</small></h2>
+            <div class="yuan_pits">
+                <div class="yuan_pit">
+                    <b>1. JS 是单线程的</b>
+                    <span>定时器只负责"排队"，如果主线程正忙（长循环、大计算），回调就得等，实际时间只会更晚，不会更早。</span>
+                </div>
+                <div class="yuan_pit">
+                    <b>2. setTimeout(fn, 0) 不是立刻执行</b>
+                    <span>它表示"尽快"，实际最小延迟约 4 毫秒，并且要等当前同步代码跑完。</span>
+                </div>
+                <div class="yuan_pit">
+                    <b>3. setInterval 会漂移、会堆积</b>
+                    <span>回调如果耗时超过间隔，下一次会排队。要求准时就用 <code>setTimeout</code> 递归 + 时间差校正。</span>
+                </div>
+                <div class="yuan_pit">
+                    <b>4. 后台标签页会被节流</b>
+                    <span>页面切到后台时，浏览器会把定时器最小间隔拉长到 1 秒甚至更多，所以别用它在后台做精确计时。</span>
+                </div>
+                <div class="yuan_pit">
+                    <b>5. 用完一定要 clear</b>
+                    <span><code>clearInterval</code> 忘写，定时器会一直跑、越积越多，导致页面卡顿。单页应用里还要在组件销毁时清理。</span>
+                </div>
+                <div class="yuan_pit">
+                    <b>6. 定时器 id 是数字</b>
+                    <span>同一个页面里 id 是全局自增的，不要自己随便造一个数字传给 clear，那样清不掉真正的定时器。</span>
+                </div>
+                <div class="yuan_pit">
+                    <b>7. 回调里的 this 是 window</b>
+                    <span>普通回调里 <code>this</code> 不再指向原对象；用箭头函数或提前 <code>var that = this</code> 保存。</span>
+                </div>
+                <div class="yuan_pit">
+                    <b>8. 定时器不是异步 I/O</b>
+                    <span>它只是把回调丢进"宏任务队列"，和网络请求、事件回调一起排队，谁先到点谁先执行。</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ 对照表 ============ -->
+        <section>
+            <h2 class="yuan_h2">七、两种定时器对照表</h2>
+            <table class="yuan_table">
+                <thead>
+                    <tr>
+                        <th>对比项</th>
+                        <th>setTimeout</th>
+                        <th>setInterval</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>执行次数</td><td>只执行一次</td><td>每隔一段时间执行，直到被清除</td></tr>
+                    <tr><td>取消方法</td><td><code>clearTimeout(id)</code></td><td><code>clearInterval(id)</code></td></tr>
+                    <tr><td>像什么</td><td>闹钟（响一次）</td><td>心跳（一直跳）</td></tr>
+                    <tr><td>是否阻塞</td><td>不阻塞，后面的代码先执行</td><td>不阻塞</td></tr>
+                    <tr><td>常见用途</td><td>延迟提示、模拟请求耗时、防抖节流</td><td>时钟、秒表、轮播、进度条</td></tr>
+                    <tr><td>精确度</td><td>受主线程繁忙影响</td><td>受主线程影响，且可能产生漂移</td></tr>
+                    <tr><td>互相实现</td><td colspan="2">setTimeout 递归可以模拟 setInterval；setInterval 也能用计数模拟 setTimeout</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ============ 代码 ============ -->
+        <section>
+            <h2 class="yuan_h2">八、本页用到的核心代码</h2>
+            <div class="yuan_panel">
+                <div class="yuan_code">/* ---------- 1. setTimeout：延迟执行，可取消 ---------- */
+var yuan_timer = setTimeout(function () {
+    console.log('3 秒后才执行');
+}, 3000);
+
+clearTimeout(yuan_timer);      // 反悔了，取消掉
+
+/* ---------- 2. setInterval：周期执行，必须清理 ---------- */
+var yuan_sec = 0;
+var yuan_interval = setInterval(function () {
+    yuan_sec++;
+    console.log('已过去 ' + yuan_sec + ' 秒');
+}, 1000);
+
+clearInterval(yuan_interval);  // 停下，否则永远在跑
+
+/* ---------- 3. 用 setTimeout 递归代替 setInterval ---------- */
+function yuan_tick() {
+    console.log(new Date().toLocaleTimeString());
+    setTimeout(yuan_tick, 1000);   // 每次只安排下一次
+}
+yuan_tick();
+
+/* ---------- 4. 最常见的用法：包一个延时 Promise ---------- */
+function yuan_sleep(ms) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, ms);   // 17-6.html 的包饺子就靠它
+    });
+}</div>
+            </div>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · 原生 HTML / CSS / JS 实现，无任何外部依赖</p>
+    </div>
+
+    <script>
+        /* ==================================================
+           Demo 1：setTimeout 延迟 3 秒 + 进度条 + 取消
+           ================================================== */
+        var yuan_delayTimer = null;     // setTimeout 的 id
+        var yuan_delayTick = null;      // 进度条用的 setInterval 的 id
+        var yuan_delayStart = 0;
+        var yuan_delayTotal = 3000;
+
+        var yuan_delayFill = document.getElementById("yuan_delayFill");
+        var yuan_delayText = document.getElementById("yuan_delayText");
+        var yuan_btnDelay = document.getElementById("yuan_btnDelay");
+        var yuan_btnDelayStop = document.getElementById("yuan_btnDelayStop");
+
+        function yuan_setTag(yuan_id, yuan_text, yuan_cls) {
+            var yuan_el = document.getElementById(yuan_id);
+            yuan_el.textContent = yuan_text;
+            yuan_el.className = "yuan_tag" + (yuan_cls ? " " + yuan_cls : "");
+        }
+
+        function yuan_startDelay() {
+            yuan_stopDelay(true);   // 先清掉旧的，避免叠加
+
+            yuan_delayStart = Date.now();
+            yuan_delayFill.style.width = "0%";
+            yuan_btnDelay.disabled = true;
+            yuan_btnDelayStop.disabled = false;
+            yuan_setTag("yuan_delayState", "状态：计时中…");
+            yuan_delayText.textContent = "3 秒后见 —— 期间主线程照常运行。";
+
+            /* 真正的定时器：3 秒后执行一次 */
+            yuan_delayTimer = setTimeout(function () {
+                yuan_delayFill.style.width = "100%";
+                yuan_delayText.textContent = "叮！3 秒到了，setTimeout 的回调执行完毕。";
+                yuan_setTag("yuan_delayState", "状态：已完成 ✓", "yuan_ok");
+                yuan_btnDelay.disabled = false;
+                yuan_btnDelayStop.disabled = true;
+                if (yuan_delayTick !== null) {
+                    clearInterval(yuan_delayTick);
+                    yuan_delayTick = null;
+                }
+            }, yuan_delayTotal);
+
+            yuan_setTag("yuan_delayId", "timerId：" + yuan_delayTimer);
+
+            /* 只为了让进度条动起来（顺带演示 setInterval） */
+            yuan_delayTick = setInterval(function () {
+                var yuan_run = Date.now() - yuan_delayStart;
+                var yuan_pct = Math.min(100, yuan_run / yuan_delayTotal * 100);
+                yuan_delayFill.style.width = yuan_pct.toFixed(1) + "%";
+            }, 50);
+        }
+
+        function yuan_stopDelay(yuan_silent) {
+            if (yuan_delayTimer !== null) {
+                clearTimeout(yuan_delayTimer);
+                yuan_delayTimer = null;
+            }
+            if (yuan_delayTick !== null) {
+                clearInterval(yuan_delayTick);
+                yuan_delayTick = null;
+            }
+            if (!yuan_silent) {
+                yuan_delayFill.style.width = "0%";
+                yuan_btnDelay.disabled = false;
+                yuan_btnDelayStop.disabled = true;
+                yuan_setTag("yuan_delayState", "状态：已取消 ✗", "yuan_err");
+                yuan_setTag("yuan_delayId", "timerId：已清除");
+                yuan_delayText.textContent = "取消成功，回调不会再执行了。";
+            }
+        }
+
+        /* ==================================================
+           Demo 2：setInterval 秒表
+           ================================================== */
+        var yuan_watchTimer = null;
+        var yuan_watchSec = 0;
+
+        function yuan_fmt(yuan_sec) {
+            var yuan_m = Math.floor(yuan_sec / 60);
+            var yuan_s = yuan_sec % 60;
+            return (yuan_m < 10 ? "0" : "") + yuan_m + " : " + (yuan_s < 10 ? "0" : "") + yuan_s;
+        }
+
+        function yuan_toggleWatch() {
+            var yuan_btn = document.getElementById("yuan_btnWatch");
+
+            if (yuan_watchTimer === null) {
+                /* 开始 / 继续 */
+                yuan_watchTimer = setInterval(function () {
+                    yuan_watchSec++;
+                    document.getElementById("yuan_watchTime").textContent = yuan_fmt(yuan_watchSec);
+                }, 1000);
+                yuan_btn.textContent = "暂停";
+                yuan_setTag("yuan_watchState", "状态：计时中…");
+                yuan_setTag("yuan_watchId", "intervalId：" + yuan_watchTimer);
+            } else {
+                /* 暂停 */
+                clearInterval(yuan_watchTimer);
+                yuan_watchTimer = null;
+                yuan_btn.textContent = "继续";
+                yuan_setTag("yuan_watchState", "状态：已暂停");
+                yuan_setTag("yuan_watchId", "intervalId：已清除");
+            }
+        }
+
+        function yuan_resetWatch() {
+            if (yuan_watchTimer !== null) {
+                clearInterval(yuan_watchTimer);
+                yuan_watchTimer = null;
+            }
+            yuan_watchSec = 0;
+            document.getElementById("yuan_watchTime").textContent = "00 : 00";
+            document.getElementById("yuan_btnWatch").textContent = "开始";
+            yuan_setTag("yuan_watchState", "状态：已重置");
+            yuan_setTag("yuan_watchId", "intervalId：—");
+        }
+
+        /* ==================================================
+           Demo 3：红绿灯（setTimeout 递归）
+           ================================================== */
+        var yuan_lightTimer = null;
+        var yuan_lightRunning = false;
+
+        function yuan_lightSet(yuan_which) {
+            document.getElementById("yuan_bulbRed").className = "yuan_bulb" + (yuan_which === "red" ? " yuan_onRed" : "");
+            document.getElementById("yuan_bulbYellow").className = "yuan_bulb" + (yuan_which === "yellow" ? " yuan_onYellow" : "");
+            document.getElementById("yuan_bulbGreen").className = "yuan_bulb" + (yuan_which === "green" ? " yuan_onGreen" : "");
+
+            var yuan_map = {
+                red: ["红灯 · 停", "3 秒后转绿灯"],
+                green: ["绿灯 · 行", "3 秒后转黄灯"],
+                yellow: ["黄灯 · 慢", "1 秒后转红灯"]
+            };
+            document.getElementById("yuan_lightText").textContent = yuan_map[yuan_which][0];
+            document.getElementById("yuan_lightTip").textContent = yuan_map[yuan_which][1];
+        }
+
+        function yuan_lightNext(yuan_which) {
+            if (!yuan_lightRunning) { return; }
+            yuan_lightSet(yuan_which);
+
+            var yuan_wait = yuan_which === "yellow" ? 1000 : 3000;
+            var yuan_next = yuan_which === "red" ? "green" : (yuan_which === "green" ? "yellow" : "red");
+
+            yuan_lightTimer = setTimeout(function () {
+                yuan_lightNext(yuan_next);
+            }, yuan_wait);
+        }
+
+        function yuan_toggleLight() {
+            var yuan_btn = document.getElementById("yuan_btnLight");
+
+            if (yuan_lightRunning) {
+                yuan_lightRunning = false;
+                if (yuan_lightTimer !== null) {
+                    clearTimeout(yuan_lightTimer);
+                    yuan_lightTimer = null;
+                }
+                yuan_btn.textContent = "启动红绿灯";
+                document.getElementById("yuan_lightText").textContent = "已停止";
+                document.getElementById("yuan_lightTip").textContent = "点按钮重新开始循环。";
+                return;
+            }
+
+            yuan_lightRunning = true;
+            yuan_btn.textContent = "停止红绿灯";
+            yuan_lightNext("red");
+        }
+
+        /* ==================================================
+           Demo 4：数字时钟
+           ================================================== */
+        function yuan_pad(yuan_n) {
+            return (yuan_n < 10 ? "0" : "") + yuan_n;
+        }
+
+        function yuan_clock() {
+            var yuan_now = new Date();
+            document.getElementById("yuan_clockTime").textContent =
+                yuan_pad(yuan_now.getHours()) + " : " + yuan_pad(yuan_now.getMinutes()) + " : " + yuan_pad(yuan_now.getSeconds());
+
+            var yuan_week = ["日", "一", "二", "三", "四", "五", "六"][yuan_now.getDay()];
+            document.getElementById("yuan_clockDate").textContent =
+                yuan_now.getFullYear() + " 年 " + (yuan_now.getMonth() + 1) + " 月 " + yuan_now.getDate() +
+                " 日 · 星期" + yuan_week;
+        }
+
+        yuan_clock();
+        setInterval(yuan_clock, 1000);
+    </script>
+</body>
+</html>

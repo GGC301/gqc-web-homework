@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-10-29 13:50
+    使用的大模型：CodeBuddy Auto
+    功能名称：JavaScript 数组主要方法演示（可视化传送带 + 实例运行结果）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 数组方法 · 形象演示</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_hero {
+            padding: 40px 24px 30px;
+            background: linear-gradient(135deg, #1d3557 0%, #457b9d 60%, #48a9a6 100%);
+            color: #fff;
+            text-align: center;
+        }
+
+        .yuan_hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(24px, 4vw, 36px);
+            letter-spacing: 1px;
+        }
+
+        .yuan_hero p {
+            margin: 0;
+            font-size: 15px;
+            opacity: .88;
+        }
+
+        .yuan_wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            margin-top: 34px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #1d3557;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #457b9d;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        /* ===== 传送带舞台 ===== */
+        .yuan_stageBox {
+            padding: 22px 20px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(31, 36, 48, .07);
+        }
+
+        .yuan_belt {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 12px;
+            min-height: 108px;
+            padding: 14px 16px 26px;
+            border-radius: 12px;
+            background: repeating-linear-gradient(90deg, #eef2f7 0 22px, #e6ebf3 22px 44px);
+            border: 1px dashed #c9d3e0;
+        }
+
+        .yuan_cell {
+            position: relative;
+            min-width: 76px;
+            padding: 16px 12px 10px;
+            text-align: center;
+            background: linear-gradient(180deg, #ffffff, #eaf1fb);
+            border: 2px solid #457b9d;
+            border-radius: 10px;
+            box-shadow: 0 3px 0 #c7d6e6;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1d3557;
+        }
+
+        .yuan_cell b {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            background: #457b9d;
+            border-radius: 6px;
+            line-height: 16px;
+        }
+
+        .yuan_cell.yuan_head::after {
+            content: "队头";
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #e63946;
+            font-weight: 700;
+        }
+
+        .yuan_cell.yuan_tail::after {
+            content: "队尾";
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #2a9d8f;
+            font-weight: 700;
+        }
+
+        .yuan_cell.yuan_in {
+            animation: yuan_drop .45s ease;
+            border-color: #2a9d8f;
+            box-shadow: 0 3px 0 #b7e0d8;
+        }
+
+        .yuan_cell.yuan_move {
+            animation: yuan_shake .4s ease;
+        }
+
+        @keyframes yuan_drop {
+            from { transform: translateY(-26px) scale(.85); opacity: 0; }
+            to   { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes yuan_shake {
+            0%   { transform: translateY(0) rotate(0); }
+            35%  { transform: translateY(-10px) rotate(-4deg); }
+            70%  { transform: translateY(4px) rotate(3deg); }
+            100% { transform: translateY(0) rotate(0); }
+        }
+
+        .yuan_emptyTip {
+            margin: auto;
+            padding: 22px;
+            color: #8b93a7;
+            font-size: 14px;
+        }
+
+        .yuan_btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .yuan_btn {
+            padding: 9px 16px;
+            font-size: 14px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #1d3557;
+            background: #eef3fa;
+            border: 1px solid #c9d6e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .yuan_btn:hover {
+            transform: translateY(-2px);
+            background: #457b9d;
+            color: #fff;
+        }
+
+        .yuan_btn.yuan_del:hover { background: #e63946; }
+        .yuan_btn.yuan_reset:hover { background: #2a9d8f; }
+
+        .yuan_meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #5b6478;
+        }
+
+        .yuan_tag {
+            padding: 3px 10px;
+            background: #eef3fa;
+            border: 1px solid #d7e1ef;
+            border-radius: 999px;
+            font-family: Consolas, monospace;
+        }
+
+        .yuan_tray {
+            padding: 3px 10px;
+            background: #fff4e5;
+            border: 1px dashed #f0a500;
+            border-radius: 999px;
+            color: #8a6d00;
+        }
+
+        .yuan_liveCode {
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: #1d3557;
+            color: #eaf1fb;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            font-size: 13.5px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .yuan_log {
+            margin: 12px 0 0;
+            padding: 0;
+            list-style: none;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .yuan_log li {
+            padding: 6px 10px;
+            border-left: 3px solid #457b9d;
+            background: #f7f9fc;
+            margin-bottom: 6px;
+            border-radius: 0 6px 6px 0;
+            font-family: Consolas, monospace;
+            color: #33405c;
+        }
+
+        /* ===== 方法卡片 ===== */
+        .yuan_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 16px;
+        }
+
+        .yuan_card {
+            padding: 16px 18px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-left: 5px solid #457b9d;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(31, 36, 48, .05);
+        }
+
+        .yuan_card h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+            color: #1d3557;
+            font-family: Consolas, monospace;
+        }
+
+        .yuan_desc {
+            margin: 0 0 10px;
+            font-size: 13.5px;
+            color: #6b7280;
+        }
+
+        .yuan_code {
+            padding: 10px 12px;
+            background: #1d3557;
+            color: #eaf1fb;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            white-space: pre;
+            overflow-x: auto;
+            line-height: 1.55;
+        }
+
+        .yuan_outLabel {
+            display: inline-block;
+            margin: 10px 0 6px;
+            padding: 2px 8px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fff;
+            background: #f0a500;
+            border-radius: 4px;
+        }
+
+        .yuan_out {
+            padding: 10px 12px;
+            background: #fffbe6;
+            border: 1px dashed #f0a500;
+            border-radius: 8px;
+            color: #7a5c00;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .yuan_chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .yuan_chip {
+            padding: 3px 10px;
+            background: #eaf1fb;
+            border: 1px solid #b9cde6;
+            border-radius: 999px;
+            font-family: Consolas, monospace;
+            font-size: 12.5px;
+            color: #1d3557;
+        }
+
+        .yuan_chip.yuan_hit {
+            background: #ffe3e0;
+            border-color: #e63946;
+            color: #a4161a;
+            font-weight: 700;
+        }
+
+        .yuan_chip.yuan_new {
+            background: #dff5ef;
+            border-color: #2a9d8f;
+            color: #127368;
+        }
+
+        /* ===== 速查表 ===== */
+        .yuan_table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(31, 36, 48, .05);
+            font-size: 14px;
+        }
+
+        .yuan_table th,
+        .yuan_table td {
+            padding: 10px 12px;
+            border: 1px solid #e4e7ee;
+            text-align: left;
+        }
+
+        .yuan_table th {
+            background: #1d3557;
+            color: #fff;
+        }
+
+        .yuan_table td code {
+            font-family: Consolas, monospace;
+            color: #a4161a;
+        }
+
+        .yuan_yes { color: #e63946; font-weight: 700; }
+        .yuan_no { color: #2a9d8f; font-weight: 700; }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        @media (max-width: 600px) {
+            .yuan_wrap { padding: 0 14px; }
+            .yuan_cell { min-width: 64px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1>JavaScript 数组方法 · 形象演示</h1>
+        <p>把数组想象成一条传送带：push 从队尾上车，pop 从队尾下车，unshift 从队头插队……</p>
+    </header>
+
+    <div class="yuan_wrap">
+
+        <!-- ============ 互动传送带 ============ -->
+        <section>
+            <h2 class="yuan_h2">一、传送带实验室 <small>点击按钮，观察数组的变化</small></h2>
+            <div class="yuan_stageBox">
+                <div class="yuan_belt" id="yuan_stage"></div>
+
+                <div class="yuan_btns">
+                    <button class="yuan_btn" onclick="yuan_push()">push() 队尾添加</button>
+                    <button class="yuan_btn yuan_del" onclick="yuan_pop()">pop() 队尾删除</button>
+                    <button class="yuan_btn" onclick="yuan_unshift()">unshift() 队头添加</button>
+                    <button class="yuan_btn yuan_del" onclick="yuan_shift()">shift() 队头删除</button>
+                    <button class="yuan_btn" onclick="yuan_splice()">splice() 中间改造</button>
+                    <button class="yuan_btn" onclick="yuan_sort()">sort() 排序</button>
+                    <button class="yuan_btn" onclick="yuan_reverse()">reverse() 反转</button>
+                    <button class="yuan_btn yuan_reset" onclick="yuan_reset()">重置数组</button>
+                </div>
+
+                <div class="yuan_meta">
+                    <span class="yuan_tag" id="yuan_len">arr.length = 0</span>
+                    <span class="yuan_tag" id="yuan_text">arr = []</span>
+                    <span class="yuan_tray" id="yuan_tray">弹出托盘：空</span>
+                </div>
+
+                <div class="yuan_liveCode" id="yuan_liveCode">// 点击上面的按钮，这里显示刚执行的代码</div>
+                <ul class="yuan_log" id="yuan_log"></ul>
+            </div>
+        </section>
+
+        <!-- ============ 增删（改变原数组） ============ -->
+        <section>
+            <h2 class="yuan_h2">二、增删元素 <small>会改变原数组</small></h2>
+            <div class="yuan_grid">
+
+                <div class="yuan_card">
+                    <h3>push() / pop()</h3>
+                    <p class="yuan_desc">栈（stack）操作：后进先出。push 返回新长度，pop 返回被删除的元素。</p>
+                    <div class="yuan_code">var yuan_stack = ["盘子A", "盘子B"];
+yuan_stack.push("盘子C");   // 返回 3
+yuan_stack.pop();           // 返回 "盘子C"</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_stack"></div>
+                    <div class="yuan_chips" id="yuan_chip_stack"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>unshift() / shift()</h3>
+                    <p class="yuan_desc">队列（queue）操作：先进先出。unshift 在头部插入，shift 从头部取出。</p>
+                    <div class="yuan_code">var yuan_queue = ["2号", "3号"];
+yuan_queue.unshift("1号");  // 返回 3
+yuan_queue.shift();         // 返回 "1号"</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_queue"></div>
+                    <div class="yuan_chips" id="yuan_chip_queue"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>splice() 万能剪刀</h3>
+                    <p class="yuan_desc">splice(起点, 删几个, 插入…)：可删、可插、可替换，返回被删掉的元素。</p>
+                    <div class="yuan_code">var yuan_cls = ["张三", "李四", "王五", "赵六"];
+yuan_cls.splice(1, 2, "关泉才");   // 返回 ["李四","王五"]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_splice"></div>
+                    <div class="yuan_chips" id="yuan_chip_splice"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============ 截取拼接 ============ -->
+        <section>
+            <h2 class="yuan_h2">三、截取与拼接 <small>不改变原数组，返回新结果</small></h2>
+            <div class="yuan_grid">
+
+                <div class="yuan_card">
+                    <h3>slice() 切片</h3>
+                    <p class="yuan_desc">slice(开始, 结束)：含头不含尾，像切蛋糕；原数组毫发无损。</p>
+                    <div class="yuan_code">var yuan_n = [10, 20, 30, 40, 50];
+yuan_n.slice(1, 4);   // [20, 30, 40]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_slice"></div>
+                    <div class="yuan_chips" id="yuan_chip_slice"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>concat() 拼接</h3>
+                    <p class="yuan_desc">把多个数组 / 值连成一条新数组，相当于"车厢对接"。</p>
+                    <div class="yuan_code">var yuan_a = ["车头"];
+var yuan_b = ["车厢1", "车厢2"];
+yuan_a.concat(yuan_b, "车尾");</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_concat"></div>
+                    <div class="yuan_chips" id="yuan_chip_concat"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>join() / toString()</h3>
+                    <p class="yuan_desc">把数组挤成一根字符串，join 可以指定"胶水"。</p>
+                    <div class="yuan_code">var yuan_p = ["北京", "上海", "广州"];
+yuan_p.join("-");      // "北京-上海-广州"
+yuan_p.toString();     // "北京,上海,广州"</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_join"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============ 查找 ============ -->
+        <section>
+            <h2 class="yuan_h2">四、查找与判断 <small>indexOf / includes / find</small></h2>
+            <div class="yuan_grid">
+
+                <div class="yuan_card">
+                    <h3>indexOf() / lastIndexOf()</h3>
+                    <p class="yuan_desc">按图索骥：找到返回下标，找不到返回 -1。</p>
+                    <div class="yuan_code">var yuan_c = ["红", "绿", "蓝", "绿"];
+yuan_c.indexOf("绿");        // 1
+yuan_c.lastIndexOf("绿");    // 3
+yuan_c.indexOf("紫");        // -1</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_indexof"></div>
+                    <div class="yuan_chips" id="yuan_chip_indexof"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>includes()</h3>
+                    <p class="yuan_desc">只回答"在不在"：返回 true / false，比 indexOf 更直观。</p>
+                    <div class="yuan_code">var yuan_menu = ["米饭", "面条", "饺子"];
+yuan_menu.includes("饺子");   // true
+yuan_menu.includes("披萨");   // false</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_includes"></div>
+                    <div class="yuan_chips" id="yuan_chip_includes"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>find() / findIndex()</h3>
+                    <p class="yuan_desc">按条件（回调函数）找：find 返回元素本身，findIndex 返回下标。</p>
+                    <div class="yuan_code">var yuan_s = [55, 72, 91, 68];
+yuan_s.find(function (v) { return v &gt;= 90; });       // 91
+yuan_s.findIndex(function (v) { return v &gt;= 90; });  // 2</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_find"></div>
+                    <div class="yuan_chips" id="yuan_chip_find"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============ 遍历与加工 ============ -->
+        <section>
+            <h2 class="yuan_h2">五、遍历与加工 <small>forEach / map / filter / reduce</small></h2>
+            <div class="yuan_grid">
+
+                <div class="yuan_card">
+                    <h3>forEach() 逐个点名</h3>
+                    <p class="yuan_desc">每个元素都执行一次回调，不返回新数组，适合"做事"。</p>
+                    <div class="yuan_code">var yuan_t = ["早读", "上课", "午休"];
+yuan_t.forEach(function (v, i) {
+    console.log(i + "：" + v);
+});</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_foreach"></div>
+                    <div class="yuan_chips" id="yuan_chip_foreach"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>map() 加工流水线</h3>
+                    <p class="yuan_desc">一对一变形：进去几个出来几个，返回全新数组。</p>
+                    <div class="yuan_code">var yuan_price = [10, 20, 30];
+yuan_price.map(function (v) { return v * 2; });   // [20,40,60]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_map"></div>
+                    <div class="yuan_chips" id="yuan_chip_map"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>filter() 筛子</h3>
+                    <p class="yuan_desc">留下条件为 true 的元素，数组长度可能变短。</p>
+                    <div class="yuan_code">var yuan_age = [12, 18, 25, 9, 30];
+yuan_age.filter(function (v) { return v &gt;= 18; });   // [18,25,30]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_filter"></div>
+                    <div class="yuan_chips" id="yuan_chip_filter"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>reduce() 压成一个值</h3>
+                    <p class="yuan_desc">带着"累计器"从左到右滚过去，求和、求积、统计都靠它。</p>
+                    <div class="yuan_code">var yuan_m = [80, 90, 100];
+yuan_m.reduce(function (sum, v) { return sum + v; }, 0);   // 270</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_reduce"></div>
+                    <div class="yuan_chips" id="yuan_chip_reduce"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>every() / some()</h3>
+                    <p class="yuan_desc">every 要求"全都满足"，some 只要"有一个满足"。</p>
+                    <div class="yuan_code">var yuan_sc = [70, 85, 92];
+yuan_sc.every(function (v) { return v &gt;= 60; });  // 全及格 → true
+yuan_sc.some(function (v) { return v &gt;= 90; });   // 有优秀 → true</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_everysome"></div>
+                    <div class="yuan_chips" id="yuan_chip_everysome"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>flat() 压平</h3>
+                    <p class="yuan_desc">把嵌套数组"拍扁"一层（或多层），非常好用。</p>
+                    <div class="yuan_code">var yuan_nest = [1, [2, 3], [4, [5]]];
+yuan_nest.flat();      // [1,2,3,4,[5]]
+yuan_nest.flat(2);     // [1,2,3,4,5]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_flat"></div>
+                    <div class="yuan_chips" id="yuan_chip_flat"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============ 排序与其他 ============ -->
+        <section>
+            <h2 class="yuan_h2">六、排序与其他常用方法</h2>
+            <div class="yuan_grid">
+
+                <div class="yuan_card">
+                    <h3>sort() 排序（要写比较函数）</h3>
+                    <p class="yuan_desc">默认按字符串排序，数字排序必须传 (a, b) =&gt; a - b。</p>
+                    <div class="yuan_code">var yuan_num = [10, 2, 33, 4];
+yuan_num.sort();                       // 错误示范：[10,2,33,4]
+yuan_num.sort(function (a, b) { return a - b; });  // [2,4,10,33]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_sort"></div>
+                    <div class="yuan_chips" id="yuan_chip_sort"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>reverse() 反转</h3>
+                    <p class="yuan_desc">把数组掉个头，原地修改。</p>
+                    <div class="yuan_code">var yuan_line = ["排头", "中间", "排尾"];
+yuan_line.reverse();   // ["排尾","中间","排头"]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_reverse"></div>
+                    <div class="yuan_chips" id="yuan_chip_reverse"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>Array.isArray() / Array.from()</h3>
+                    <p class="yuan_desc">判断是不是数组；把类数组（如字符串）转成真数组。</p>
+                    <div class="yuan_code">Array.isArray([1, 2]);          // true
+Array.isArray("abc");           // false
+Array.from("abc");              // ["a","b","c"]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_isarray"></div>
+                </div>
+
+                <div class="yuan_card">
+                    <h3>fill() / length</h3>
+                    <p class="yuan_desc">fill 批量填充；length 既能读也能写（写小了会截断）。</p>
+                    <div class="yuan_code">var yuan_f = [1, 2, 3, 4];
+yuan_f.fill(0);       // [0,0,0,0]
+yuan_f.length = 2;    // [0,0]</div>
+                    <span class="yuan_outLabel">运行结果</span>
+                    <div class="yuan_out" id="yuan_out_fill"></div>
+                    <div class="yuan_chips" id="yuan_chip_fill"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============ 速查表 ============ -->
+        <section>
+            <h2 class="yuan_h2">七、方法速查表</h2>
+            <table class="yuan_table">
+                <thead>
+                    <tr>
+                        <th>方法</th>
+                        <th>作用（形象说法）</th>
+                        <th>改变原数组</th>
+                        <th>返回值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>push()</code></td><td>队尾上车</td><td class="yuan_yes">是</td><td>新长度</td></tr>
+                    <tr><td><code>pop()</code></td><td>队尾下车</td><td class="yuan_yes">是</td><td>被删元素</td></tr>
+                    <tr><td><code>unshift()</code></td><td>队头插队</td><td class="yuan_yes">是</td><td>新长度</td></tr>
+                    <tr><td><code>shift()</code></td><td>队头放行</td><td class="yuan_yes">是</td><td>被删元素</td></tr>
+                    <tr><td><code>splice()</code></td><td>万能剪刀：删 / 插 / 换</td><td class="yuan_yes">是</td><td>被删元素数组</td></tr>
+                    <tr><td><code>sort()</code></td><td>重新排座位</td><td class="yuan_yes">是</td><td>排序后的原数组</td></tr>
+                    <tr><td><code>reverse()</code></td><td>整队掉头</td><td class="yuan_yes">是</td><td>反转后的原数组</td></tr>
+                    <tr><td><code>fill()</code></td><td>批量灌同样的值</td><td class="yuan_yes">是</td><td>填充后的原数组</td></tr>
+                    <tr><td><code>slice()</code></td><td>切一片蛋糕</td><td class="yuan_no">否</td><td>新数组</td></tr>
+                    <tr><td><code>concat()</code></td><td>车厢对接</td><td class="yuan_no">否</td><td>新数组</td></tr>
+                    <tr><td><code>join()</code></td><td>用胶水粘成字符串</td><td class="yuan_no">否</td><td>字符串</td></tr>
+                    <tr><td><code>indexOf()</code></td><td>按图索骥</td><td class="yuan_no">否</td><td>下标 / -1</td></tr>
+                    <tr><td><code>includes()</code></td><td>在不在？</td><td class="yuan_no">否</td><td>true / false</td></tr>
+                    <tr><td><code>find() / findIndex()</code></td><td>按条件挑人</td><td class="yuan_no">否</td><td>元素 / 下标</td></tr>
+                    <tr><td><code>forEach()</code></td><td>逐个点名做事</td><td class="yuan_no">否</td><td>undefined</td></tr>
+                    <tr><td><code>map()</code></td><td>加工流水线</td><td class="yuan_no">否</td><td>新数组</td></tr>
+                    <tr><td><code>filter()</code></td><td>筛子过滤</td><td class="yuan_no">否</td><td>新数组</td></tr>
+                    <tr><td><code>reduce()</code></td><td>滚雪球成一个值</td><td class="yuan_no">否</td><td>累计结果</td></tr>
+                    <tr><td><code>every() / some()</code></td><td>全满足 / 有满足</td><td class="yuan_no">否</td><td>true / false</td></tr>
+                    <tr><td><code>flat()</code></td><td>把嵌套拍扁</td><td class="yuan_no">否</td><td>新数组</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · 原生 HTML / CSS / JS 实现，无任何外部依赖</p>
+    </div>
+
+    <script>
+        /* ================= 一、传送带实验室 ================= */
+        var yuan_pool = ["桃子", "草莓", "芒果", "樱桃", "柠檬", "哈密瓜"];
+        var yuan_seq = 0;
+        var yuan_arr = [];
+        var yuan_logList = document.getElementById("yuan_log");
+
+        function yuan_nextFruit() {
+            yuan_seq = (yuan_seq + 1) % yuan_pool.length;
+            return yuan_pool[yuan_seq];
+        }
+
+        function yuan_draw(yuan_flashIdx, yuan_kind) {
+            var yuan_stage = document.getElementById("yuan_stage");
+            var yuan_html = "";
+
+            if (yuan_arr.length === 0) {
+                yuan_html = '<div class="yuan_emptyTip">数组已经空了 —— 点「push()」或「unshift()」再装货吧</div>';
+            }
+
+            for (var yuan_i = 0; yuan_i < yuan_arr.length; yuan_i++) {
+                var yuan_cls = "yuan_cell";
+                if (yuan_i === 0) { yuan_cls += " yuan_head"; }
+                if (yuan_i === yuan_arr.length - 1) { yuan_cls += " yuan_tail"; }
+                if (yuan_i === yuan_flashIdx && yuan_kind === "in") { yuan_cls += " yuan_in"; }
+                if (yuan_kind === "move") { yuan_cls += " yuan_move"; }
+                yuan_html += '<div class="' + yuan_cls + '"><b>' + yuan_i + '</b>' + yuan_arr[yuan_i] + '</div>';
+            }
+
+            yuan_stage.innerHTML = yuan_html;
+            document.getElementById("yuan_len").textContent = "arr.length = " + yuan_arr.length;
+            document.getElementById("yuan_text").textContent = "arr = [" + yuan_arr.join(", ") + "]";
+        }
+
+        function yuan_log(yuan_msg, yuan_code) {
+            document.getElementById("yuan_liveCode").textContent = yuan_code;
+            var yuan_li = document.createElement("li");
+            yuan_li.textContent = yuan_msg;
+            yuan_logList.insertBefore(yuan_li, yuan_logList.firstChild);
+            while (yuan_logList.children.length > 8) {
+                yuan_logList.removeChild(yuan_logList.lastChild);
+            }
+        }
+
+        function yuan_push() {
+            var yuan_v = yuan_nextFruit();
+            var yuan_len = yuan_arr.push(yuan_v);
+            yuan_draw(yuan_arr.length - 1, "in");
+            yuan_log('push("' + yuan_v + '") → 返回新长度 ' + yuan_len + '，队尾多了一节车厢',
+                     'var yuan_len = arr.push("' + yuan_v + '");   // ' + yuan_len);
+        }
+
+        function yuan_pop() {
+            if (yuan_arr.length === 0) { yuan_draw(-1, ""); return; }
+            var yuan_v = yuan_arr.pop();
+            yuan_draw(-1, "");
+            document.getElementById("yuan_tray").textContent = "弹出托盘：" + yuan_v;
+            yuan_log('pop() → 弹出「' + yuan_v + '」并返回它',
+                     'var yuan_v = arr.pop();   // "' + yuan_v + '"');
+        }
+
+        function yuan_unshift() {
+            var yuan_v = yuan_nextFruit();
+            var yuan_len = yuan_arr.unshift(yuan_v);
+            yuan_draw(0, "in");
+            yuan_log('unshift("' + yuan_v + '") → 返回新长度 ' + yuan_len + '，它插到了队头',
+                     'var yuan_len = arr.unshift("' + yuan_v + '");   // ' + yuan_len);
+        }
+
+        function yuan_shift() {
+            if (yuan_arr.length === 0) { yuan_draw(-1, ""); return; }
+            var yuan_v = yuan_arr.shift();
+            yuan_draw(-1, "");
+            document.getElementById("yuan_tray").textContent = "弹出托盘：" + yuan_v;
+            yuan_log('shift() → 队头「' + yuan_v + '」被放行并返回',
+                     'var yuan_v = arr.shift();   // "' + yuan_v + '"');
+        }
+
+        function yuan_splice() {
+            if (yuan_arr.length < 3) {
+                yuan_draw(-1, "");
+                yuan_log("数组元素不足 3 个，先添加几个再试 splice()", "// 需要至少 3 个元素");
+                return;
+            }
+            var yuan_v = yuan_nextFruit();
+            var yuan_cut = yuan_arr.splice(1, 2, yuan_v);
+            yuan_draw(1, "in");
+            document.getElementById("yuan_tray").textContent = "弹出托盘：" + yuan_cut.join("、");
+            yuan_log('splice(1, 2, "' + yuan_v + '") → 剪掉 [' + yuan_cut.join(", ") + ']，同一位置补上「' + yuan_v + '」',
+                     'var yuan_cut = arr.splice(1, 2, "' + yuan_v + '");   // [' + yuan_cut.join(", ") + ']');
+        }
+
+        function yuan_sort() {
+            yuan_arr.sort();
+            yuan_draw(-1, "move");
+            yuan_log("sort() → 默认先转成字符串再比较大小，重新排座位（原数组被改变）", "arr.sort();");
+        }
+
+        function yuan_reverse() {
+            yuan_arr.reverse();
+            yuan_draw(-1, "move");
+            yuan_log("reverse() → 整条传送带掉了个头（原数组被改变）", "arr.reverse();");
+        }
+
+        function yuan_reset() {
+            yuan_arr = ["苹果", "香蕉", "葡萄", "西瓜"];
+            yuan_seq = 0;
+            yuan_draw(-1, "");
+            document.getElementById("yuan_tray").textContent = "弹出托盘：空";
+            yuan_log('重置：arr = ["苹果", "香蕉", "葡萄", "西瓜"]', 'arr = ["苹果", "香蕉", "葡萄", "西瓜"];');
+        }
+
+        yuan_reset();
+
+        /* ================= 二、结果渲染小工具 ================= */
+        function yuan_show(yuan_outId, yuan_chipId, yuan_text, yuan_list, yuan_hitList) {
+            document.getElementById(yuan_outId).textContent = yuan_text;
+            if (!yuan_chipId) { return; }
+            var yuan_html = "";
+            for (var yuan_i = 0; yuan_i < yuan_list.length; yuan_i++) {
+                var yuan_cls = "yuan_chip";
+                if (yuan_hitList && yuan_hitList.indexOf(yuan_list[yuan_i]) !== -1) { yuan_cls += " yuan_hit"; }
+                yuan_html += '<span class="' + yuan_cls + '">' + yuan_list[yuan_i] + "</span>";
+            }
+            document.getElementById(yuan_chipId).innerHTML = yuan_html;
+        }
+
+        function yuan_showNew(yuan_outId, yuan_chipId, yuan_text, yuan_old, yuan_new) {
+            document.getElementById(yuan_outId).textContent = yuan_text;
+            if (!yuan_chipId) { return; }
+            var yuan_html = "";
+            for (var yuan_i = 0; yuan_i < yuan_old.length; yuan_i++) {
+                yuan_html += '<span class="yuan_chip">' + yuan_old[yuan_i] + "</span>";
+            }
+            yuan_html += '<span class="yuan_chip">→</span>';
+            for (var yuan_j = 0; yuan_j < yuan_new.length; yuan_j++) {
+                yuan_html += '<span class="yuan_chip yuan_new">' + yuan_new[yuan_j] + "</span>";
+            }
+            document.getElementById(yuan_chipId).innerHTML = yuan_html;
+        }
+
+        /* ================= 三、增删元素 ================= */
+        (function () {
+            var yuan_stack = ["盘子A", "盘子B"];
+            var yuan_r1 = yuan_stack.push("盘子C");
+            var yuan_r2 = yuan_stack.pop();
+            yuan_show("yuan_out_stack", "yuan_chip_stack",
+                "push 返回：" + yuan_r1 + "\npop  返回：" + yuan_r2 + "\n剩余：" + JSON.stringify(yuan_stack),
+                yuan_stack);
+        })();
+
+        (function () {
+            var yuan_queue = ["2号", "3号"];
+            var yuan_r1 = yuan_queue.unshift("1号");
+            var yuan_r2 = yuan_queue.shift();
+            yuan_show("yuan_out_queue", "yuan_chip_queue",
+                "unshift 返回：" + yuan_r1 + "\nshift   返回：" + yuan_r2 + "\n剩余：" + JSON.stringify(yuan_queue),
+                yuan_queue);
+        })();
+
+        (function () {
+            var yuan_cls = ["张三", "李四", "王五", "赵六"];
+            var yuan_cut = yuan_cls.splice(1, 2, "关泉才");
+            yuan_show("yuan_out_splice", "yuan_chip_splice",
+                "splice 返回（被剪掉的）：" + JSON.stringify(yuan_cut) + "\n原数组变成：" + JSON.stringify(yuan_cls),
+                yuan_cls, ["关泉才"]);
+        })();
+
+        /* ================= 四、截取与拼接 ================= */
+        (function () {
+            var yuan_n = [10, 20, 30, 40, 50];
+            var yuan_part = yuan_n.slice(1, 4);
+            yuan_show("yuan_out_slice", "yuan_chip_slice",
+                "slice(1, 4) = " + JSON.stringify(yuan_part) + "\n原数组仍是：" + JSON.stringify(yuan_n),
+                yuan_n, [20, 30, 40]);
+        })();
+
+        (function () {
+            var yuan_a = ["车头"];
+            var yuan_b = ["车厢1", "车厢2"];
+            var yuan_all = yuan_a.concat(yuan_b, "车尾");
+            yuan_show("yuan_out_concat", "yuan_chip_concat",
+                "concat 结果：" + JSON.stringify(yuan_all) + "\n原数组 a 仍是：" + JSON.stringify(yuan_a),
+                yuan_all);
+        })();
+
+        (function () {
+            var yuan_p = ["北京", "上海", "广州"];
+            yuan_show("yuan_out_join", "",
+                'join("-")   → "' + yuan_p.join("-") + '"\n' +
+                "toString()  → \"" + yuan_p.toString() + '"\n' +
+                'join("")    → "' + yuan_p.join("") + '"');
+        })();
+
+        /* ================= 五、查找与判断 ================= */
+        (function () {
+            var yuan_c = ["红", "绿", "蓝", "绿"];
+            yuan_show("yuan_out_indexof", "yuan_chip_indexof",
+                'indexOf("绿")     = ' + yuan_c.indexOf("绿") + "\n" +
+                'lastIndexOf("绿") = ' + yuan_c.lastIndexOf("绿") + "\n" +
+                'indexOf("紫")     = ' + yuan_c.indexOf("紫") + "   （找不到 → -1）",
+                yuan_c, ["绿"]);
+        })();
+
+        (function () {
+            var yuan_menu = ["米饭", "面条", "饺子"];
+            yuan_show("yuan_out_includes", "yuan_chip_includes",
+                'includes("饺子") = ' + yuan_menu.includes("饺子") + "\n" +
+                'includes("披萨") = ' + yuan_menu.includes("披萨"),
+                yuan_menu, ["饺子"]);
+        })();
+
+        (function () {
+            var yuan_s = [55, 72, 91, 68];
+            var yuan_hit = yuan_s.find(function (v) { return v >= 90; });
+            var yuan_idx = yuan_s.findIndex(function (v) { return v >= 90; });
+            yuan_show("yuan_out_find", "yuan_chip_find",
+                "find(v => v >= 90)      = " + yuan_hit + "\n" +
+                "findIndex(v => v >= 90) = " + yuan_idx,
+                yuan_s, [91]);
+        })();
+
+        /* ================= 六、遍历与加工 ================= */
+        (function () {
+            var yuan_t = ["早读", "上课", "午休"];
+            var yuan_txt = "";
+            yuan_t.forEach(function (v, i) { yuan_txt += i + "：" + v + "\n"; });
+            yuan_show("yuan_out_foreach", "yuan_chip_foreach", yuan_txt.trim(), yuan_t);
+        })();
+
+        (function () {
+            var yuan_price = [10, 20, 30];
+            var yuan_new = yuan_price.map(function (v) { return v * 2; });
+            yuan_showNew("yuan_out_map", "yuan_chip_map",
+                "map(v => v * 2) = " + JSON.stringify(yuan_new) + "\n原数组不变：" + JSON.stringify(yuan_price),
+                yuan_price, yuan_new);
+        })();
+
+        (function () {
+            var yuan_age = [12, 18, 25, 9, 30];
+            var yuan_pass = yuan_age.filter(function (v) { return v >= 18; });
+            yuan_showNew("yuan_out_filter", "yuan_chip_filter",
+                "filter(v => v >= 18) = " + JSON.stringify(yuan_pass) + "   （筛掉 12 和 9）",
+                yuan_age, yuan_pass);
+        })();
+
+        (function () {
+            var yuan_m = [80, 90, 100];
+            var yuan_sum = yuan_m.reduce(function (sum, v) { return sum + v; }, 0);
+            var yuan_max = yuan_m.reduce(function (a, b) { return a > b ? a : b; });
+            yuan_show("yuan_out_reduce", "yuan_chip_reduce",
+                "求和 reduce((sum, v) => sum + v, 0) = " + yuan_sum + "\n" +
+                "求最大值 reduce((a, b) => a > b ? a : b) = " + yuan_max,
+                yuan_m);
+        })();
+
+        (function () {
+            var yuan_sc = [70, 85, 92];
+            yuan_show("yuan_out_everysome", "yuan_chip_everysome",
+                "every(v => v >= 60) = " + yuan_sc.every(function (v) { return v >= 60; }) + "   （全部及格）\n" +
+                "some(v >= 90)       = " + yuan_sc.some(function (v) { return v >= 90; }) + "    （有人优秀）\n" +
+                "every(v => v >= 90) = " + yuan_sc.every(function (v) { return v >= 90; }) + "   （并非全优秀）",
+                yuan_sc, [92]);
+        })();
+
+        (function () {
+            var yuan_nest = [1, [2, 3], [4, [5]]];
+            yuan_show("yuan_out_flat", "yuan_chip_flat",
+                "flat()    = " + JSON.stringify(yuan_nest.flat()) + "\n" +
+                "flat(2)   = " + JSON.stringify(yuan_nest.flat(2)),
+                yuan_nest.flat(2));
+        })();
+
+        /* ================= 七、排序与其他 ================= */
+        (function () {
+            var yuan_bad = [10, 2, 33, 4];
+            var yuan_badResult = yuan_bad.slice().sort();
+            var yuan_good = [10, 2, 33, 4].sort(function (a, b) { return a - b; });
+            yuan_showNew("yuan_out_sort", "yuan_chip_sort",
+                "sort() 默认按字符串排 → " + JSON.stringify(yuan_badResult) + "   ✗ 不是我们想要的\n" +
+                "sort((a, b) => a - b) → " + JSON.stringify(yuan_good) + "   ✓ 升序正确",
+                [10, 2, 33, 4], yuan_good);
+        })();
+
+        (function () {
+            var yuan_line = ["排头", "中间", "排尾"];
+            yuan_line.reverse();
+            yuan_show("yuan_out_reverse", "yuan_chip_reverse",
+                "reverse() 后：" + JSON.stringify(yuan_line) + "   （原地掉头）",
+                yuan_line);
+        })();
+
+        (function () {
+            var yuan_txt = "";
+            yuan_txt += "Array.isArray([1, 2]) = " + Array.isArray([1, 2]) + "\n";
+            yuan_txt += 'Array.isArray("abc")  = ' + Array.isArray("abc") + "\n";
+            yuan_txt += 'Array.from("abc")     = ' + JSON.stringify(Array.from("abc"));
+            document.getElementById("yuan_out_isarray").textContent = yuan_txt;
+        })();
+
+        (function () {
+            var yuan_f = [1, 2, 3, 4];
+            yuan_f.fill(0);
+            var yuan_afterFill = yuan_f.slice();
+            yuan_f.length = 2;
+            yuan_show("yuan_out_fill", "yuan_chip_fill",
+                "fill(0) 后      = " + JSON.stringify(yuan_afterFill) + "\n" +
+                "length = 2 截断 = " + JSON.stringify(yuan_f),
+                yuan_afterFill);
+        })();
+    </script>
+</body>
+</html>

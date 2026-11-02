@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-02 13:52
+    使用的大模型：CodeBuddy Auto
+    功能名称：商品详情页（fetch 根据 URL 中的 id 请求 dummyjson 单个商品）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 · fetch 按 ID 请求</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        .yuan_hero {
+            padding: 38px 24px 28px;
+            background: linear-gradient(135deg, #2b2d42 0%, #8d99ae 55%, #ef8354 130%);
+            color: #fff;
+            text-align: center;
+        }
+
+        .yuan_hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(22px, 4vw, 34px);
+            letter-spacing: 1px;
+        }
+
+        .yuan_api {
+            display: inline-block;
+            margin: 6px 0 10px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, .16);
+            border: 1px solid rgba(255, 255, 255, .45);
+            border-radius: 999px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .yuan_hero p {
+            margin: 0 auto;
+            max-width: 760px;
+            font-size: 14.5px;
+            opacity: .92;
+        }
+
+        .yuan_wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            margin-top: 26px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 14px;
+            font-size: 20px;
+            color: #2b2d42;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #ef8354;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        /* ===== 工具条 ===== */
+        .yuan_panel {
+            padding: 16px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .yuan_btn {
+            padding: 9px 16px;
+            font-size: 14px;
+            color: #2b2d42;
+            background: #f2f4f8;
+            border: 1px solid #d3dae6;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .yuan_btn:hover {
+            transform: translateY(-2px);
+            background: #2b2d42;
+            color: #fff;
+        }
+
+        .yuan_btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .yuan_btn.yuan_orange {
+            background: #ef8354;
+            border-color: #ef8354;
+            color: #fff;
+        }
+
+        .yuan_btn.yuan_orange:hover {
+            background: #d96a3a;
+        }
+
+        .yuan_input {
+            width: 110px;
+            padding: 9px 12px;
+            font-size: 14px;
+            font-family: Consolas, monospace;
+            color: #1f2430;
+            background: #fbfcfe;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .yuan_input:focus {
+            border-color: #ef8354;
+            box-shadow: 0 0 0 3px rgba(239, 131, 84, .18);
+        }
+
+        .yuan_status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .yuan_tag {
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-family: Consolas, monospace;
+            background: #f2f4f8;
+            border: 1px solid #d3dae6;
+            color: #33405c;
+        }
+
+        .yuan_tag.yuan_load { background: #fff4e5; border-color: #f0a500; color: #8a6d00; }
+        .yuan_tag.yuan_ok { background: #eaf7f2; border-color: #2a9d8f; color: #127368; }
+        .yuan_tag.yuan_err { background: #fdeceb; border-color: #e63946; color: #a4161a; }
+
+        /* ===== 骨架 ===== */
+        .yuan_skeleton {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 22px;
+            margin-top: 16px;
+        }
+
+        .yuan_skBox {
+            border-radius: 14px;
+            background: linear-gradient(90deg, #eef2f7 25%, #e2e8f0 37%, #eef2f7 63%);
+            background-size: 400% 100%;
+            animation: yuan_sweep 1.2s ease infinite;
+        }
+
+        .yuan_skBox.yuan_skImg { height: 340px; }
+        .yuan_skBox.yuan_skInfo { height: 340px; }
+
+        @keyframes yuan_sweep {
+            0% { background-position: 100% 50%; }
+            100% { background-position: 0 50%; }
+        }
+
+        /* ===== 详情 ===== */
+        .yuan_detail {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 22px;
+            margin-top: 16px;
+        }
+
+        .yuan_media,
+        .yuan_info {
+            padding: 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+            min-width: 0;
+        }
+
+        .yuan_mainImg {
+            position: relative;
+            height: 300px;
+            background: #f7f8fb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .yuan_mainImg img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 12px;
+        }
+
+        .yuan_mainImg.yuan_fail::after {
+            content: "图片加载失败";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        .yuan_thumbs {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .yuan_thumbBtn {
+            flex: 0 0 62px;
+            width: 62px;
+            height: 62px;
+            padding: 4px;
+            background: #f7f8fb;
+            border: 2px solid #e4e7ee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color .15s ease;
+        }
+
+        .yuan_thumbBtn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .yuan_thumbBtn.yuan_active,
+        .yuan_thumbBtn:hover {
+            border-color: #ef8354;
+        }
+
+        .yuan_cat {
+            display: inline-block;
+            padding: 2px 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #2b2d42;
+            background: #eef1f6;
+            border-radius: 999px;
+        }
+
+        .yuan_title {
+            margin: 0 0 6px;
+            font-size: clamp(20px, 3vw, 26px);
+            color: #2b2d42;
+        }
+
+        .yuan_brand {
+            margin: 0 0 12px;
+            font-size: 13.5px;
+            color: #8b93a7;
+        }
+
+        .yuan_priceRow {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #e4e7ee;
+        }
+
+        .yuan_price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e63946;
+        }
+
+        .yuan_old {
+            font-size: 15px;
+            color: #a0a8b8;
+            text-decoration: line-through;
+        }
+
+        .yuan_off {
+            padding: 2px 10px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #fff;
+            background: #ef8354;
+            border-radius: 999px;
+        }
+
+        .yuan_desc {
+            margin: 0 0 14px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .yuan_specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .yuan_spec {
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #e8eef5;
+            border-radius: 10px;
+        }
+
+        .yuan_spec dt {
+            margin: 0 0 2px;
+            font-size: 12px;
+            color: #8b93a7;
+        }
+
+        .yuan_spec dd {
+            margin: 0;
+            font-size: 13.5px;
+            color: #2b2d42;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .yuan_stockOk { color: #2a9d8f; }
+        .yuan_stockLow { color: #e63946; }
+
+        .yuan_tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .yuan_tagItem {
+            padding: 3px 10px;
+            font-size: 12.5px;
+            color: #127368;
+            background: #eaf7f2;
+            border: 1px solid #bfe0da;
+            border-radius: 999px;
+        }
+
+        .yuan_star {
+            color: #f0a500;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 消息 ===== */
+        .yuan_msg {
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .yuan_msg.yuan_show { display: block; }
+        .yuan_msg.yuan_errMsg { background: #fdeceb; border: 1px dashed #e63946; color: #a4161a; }
+
+        .yuan_msg ul {
+            margin: 8px 0 0;
+            padding-left: 20px;
+        }
+
+        /* ===== 原始 JSON / 代码 ===== */
+        .yuan_code {
+            padding: 14px 16px;
+            background: #2b2d42;
+            color: #eaf1fb;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .yuan_raw {
+            margin-top: 12px;
+            padding: 14px 16px;
+            max-height: 320px;
+            overflow: auto;
+            background: #fbfcfe;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 12.5px;
+            color: #33405c;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        @media (max-width: 820px) {
+            .yuan_detail,
+            .yuan_skeleton {
+                grid-template-columns: 1fr;
+            }
+
+            .yuan_skBox.yuan_skImg { height: 240px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1>商品详情 · 按 ID 请求</h1>
+        <div class="yuan_api" id="yuan_apiText">GET https://dummyjson.com/products/1</div>
+        <p>地址栏里的 <b>?id=3</b> 就是这个页面的"参数"：用 <b>URLSearchParams</b> 取出来，拼进接口地址再 fetch。</p>
+    </header>
+
+    <div class="yuan_wrap">
+
+        <section>
+            <h2 class="yuan_h2">一、参数控制台 <small>改 id 换商品</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_btns">
+                    <a class="yuan_btn" href="17-3.html">‹ 返回列表</a>
+                    <button class="yuan_btn" id="yuan_btnPrev" onclick="yuan_go(yuan_id - 1)">‹ 上一件</button>
+                    <button class="yuan_btn" id="yuan_btnNext" onclick="yuan_go(yuan_id + 1)">下一件 ›</button>
+                    <input class="yuan_input" id="yuan_inputId" type="number" min="1" max="8" value="1">
+                    <button class="yuan_btn yuan_orange" onclick="yuan_goInput()">按 ID 加载</button>
+                </div>
+
+                <div class="yuan_status">
+                    <span class="yuan_tag" id="yuan_tagState">状态：待发起</span>
+                    <span class="yuan_tag" id="yuan_tagCode">HTTP：—</span>
+                    <span class="yuan_tag" id="yuan_tagTime">耗时：—</span>
+                    <span class="yuan_tag" id="yuan_tagId">当前 id：—</span>
+                </div>
+
+                <div class="yuan_msg yuan_errMsg" id="yuan_msgErr"></div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="yuan_h2">二、商品详情</h2>
+
+            <div class="yuan_skeleton" id="yuan_skeleton">
+                <div class="yuan_skBox yuan_skImg"></div>
+                <div class="yuan_skBox yuan_skInfo"></div>
+            </div>
+
+            <div class="yuan_detail" id="yuan_detail" hidden>
+                <div class="yuan_media">
+                    <div class="yuan_mainImg" id="yuan_mainBox">
+                        <img id="yuan_mainImg" src="" alt="商品图片">
+                    </div>
+                    <div class="yuan_thumbs" id="yuan_thumbs"></div>
+                </div>
+
+                <div class="yuan_info">
+                    <span class="yuan_cat" id="yuan_cat">—</span>
+                    <h2 class="yuan_title" id="yuan_title">—</h2>
+                    <p class="yuan_brand" id="yuan_brand">—</p>
+
+                    <div class="yuan_priceRow">
+                        <span class="yuan_price" id="yuan_price">—</span>
+                        <span class="yuan_old" id="yuan_old"></span>
+                        <span class="yuan_off" id="yuan_off"></span>
+                    </div>
+
+                    <p class="yuan_desc" id="yuan_desc">—</p>
+
+                    <dl class="yuan_specs" id="yuan_specs"></dl>
+                    <div class="yuan_tags" id="yuan_tags"></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="yuan_h2">三、这条记录的原始 JSON <small>接口返回的对象</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_raw" id="yuan_raw">还没有数据。</div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="yuan_h2">四、详情页的核心代码</h2>
+            <div class="yuan_panel">
+                <div class="yuan_code">// 1) 从地址栏取 id：17-3-detail.html?id=3
+var yuan_id = Number(new URLSearchParams(location.search).get('id')) || 1;
+
+// 2) 用 id 拼接口地址
+var yuan_url = 'https://dummyjson.com/products/' + yuan_id;
+
+// 3) 请求
+async function yuan_loadDetail() {
+    var yuan_res = await fetch(yuan_url);
+    if (!yuan_res.ok) {                       // 404 也要自己判断
+        throw new Error('HTTP ' + yuan_res.status);
+    }
+    var yuan_item = await yuan_res.json();
+    document.getElementById('yuan_title').textContent = yuan_item.title;
+    // images 是数组，可以做成缩略图切换
+    console.log(yuan_item.images.length);
+}
+
+// 4) 换商品 = 改地址栏参数后重新请求
+function yuan_go(yuan_newId) {
+    location.href = '17-3-detail.html?id=' + yuan_newId;
+}</div>
+            </div>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · 原生 HTML / CSS / JS 实现（数据来自 DummyJSON 公开测试接口）</p>
+    </div>
+
+    <script>
+        /* ===== 1. 解析地址栏参数 ===== */
+        var yuan_param = new URLSearchParams(location.search).get("id");
+        var yuan_id = parseInt(yuan_param, 10);
+        if (isNaN(yuan_id) || yuan_id < 1) { yuan_id = 1; }
+        if (yuan_id > 8) { yuan_id = 8; }   // 列表只有 8 件商品
+
+        var yuan_apiBase = "https://dummyjson.com/products/";
+        var yuan_detail = document.getElementById("yuan_detail");
+        var yuan_skeleton = document.getElementById("yuan_skeleton");
+        var yuan_msgErr = document.getElementById("yuan_msgErr");
+        var yuan_raw = document.getElementById("yuan_raw");
+        var yuan_inputId = document.getElementById("yuan_inputId");
+
+        function yuan_setTag(yuan_tagId, yuan_text, yuan_cls) {
+            var yuan_el = document.getElementById(yuan_tagId);
+            yuan_el.textContent = yuan_text;
+            yuan_el.className = "yuan_tag " + (yuan_cls || "");
+        }
+
+        function yuan_escape(yuan_s) {
+            return String(yuan_s)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function yuan_stars(yuan_score) {
+            var yuan_full = Math.round(yuan_score);
+            var yuan_txt = "";
+            for (var yuan_i = 1; yuan_i <= 5; yuan_i++) {
+                yuan_txt += yuan_i <= yuan_full ? "★" : "☆";
+            }
+            return yuan_txt;
+        }
+
+        /* ===== 2. 渲染详情 ===== */
+        function yuan_render(yuan_p) {
+            document.getElementById("yuan_apiText").textContent = "GET " + yuan_apiBase + yuan_id;
+            yuan_setTag("yuan_tagId", "当前 id：" + yuan_id, "yuan_ok");
+            yuan_inputId.value = yuan_id;
+            document.getElementById("yuan_btnPrev").disabled = (yuan_id <= 1);
+            document.getElementById("yuan_btnNext").disabled = (yuan_id >= 8);
+
+            /* 图片区 */
+            var yuan_mainBox = document.getElementById("yuan_mainBox");
+            var yuan_mainImg = document.getElementById("yuan_mainImg");
+            yuan_mainBox.className = "yuan_mainImg";
+            yuan_mainImg.src = yuan_p.images && yuan_p.images.length ? yuan_p.images[0] : yuan_p.thumbnail;
+            yuan_mainImg.alt = yuan_p.title;
+            yuan_mainImg.onerror = function () {
+                yuan_mainBox.className = "yuan_mainImg yuan_fail";
+            };
+
+            var yuan_thumbs = document.getElementById("yuan_thumbs");
+            var yuan_html = "";
+            var yuan_imgs = yuan_p.images || [];
+            for (var yuan_i = 0; yuan_i < yuan_imgs.length; yuan_i++) {
+                yuan_html += '<button class="yuan_thumbBtn' + (yuan_i === 0 ? " yuan_active" : "") +
+                    '" onclick="yuan_pick(this, \'' + yuan_escape(yuan_imgs[yuan_i]) + '\')">' +
+                    '<img src="' + yuan_escape(yuan_imgs[yuan_i]) + '" alt="图 ' + (yuan_i + 1) + '"></button>';
+            }
+            yuan_thumbs.innerHTML = yuan_html;
+
+            /* 文字区 */
+            document.getElementById("yuan_cat").textContent = yuan_p.category;
+            document.getElementById("yuan_title").textContent = yuan_p.title;
+            document.getElementById("yuan_brand").textContent =
+                (yuan_p.brand ? "品牌：" + yuan_p.brand : "品牌：未标注") +
+                "  ·  评分 " + yuan_stars(yuan_p.rating) + " " + yuan_p.rating + " / 5";
+
+            document.getElementById("yuan_price").textContent = "$" + yuan_p.price.toFixed(2);
+            document.getElementById("yuan_old").textContent = "$" +
+                (yuan_p.price / (1 - yuan_p.discountPercentage / 100)).toFixed(2);
+            document.getElementById("yuan_off").textContent = "-" + Math.round(yuan_p.discountPercentage) + "%";
+            document.getElementById("yuan_desc").textContent = yuan_p.description;
+
+            var yuan_dim = yuan_p.dimensions || {};
+            var yuan_specList = [
+                ["商品编号 SKU", yuan_p.sku || "—"],
+                ["库存", yuan_p.stock + " 件（" + (yuan_p.availabilityStatus || "—") + "）"],
+                ["起订量", (yuan_p.minimumOrderQuantity || 1) + " 件"],
+                ["重量", (yuan_p.weight || 0) + " g"],
+                ["尺寸", (yuan_dim.width || "—") + " × " + (yuan_dim.height || "—") + " × " + (yuan_dim.depth || "—") + " cm"],
+                ["保修", yuan_p.warrantyInformation || "—"],
+                ["发货", yuan_p.shippingInformation || "—"],
+                ["退换", yuan_p.returnPolicy || "—"]
+            ];
+
+            var yuan_specHtml = "";
+            for (var yuan_j = 0; yuan_j < yuan_specList.length; yuan_j++) {
+                var yuan_low = (yuan_j === 1 && yuan_p.stock < 20);
+                yuan_specHtml += '<div class="yuan_spec"><dt>' + yuan_escape(yuan_specList[yuan_j][0]) + "</dt>" +
+                    '<dd class="' + (yuan_low ? "yuan_stockLow" : (yuan_j === 1 ? "yuan_stockOk" : "")) + '">' +
+                    yuan_escape(yuan_specList[yuan_j][1]) + "</dd></div>";
+            }
+            document.getElementById("yuan_specs").innerHTML = yuan_specHtml;
+
+            var yuan_tags = document.getElementById("yuan_tags");
+            var yuan_tagHtml = "";
+            for (var yuan_k = 0; yuan_k < (yuan_p.tags || []).length; yuan_k++) {
+                yuan_tagHtml += '<span class="yuan_tagItem">#' + yuan_escape(yuan_p.tags[yuan_k]) + "</span>";
+            }
+            yuan_tags.innerHTML = yuan_tagHtml;
+
+            yuan_raw.textContent = JSON.stringify(yuan_p, null, 2);
+            yuan_detail.hidden = false;
+        }
+
+        function yuan_pick(yuan_btn, yuan_src) {
+            document.getElementById("yuan_mainImg").src = yuan_src;
+            var yuan_all = document.getElementById("yuan_thumbs").getElementsByTagName("button");
+            for (var yuan_i = 0; yuan_i < yuan_all.length; yuan_i++) {
+                yuan_all[yuan_i].className = "yuan_thumbBtn";
+            }
+            yuan_btn.className = "yuan_thumbBtn yuan_active";
+        }
+
+        /* ===== 3. 请求详情 ===== */
+        async function yuan_loadDetail() {
+            var yuan_url = yuan_apiBase + yuan_id;
+            yuan_msgErr.className = "yuan_msg yuan_errMsg";
+            yuan_msgErr.textContent = "";
+            yuan_skeleton.hidden = false;
+            yuan_detail.hidden = true;
+            yuan_setTag("yuan_tagState", "状态：请求中…", "yuan_load");
+            yuan_setTag("yuan_tagCode", "HTTP：—", "");
+            yuan_setTag("yuan_tagTime", "耗时：—", "");
+            yuan_setTag("yuan_tagId", "当前 id：" + yuan_id, "");
+
+            var yuan_start = Date.now();
+
+            try {
+                var yuan_res = await fetch(yuan_url);
+                var yuan_ms = Date.now() - yuan_start;
+
+                yuan_setTag("yuan_tagCode", "HTTP：" + yuan_res.status + " " + yuan_res.statusText,
+                    yuan_res.ok ? "yuan_ok" : "yuan_err");
+                yuan_setTag("yuan_tagTime", "耗时：" + yuan_ms + " ms", "yuan_ok");
+
+                if (!yuan_res.ok) {
+                    throw new Error("接口返回 HTTP " + yuan_res.status + "（id=" + yuan_id + " 的商品不存在）");
+                }
+
+                var yuan_item = await yuan_res.json();
+                yuan_setTag("yuan_tagState", "状态：成功 ✓", "yuan_ok");
+                yuan_render(yuan_item);
+            } catch (yuan_err) {
+                yuan_setTag("yuan_tagState", "状态：失败 ✗", "yuan_err");
+                yuan_msgErr.className = "yuan_msg yuan_errMsg yuan_show";
+                yuan_msgErr.innerHTML = "请求失败：" + yuan_escape(yuan_err.message) +
+                    "<ul>" +
+                    "<li>本页只演示 <b>id = 1 ~ 8</b>（与列表页的 8 件商品对应），换个小一点的 id 试试</li>" +
+                    "<li>检查网络是否可用，能否直接打开 " + yuan_escape(yuan_url) + "</li>" +
+                    "<li>若浏览器拦截 file:// 请求，可在本目录执行 <b>python -m http.server</b> 后用 localhost 打开</li>" +
+                    "</ul>";
+                yuan_detail.hidden = true;
+                yuan_raw.textContent = "请求失败，没有拿到数据。";
+            } finally {
+                yuan_skeleton.hidden = true;
+            }
+        }
+
+        /* ===== 4. 切换商品 ===== */
+        function yuan_go(yuan_newId) {
+            if (yuan_newId < 1 || yuan_newId > 8) { return; }
+            location.href = "17-3-detail.html?id=" + yuan_newId;
+        }
+
+        function yuan_goInput() {
+            var yuan_v = parseInt(yuan_inputId.value, 10);
+            if (isNaN(yuan_v) || yuan_v < 1 || yuan_v > 8) {
+                yuan_msgErr.className = "yuan_msg yuan_errMsg yuan_show";
+                yuan_msgErr.innerHTML = "请输入 1 ~ 8 之间的商品 id（列表页只有 8 件商品）。";
+                return;
+            }
+            yuan_go(yuan_v);
+        }
+
+        yuan_inputId.addEventListener("keydown", function (yuan_e) {
+            if (yuan_e.key === "Enter") { yuan_goInput(); }
+        });
+
+        /* 打开页面就开始请求 */
+        yuan_loadDetail();
+    </script>
+</body>
+</html>
