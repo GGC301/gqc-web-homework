@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-05 14:12
+    使用的大模型：DeepSeek-V4.1-Flash
+    功能名称：ECharts 数据可视化 —— 智能客服会话趋势图 + 问题类型占比图（本地 cdn 引入）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts 数据可视化 · 智能客服运营看板 · 关泉才</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .yuan_hero {
+            padding: 46px 24px 36px;
+            text-align: center;
+            color: #fff;
+            background: radial-gradient(120% 150% at 50% 0%, #4338ca 0%, #101a33 55%, #070b16 100%);
+        }
+
+        .yuan_heroTitle {
+            margin: 0 0 12px;
+            font-size: clamp(23px, 3.6vw, 34px);
+            letter-spacing: 2px;
+        }
+
+        .yuan_heroTitle span {
+            background: linear-gradient(90deg, #a5b4fc, #22d3ee, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .yuan_heroText {
+            margin: 0 auto;
+            max-width: 820px;
+            font-size: 15px;
+            color: #cbd5e1;
+        }
+
+        .yuan_heroMeta {
+            margin: 16px 0 0;
+            font-size: 12.5px;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+        }
+
+        /* ---------- 主体 ---------- */
+        .yuan_wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .yuan_charts {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 18px;
+            margin-top: 26px;
+        }
+
+        .yuan_card {
+            display: flex;
+            flex-direction: column;
+            padding: 18px 20px 12px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(31, 36, 48, .07);
+        }
+
+        .yuan_cardHead {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .yuan_cardTitle {
+            margin: 0;
+            font-size: 17px;
+            color: #1f2430;
+        }
+
+        .yuan_tag {
+            padding: 1px 9px;
+            font-size: 12px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #4338ca;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 999px;
+        }
+
+        .yuan_cardDesc {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .yuan_switcher {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .yuan_chip {
+            padding: 5px 14px;
+            font-size: 12.5px;
+            font-family: inherit;
+            color: #4a5568;
+            background: #f8fafc;
+            border: 1px solid #d7dbe5;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background .15s ease, color .15s ease, border-color .15s ease;
+        }
+
+        .yuan_chip:hover {
+            border-color: #6366f1;
+            color: #4338ca;
+        }
+
+        .yuan_chip.yuan_active {
+            color: #fff;
+            background: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        .yuan_chart {
+            width: 100%;
+            height: 380px;
+        }
+
+        /* ---------- 说明区 ---------- */
+        .yuan_section {
+            margin-top: 34px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #312e81;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #4f46e5;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        .yuan_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .yuan_info {
+            padding: 16px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-top: 4px solid #4f46e5;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_info h3 {
+            margin: 0 0 6px;
+            font-size: 15.5px;
+        }
+
+        .yuan_info p {
+            margin: 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .yuan_info code {
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            color: #a4161a;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .yuan_panel {
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_code {
+            padding: 16px 18px;
+            background: #0f172a;
+            color: #dbeafe;
+            border-radius: 10px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.65;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        @media (max-width: 900px) {
+            .yuan_charts {
+                grid-template-columns: 1fr;
+            }
+
+            .yuan_chart {
+                height: 330px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1 class="yuan_heroTitle">ECharts <span>数据可视化</span> · 智能客服运营看板</h1>
+        <p class="yuan_heroText">
+            两个图表都由本地引入的 ECharts 5.5.1 绘制：一个是近 7 天的会话量趋势（柱状 / 折线可切换），
+            一个是用户问题类型占比（环形 / 玫瑰 / 条形可切换）。
+        </p>
+        <p class="yuan_heroMeta">高级网页设计 · ECharts 图表练习 · 文件已下载到 cdn 目录，离线可用</p>
+    </header>
+
+    <main class="yuan_wrap">
+        <section class="yuan_charts">
+            <!-- 图 1 -->
+            <article class="yuan_card">
+                <div class="yuan_cardHead">
+                    <h2 class="yuan_cardTitle">近 7 天会话量趋势</h2>
+                    <span class="yuan_tag">图 1</span>
+                </div>
+                <p class="yuan_cardDesc">机器人与人工会话量（左轴）叠加解决率曲线（右轴），可切换柱状 / 折线表现。</p>
+                <div class="yuan_switcher">
+                    <button class="yuan_chip yuan_active" id="yuan_typeBar" type="button">柱状图</button>
+                    <button class="yuan_chip" id="yuan_typeLine" type="button">折线图</button>
+                </div>
+                <div class="yuan_chart" id="yuan_chart1"></div>
+            </article>
+
+            <!-- 图 2 -->
+            <article class="yuan_card">
+                <div class="yuan_cardHead">
+                    <h2 class="yuan_cardTitle">用户问题类型占比</h2>
+                    <span class="yuan_tag">图 2</span>
+                </div>
+                <p class="yuan_cardDesc">一周内全部会话按问题类型归类，占比越大越值得优先沉淀知识库。</p>
+                <div class="yuan_switcher">
+                    <button class="yuan_chip yuan_active" id="yuan_typeDonut" type="button">环形图</button>
+                    <button class="yuan_chip" id="yuan_typeRose" type="button">玫瑰图</button>
+                    <button class="yuan_chip" id="yuan_typeHBar" type="button">条形图</button>
+                </div>
+                <div class="yuan_chart" id="yuan_chart2"></div>
+            </article>
+        </section>
+
+        <!-- ============ 说明 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">一、图表里放了什么 <small>数据取自智能客服的运营场景</small></h2>
+            <div class="yuan_grid">
+                <div class="yuan_info">
+                    <h3>双轴组合</h3>
+                    <p>会话量是"量"，解决率是"率"，单位不同就得用两个 <code>yAxis</code>，通过 <code>yAxisIndex</code> 把线挂到右轴。</p>
+                </div>
+                <div class="yuan_info">
+                    <h3>堆叠柱状</h3>
+                    <p>机器人会话与人工会话用同一个 <code>stack</code>，柱子高度表示总量，分段颜色表示构成。</p>
+                </div>
+                <div class="yuan_info">
+                    <h3>占比图</h3>
+                    <p>环形图用 <code>radius: ['45%','70%']</code> 挖空中心；玫瑰图用 <code>roseType: 'radius'</code> 用半径表示大小。</p>
+                </div>
+                <div class="yuan_info">
+                    <h3>响应式</h3>
+                    <p>图表容器宽度变化时调用 <code>chart.resize()</code>，否则窗口缩放后画布会被拉伸模糊。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ 代码 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">二、怎么引入与初始化 <small>本地文件，不走在线 CDN</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_code">&lt;!-- 1. 引入：文件已下载到 cdn/echarts.min.js --&gt;
+&lt;script src="./cdn/echarts.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- 2. 准备一个有宽高的容器 --&gt;
+&lt;div id="yuan_chart1" style="width:100%;height:380px"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// 3. 初始化并设置配置项
+var yuan_chart = echarts.init(document.getElementById('yuan_chart1'));
+
+yuan_chart.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['机器人会话', '人工会话', '解决率'] },
+    xAxis: { type: 'category', data: ['11-01', '11-02', '11-03', '11-04', '11-05', '11-06', '11-07'] },
+    yAxis: [
+        { type: 'value', name: '会话量' },
+        { type: 'value', name: '解决率', min: 70, max: 95, axisLabel: { formatter: '{value}%' } }
+    ],
+    series: [
+        { name: '机器人会话', type: 'bar', stack: 'total', data: [1280, 1420, 1356, 1680, 1520, 1180, 1340] },
+        { name: '人工会话', type: 'bar', stack: 'total', data: [320, 356, 298, 420, 386, 276, 312] },
+        { name: '解决率', type: 'line', yAxisIndex: 1, smooth: true, data: [82.4, 84.1, 83.6, 86.2, 85.1, 87.3, 86.5] }
+    ]
+});
+
+// 4. 窗口缩放时同步尺寸
+window.addEventListener('resize', function () {
+    yuan_chart.resize();
+});
+&lt;/script&gt;</div>
+            </div>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · ECharts 图表练习，图表库为本地文件</p>
+    </main>
+
+    <script src="./cdn/echarts.min.js"></script>
+    <script>
+        (function () {
+            "use strict";
+
+            var yuan_days = ["11-01", "11-02", "11-03", "11-04", "11-05", "11-06", "11-07"];
+            var yuan_bot = [1280, 1420, 1356, 1680, 1520, 1180, 1340];
+            var yuan_human = [320, 356, 298, 420, 386, 276, 312];
+            var yuan_rate = [82.4, 84.1, 83.6, 86.2, 85.1, 87.3, 86.5];
+
+            var yuan_topics = ["订单与物流", "退换货", "商品咨询", "账号与支付", "其他"];
+            var yuan_topicVals = [32, 24, 18, 14, 12];
+            var yuan_palette = ["#4f46e5", "#22d3ee", "#34d399", "#fbbf24", "#f472b6"];
+
+            var yuan_chart1 = echarts.init(document.getElementById("yuan_chart1"));
+            var yuan_chart2 = echarts.init(document.getElementById("yuan_chart2"));
+
+            /* ================= 图 1：会话量趋势 ================= */
+            function yuan_option1(yuan_type) {
+                var yuan_base = {
+                    color: ["#4f46e5", "#22d3ee", "#f472b6"],
+                    tooltip: {
+                        trigger: "axis",
+                        axisPointer: { type: "shadow" }
+                    },
+                    legend: {
+                        top: 0,
+                        icon: "circle",
+                        itemWidth: 9,
+                        itemHeight: 9,
+                        textStyle: { color: "#4a5568", fontSize: 12 }
+                    },
+                    grid: {
+                        left: 8,
+                        right: 12,
+                        top: 52,
+                        bottom: 4,
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: "category",
+                        data: yuan_days,
+                        axisTick: { show: false },
+                        axisLine: { lineStyle: { color: "#d7dbe5" } },
+                        axisLabel: { color: "#6b7280" }
+                    },
+                    yAxis: [
+                        {
+                            type: "value",
+                            name: "会话量",
+                            nameTextStyle: { color: "#8b93a7", fontSize: 11 },
+                            axisLabel: { color: "#6b7280" },
+                            splitLine: { lineStyle: { color: "#eef2f7" } }
+                        },
+                        {
+                            type: "value",
+                            name: "解决率",
+                            min: 70,
+                            max: 95,
+                            nameTextStyle: { color: "#8b93a7", fontSize: 11 },
+                            axisLabel: { color: "#6b7280", formatter: "{value}%" },
+                            splitLine: { show: false }
+                        }
+                    ]
+                };
+
+                if (yuan_type === "bar") {
+                    yuan_base.series = [
+                        {
+                            name: "机器人会话",
+                            type: "bar",
+                            stack: "total",
+                            barWidth: 24,
+                            data: yuan_bot
+                        },
+                        {
+                            name: "人工会话",
+                            type: "bar",
+                            stack: "total",
+                            barWidth: 24,
+                            itemStyle: { borderRadius: [5, 5, 0, 0] },
+                            data: yuan_human
+                        },
+                        {
+                            name: "解决率",
+                            type: "line",
+                            yAxisIndex: 1,
+                            smooth: true,
+                            symbolSize: 7,
+                            lineStyle: { width: 3 },
+                            data: yuan_rate
+                        }
+                    ];
+                } else {
+                    yuan_base.series = [
+                        {
+                            name: "机器人会话",
+                            type: "line",
+                            smooth: true,
+                            symbolSize: 7,
+                            lineStyle: { width: 3 },
+                            areaStyle: { opacity: 0.12 },
+                            data: yuan_bot
+                        },
+                        {
+                            name: "人工会话",
+                            type: "line",
+                            smooth: true,
+                            symbolSize: 7,
+                            lineStyle: { width: 3 },
+                            areaStyle: { opacity: 0.12 },
+                            data: yuan_human
+                        },
+                        {
+                            name: "解决率",
+                            type: "line",
+                            yAxisIndex: 1,
+                            smooth: true,
+                            symbolSize: 7,
+                            lineStyle: { width: 2, type: "dashed" },
+                            data: yuan_rate
+                        }
+                    ];
+                }
+
+                return yuan_base;
+            }
+
+            /* ================= 图 2：问题类型占比 ================= */
+            function yuan_option2(yuan_type) {
+                if (yuan_type === "bar") {
+                    return {
+                        color: yuan_palette,
+                        tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+                        grid: { left: 8, right: 60, top: 24, bottom: 4, containLabel: true },
+                        xAxis: {
+                            type: "value",
+                            name: "%",
+                            max: 40,
+                            axisLabel: { color: "#6b7280", formatter: "{value}%" },
+                            splitLine: { lineStyle: { color: "#eef2f7" } }
+                        },
+                        yAxis: {
+                            type: "category",
+                            data: yuan_topics.slice().reverse(),
+                            axisTick: { show: false },
+                            axisLine: { lineStyle: { color: "#d7dbe5" } },
+                            axisLabel: { color: "#4a5568" }
+                        },
+                        series: [
+                            {
+                                name: "占比",
+                                type: "bar",
+                                barWidth: 16,
+                                itemStyle: { borderRadius: [0, 6, 6, 0] },
+                                label: {
+                                    show: true,
+                                    position: "right",
+                                    formatter: "{c}%",
+                                    color: "#4a5568",
+                                    fontSize: 12
+                                },
+                                data: yuan_topicVals.slice().reverse()
+                            }
+                        ]
+                    };
+                }
+
+                var yuan_rose = yuan_type === "rose";
+
+                return {
+                    color: yuan_palette,
+                    tooltip: {
+                        trigger: "item",
+                        formatter: "{b}<br/>{c}%（{d}%）"
+                    },
+                    legend: {
+                        bottom: 0,
+                        icon: "circle",
+                        itemWidth: 9,
+                        itemHeight: 9,
+                        textStyle: { color: "#4a5568", fontSize: 12 }
+                    },
+                    series: [
+                        {
+                            name: "问题类型",
+                            type: "pie",
+                            radius: yuan_rose ? ["10%", "68%"] : ["45%", "70%"],
+                            center: ["50%", "45%"],
+                            roseType: yuan_rose ? "radius" : false,
+                            avoidLabelOverlap: true,
+                            itemStyle: {
+                                borderColor: "#ffffff",
+                                borderWidth: 2,
+                                borderRadius: 4
+                            },
+                            label: {
+                                color: "#4a5568",
+                                fontSize: 12,
+                                formatter: "{b}\n{d}%"
+                            },
+                            labelLine: { length: 10, length2: 12 },
+                            data: yuan_topics.map(function (yuan_name, yuan_i) {
+                                return { name: yuan_name, value: yuan_topicVals[yuan_i] };
+                            })
+                        }
+                    ]
+                };
+            }
+
+            /* ================= 切换逻辑 ================= */
+            function yuan_bind(yuan_buttons, yuan_apply) {
+                yuan_buttons.forEach(function (yuan_btn) {
+                    yuan_btn.addEventListener("click", function () {
+                        yuan_buttons.forEach(function (yuan_other) {
+                            yuan_other.classList.remove("yuan_active");
+                        });
+                        yuan_btn.classList.add("yuan_active");
+                        yuan_apply(yuan_btn);
+                    });
+                });
+            }
+
+            var yuan_btns1 = [
+                document.getElementById("yuan_typeBar"),
+                document.getElementById("yuan_typeLine")
+            ];
+            var yuan_btns2 = [
+                document.getElementById("yuan_typeDonut"),
+                document.getElementById("yuan_typeRose"),
+                document.getElementById("yuan_typeHBar")
+            ];
+
+            yuan_bind(yuan_btns1, function (yuan_btn) {
+                yuan_chart1.setOption(yuan_option1(yuan_btn.id === "yuan_typeBar" ? "bar" : "line"), true);
+            });
+
+            yuan_bind(yuan_btns2, function (yuan_btn) {
+                var yuan_mode = yuan_btn.id === "yuan_typeRose"
+                    ? "rose"
+                    : (yuan_btn.id === "yuan_typeHBar" ? "bar" : "donut");
+                yuan_chart2.setOption(yuan_option2(yuan_mode), true);
+            });
+
+            /* ================= 首次渲染 ================= */
+            yuan_chart1.setOption(yuan_option1("bar"));
+            yuan_chart2.setOption(yuan_option2("donut"));
+
+            /* ================= 自适应 ================= */
+            var yuan_resizeTimer = 0;
+            window.addEventListener("resize", function () {
+                window.clearTimeout(yuan_resizeTimer);
+                yuan_resizeTimer = window.setTimeout(function () {
+                    yuan_chart1.resize();
+                    yuan_chart2.resize();
+                }, 120);
+            });
+        })();
+    </script>
+</body>
+</html>

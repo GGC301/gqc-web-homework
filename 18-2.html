@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-05 13:52
+    使用的大模型：DeepSeek-V4.1-Flash
+    功能名称：Canvas 绘制电商全站系统架构图（五层架构 + 悬停/点击说明 + 导出 PNG）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 绘制电商全站系统架构图 · 关泉才</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .yuan_hero {
+            padding: 46px 24px 36px;
+            text-align: center;
+            color: #fff;
+            background: radial-gradient(120% 150% at 50% 0%, #0f766e 0%, #0f172a 55%, #070b16 100%);
+        }
+
+        .yuan_heroTitle {
+            margin: 0 0 12px;
+            font-size: clamp(24px, 4vw, 36px);
+            letter-spacing: 2px;
+        }
+
+        .yuan_heroTitle span {
+            background: linear-gradient(90deg, #22d3ee, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .yuan_heroText {
+            margin: 0 auto;
+            max-width: 800px;
+            font-size: 15px;
+            color: #cbd5e1;
+        }
+
+        .yuan_heroMeta {
+            margin: 16px 0 0;
+            font-size: 12.5px;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+        }
+
+        /* ---------- 画布 ---------- */
+        .yuan_wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .yuan_stage {
+            margin-top: 26px;
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            background: #0b1020;
+            overflow: hidden;
+            box-shadow: 0 18px 44px rgba(15, 23, 42, .26);
+        }
+
+        .yuan_canvasBox {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .yuan_diagram {
+            display: block;
+            max-width: none;
+        }
+
+        /* ---------- 工具条 ---------- */
+        .yuan_bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+            padding: 16px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_btn {
+            padding: 8px 16px;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: #0f766e;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .yuan_btn:hover {
+            transform: translateY(-2px);
+            background: #0f766e;
+            color: #fff;
+        }
+
+        .yuan_btn.yuan_primary {
+            color: #fff;
+            background: #0f766e;
+            border-color: #0f766e;
+        }
+
+        .yuan_btn.yuan_primary:hover {
+            background: #115e59;
+        }
+
+        .yuan_hint {
+            margin-left: auto;
+            font-size: 12.5px;
+            color: #8b93a7;
+        }
+
+        /* ---------- 详情面板 ---------- */
+        .yuan_detail {
+            margin-top: 14px;
+            padding: 16px 20px;
+            font-size: 13.5px;
+            color: #4a5568;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_detail b {
+            margin-right: 10px;
+            font-size: 16px;
+            color: #0f172a;
+        }
+
+        .yuan_detailTag {
+            display: inline-block;
+            padding: 1px 10px;
+            font-size: 12px;
+            color: #0f766e;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 999px;
+        }
+
+        .yuan_detail p {
+            margin: 8px 0 0;
+            line-height: 1.75;
+        }
+
+        /* ---------- 说明区 ---------- */
+        .yuan_section {
+            margin-top: 34px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #115e59;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #0f766e;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        .yuan_layers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
+        }
+
+        .yuan_layerCard {
+            padding: 16px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-top: 4px solid #0f766e;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_l1 { border-top-color: #22d3ee; }
+        .yuan_l2 { border-top-color: #60a5fa; }
+        .yuan_l3 { border-top-color: #a78bfa; }
+        .yuan_l4 { border-top-color: #fbbf24; }
+        .yuan_l5 { border-top-color: #34d399; }
+
+        .yuan_layerCard h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+        }
+
+        .yuan_layerCard p {
+            margin: 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* 请求链路 */
+        .yuan_steps {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: yuan_step;
+        }
+
+        .yuan_steps li {
+            position: relative;
+            padding: 10px 16px 10px 46px;
+            margin-bottom: 10px;
+            font-size: 13.5px;
+            color: #33405c;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-left: 4px solid #0f766e;
+            border-radius: 10px;
+            counter-increment: yuan_step;
+        }
+
+        .yuan_steps li::before {
+            content: counter(yuan_step);
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 22px;
+            text-align: center;
+            color: #fff;
+            background: #0f766e;
+            border-radius: 50%;
+        }
+
+        .yuan_steps code,
+        .yuan_layerCard code {
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            color: #a4161a;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .yuan_panel {
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_code {
+            padding: 16px 18px;
+            background: #0f172a;
+            color: #dbeafe;
+            border-radius: 10px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.65;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        @media (max-width: 780px) {
+            .yuan_hint {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1 class="yuan_heroTitle">Canvas 绘制 <span>电商全站系统架构图</span></h1>
+        <p class="yuan_heroText">
+            全部用 Canvas 2D 的矩形、文字、连线和图标拼出来：五个层次、二十四个组件，
+            鼠标悬停看说明、点击固定查看，还能一键导出 PNG。没有图片、没有框架、没有外部依赖。
+        </p>
+        <p class="yuan_heroMeta">高级网页设计 · Canvas 绘图 · 关泉才</p>
+    </header>
+
+    <main class="yuan_wrap">
+        <!-- ============ 画布 ============ -->
+        <section class="yuan_stage" aria-label="电商系统架构图画布">
+            <div class="yuan_canvasBox" id="yuan_canvasBox">
+                <canvas id="yuan_canvas" class="yuan_diagram">你的浏览器不支持 canvas，请更换现代浏览器。</canvas>
+            </div>
+        </section>
+
+        <div class="yuan_bar">
+            <button class="yuan_btn yuan_primary" id="yuan_btnDownload" type="button">下载 PNG</button>
+            <button class="yuan_btn" id="yuan_btnReset" type="button">清除选中</button>
+            <span class="yuan_hint">鼠标移到方块上可以看说明，点击可在下方固定查看</span>
+        </div>
+
+        <div class="yuan_detail" id="yuan_detail">当前未选中模块 —— 点击图中任意方块，查看它在电商系统中的职责。</div>
+
+        <!-- ============ 分层说明 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">一、五个层次，各管一段 <small>从上到下的请求路径</small></h2>
+            <div class="yuan_layers">
+                <div class="yuan_layerCard yuan_l1">
+                    <h3>用户层</h3>
+                    <p>PC 商城、移动 H5、微信小程序、原生 App。同一套后端，四种触点，负责流量入口与交互体验。</p>
+                </div>
+                <div class="yuan_layerCard yuan_l2">
+                    <h3>接入层</h3>
+                    <p>CDN 静态加速、Nginx 负载均衡、API 网关、统一鉴权。做 TLS 卸载、限流、路由与身份校验。</p>
+                </div>
+                <div class="yuan_layerCard yuan_l3">
+                    <h3>业务服务层</h3>
+                    <p>商品、搜索、购物车、用户、订单、支付、库存、营销八个微服务，各自独立部署、独立扩容。</p>
+                </div>
+                <div class="yuan_layerCard yuan_l4">
+                    <h3>中间件层</h3>
+                    <p>Redis 缓存、Kafka 消息队列、Elasticsearch 检索、分布式任务调度，负责性能、解耦与补偿。</p>
+                </div>
+                <div class="yuan_layerCard yuan_l5">
+                    <h3>数据层</h3>
+                    <p>MySQL 主从集群、对象存储 OSS、数据仓库、日志监控，是订单、商品与行为数据的最终归宿。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ 下单链路 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">二、一次"下单"是怎么走完的 <small>把架构图串成一条线</small></h2>
+            <ol class="yuan_steps">
+                <li>用户在 <code>小程序 / H5</code> 点击"提交订单"，请求先打到 <code>CDN</code> 拿静态资源，业务请求直达 <code>Nginx</code>。</li>
+                <li><code>Nginx</code> 把请求转给 <code>API 网关</code>，网关校验 <code>JWT</code> 令牌、限流、按灰度规则路由到订单服务。</li>
+                <li><code>订单服务</code> 先调用 <code>库存服务</code> 预占库存、<code>营销服务</code> 计算优惠，写入订单表（状态：待支付）。</li>
+                <li>下单成功消息投递到 <code>Kafka</code>，异步通知积分、推荐、通知等下游，主链路快速返回。</li>
+                <li>用户打开 <code>支付服务</code> 收银台，支付回调进来后置为已支付，再发消息驱动发货与对账。</li>
+                <li>所有关键数据落到 <code>MySQL</code>，图片落 <code>OSS</code>，日志进<code>日志中心</code>，报表与推荐从<code>数据仓库</code>取数。</li>
+            </ol>
+        </section>
+
+        <!-- ============ 绘制要点 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">三、这张图是"画"出来的 <small>Canvas 绘图的几个关键点</small></h2>
+            <ol class="yuan_steps">
+                <li><b>圆角矩形</b>：<code>roundRect</code> 在旧浏览器里没有，用 <code>arcTo</code> 自己写一个，四段圆弧拼成方块。</li>
+                <li><b>高清适配</b>：按 <code>devicePixelRatio</code> 放大画布，再 <code>setTransform</code> 缩放回来，文字才不会发虚。</li>
+                <li><b>坐标映射</b>：以 1200×860 的设计坐标作图，按容器宽度整体缩放，图就是响应式的。</li>
+                <li><b>命中检测</b>：把鼠标坐标除以缩放比还原成设计坐标，再遍历方块数组判断点在哪个矩形里。</li>
+                <li><b>导出图片</b>：<code>canvas.toDataURL('image/png')</code> 直接拿到像素数据，挂到 <code>a[download]</code> 上就能保存。</li>
+            </ol>
+        </section>
+
+        <!-- ============ 代码 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">四、核心代码 <small>骨架部分</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_code">/* ---------- 1. 手写圆角矩形 ---------- */
+function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}
+
+/* ---------- 2. 设计坐标 → 屏幕坐标 ---------- */
+var scale = cssWidth / 1200;              // 1200 是设计稿宽度
+canvas.width  = cssWidth  * dpr;
+canvas.height = cssHeight * dpr;
+ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
+// 之后所有 fillRect / fillText 都用设计坐标
+
+/* ---------- 3. 方块与命中检测 ---------- */
+boxes.forEach(function (b) {
+    roundRect(b.x, b.y, b.w, b.h, 10);
+    ctx.fillStyle = rgba(b.color, .16);
+    ctx.fill();
+    ctx.strokeStyle = rgba(b.color, .5);
+    ctx.stroke();
+    ctx.fillText(b.title, b.x + 16, b.y + b.h / 2 - 9);
+});
+
+function hit(x, y) {
+    return boxes.find(function (b) {
+        return x &gt;= b.x &amp;&amp; x &lt;= b.x + b.w &amp;&amp; y &gt;= b.y &amp;&amp; y &lt;= b.y + b.h;
+    });
+}
+
+/* ---------- 4. 导出 PNG ---------- */
+var a = document.createElement('a');
+a.download = '电商全站系统架构图.png';
+a.href = canvas.toDataURL('image/png');
+a.click();</div>
+            </div>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · Canvas 架构图练习，纯原生实现</p>
+    </main>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var yuan_canvas = document.getElementById("yuan_canvas");
+            var yuan_ctx = yuan_canvas.getContext("2d");
+            var yuan_canvasBox = document.getElementById("yuan_canvasBox");
+            var yuan_detail = document.getElementById("yuan_detail");
+
+            var yuan_DW = 1200;      // 设计宽度
+            var yuan_DH = 860;       // 设计高度
+            var yuan_FONT = '"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif';
+            var yuan_MONO = 'Consolas, "Courier New", monospace';
+
+            var yuan_boxes = [];
+            var yuan_hover = null;
+            var yuan_selected = null;
+            var yuan_flowT = 0;
+            var yuan_last = 0;
+            var yuan_resizeTimer = 0;
+
+            /* ================= 架构数据 ================= */
+            var yuan_spec = [
+                {
+                    name: "用户层",
+                    en: "CLIENT",
+                    color: "#22d3ee",
+                    y: 92,
+                    h: 92,
+                    rows: 1,
+                    items: [
+                        { t: "PC 商城", s: "Web / 浏览器", d: "面向 PC 端用户的购物入口，商品浏览、下单、支付、售后全流程都在这里完成。" },
+                        { t: "移动 H5", s: "手机浏览器", d: "响应式页面适配手机浏览器，也承担活动页、分享页等轻量场景，免安装即用。" },
+                        { t: "微信小程序", s: "微信生态", d: "依托微信生态的轻量入口，登录快、分享方便，承接社交与私域流量。" },
+                        { t: "原生 App", s: "iOS / Android", d: "体验最好、可调用系统能力，适合高频用户与消息推送召回。" }
+                    ]
+                },
+                {
+                    name: "接入层",
+                    en: "ACCESS",
+                    color: "#60a5fa",
+                    y: 210,
+                    h: 92,
+                    rows: 1,
+                    items: [
+                        { t: "CDN 静态加速", s: "图片 / JS / CSS", d: "把静态资源分发到离用户最近的节点，降低首屏时间与源站压力。" },
+                        { t: "Nginx 负载均衡", s: "反向代理", d: "统一入口、TLS 卸载、按权重转发到多台网关，做第一层流量削峰。" },
+                        { t: "API 网关", s: "路由 / 限流 / 熔断", d: "统一鉴权、限流、灰度路由，把请求分发到对应微服务，对外屏蔽内部拓扑。" },
+                        { t: "统一鉴权 SSO", s: "JWT / OAuth2", d: "一次登录全站通行，签发令牌并在网关侧校验，防止越权访问。" }
+                    ]
+                },
+                {
+                    name: "业务服务层",
+                    en: "SERVICE",
+                    color: "#a78bfa",
+                    y: 328,
+                    h: 180,
+                    rows: 2,
+                    items: [
+                        { t: "商品服务", s: "类目 / 详情 / 价格", d: "维护 SKU 与 SPU、类目树和价格体系，为列表页、详情页提供数据。" },
+                        { t: "搜索服务", s: "关键词 / 筛选 / 排序", d: "基于倒排索引做关键词召回、排序与筛选，是流量分发的核心能力。" },
+                        { t: "购物车服务", s: "加购 / 合并 / 结算", d: "保存游客与登录用户的购物车，支持多端合并、失效商品提醒与去结算。" },
+                        { t: "用户服务", s: "注册 / 地址 / 会员", d: "管理账号、收货地址、会员等级与积分，是各种个性化能力的基础。" },
+                        { t: "订单服务", s: "下单 / 状态机", d: "拆单、维护订单状态机（待支付 / 已支付 / 已发货 / 已完成），并驱动履约。" },
+                        { t: "支付服务", s: "支付 / 退款 / 对账", d: "对接第三方支付渠道，处理异步回调、幂等校验、退款与日终对账。" },
+                        { t: "库存服务", s: "预占 / 扣减 / 释放", d: "下单预占、支付扣减、超时释放，防超卖是高并发场景下的关键。" },
+                        { t: "营销与秒杀", s: "优惠券 / 限时活动", d: "优惠计算、券的发放与核销、秒杀排队，通常独立部署并做单独限流。" }
+                    ]
+                },
+                {
+                    name: "中间件层",
+                    en: "MIDDLEWARE",
+                    color: "#fbbf24",
+                    y: 534,
+                    h: 92,
+                    rows: 1,
+                    items: [
+                        { t: "Redis 缓存集群", s: "热点数据 / 分布式锁", d: "缓存商品与会话，扛住读多写少的高并发，同时提供分布式锁与计数器。" },
+                        { t: "Kafka 消息队列", s: "异步解耦 / 削峰", d: "下单、扣库存、通知等通过消息异步串联，实现最终一致性并削掉流量尖峰。" },
+                        { t: "Elasticsearch", s: "全文检索 / 聚合", d: "为搜索服务提供全文索引与聚合统计，支持海量商品的秒级检索。" },
+                        { t: "分布式任务调度", s: "定时 / 补偿", d: "处理超时未支付关单、库存回补、报表统计等定时任务与失败补偿。" }
+                    ]
+                },
+                {
+                    name: "数据层",
+                    en: "DATA",
+                    color: "#34d399",
+                    y: 652,
+                    h: 92,
+                    rows: 1,
+                    items: [
+                        { t: "MySQL 主从集群", s: "交易数据 / 分库分表", d: "订单、用户、商品等核心交易数据落库，读写分离，按业务分库分表。" },
+                        { t: "对象存储 OSS", s: "图片 / 视频 / 附件", d: "存放商品图片、详情富文本与评价素材，配合 CDN 回源加速。" },
+                        { t: "数据仓库", s: "数仓 / BI 报表", d: "汇聚业务数据做离线分析与报表，支撑经营决策与推荐模型训练。" },
+                        { t: "日志与监控", s: "日志 / 指标 / 告警", d: "集中收集访问日志与运行指标，是排障、告警与容量规划的依据。" }
+                    ]
+                }
+            ];
+
+            var yuan_ops = [
+                "监控告警 · Prometheus",
+                "链路追踪 · SkyWalking",
+                "CI/CD 自动化发布",
+                "灰度发布 · 多机房容灾"
+            ];
+
+            /* ================= 工具 ================= */
+            function yuan_roundRect(yuan_x, yuan_y, yuan_w, yuan_h, yuan_r) {
+                var yuan_c = yuan_ctx;
+                yuan_c.beginPath();
+                yuan_c.moveTo(yuan_x + yuan_r, yuan_y);
+                yuan_c.arcTo(yuan_x + yuan_w, yuan_y, yuan_x + yuan_w, yuan_y + yuan_h, yuan_r);
+                yuan_c.arcTo(yuan_x + yuan_w, yuan_y + yuan_h, yuan_x, yuan_y + yuan_h, yuan_r);
+                yuan_c.arcTo(yuan_x, yuan_y + yuan_h, yuan_x, yuan_y, yuan_r);
+                yuan_c.arcTo(yuan_x, yuan_y, yuan_x + yuan_w, yuan_y, yuan_r);
+                yuan_c.closePath();
+            }
+
+            function yuan_alpha(yuan_hex, yuan_a) {
+                var yuan_v = yuan_hex.replace("#", "");
+                var yuan_r = parseInt(yuan_v.substring(0, 2), 16);
+                var yuan_g = parseInt(yuan_v.substring(2, 4), 16);
+                var yuan_b = parseInt(yuan_v.substring(4, 6), 16);
+                return "rgba(" + yuan_r + "," + yuan_g + "," + yuan_b + "," + yuan_a + ")";
+            }
+
+            /* ================= 布局 ================= */
+            function yuan_layout() {
+                yuan_boxes = [];
+                var yuan_left = 134;
+                var yuan_right = 1176;
+                var yuan_padY = 18;
+                var yuan_gapX = 14;
+                var yuan_gapY = 16;
+
+                for (var yuan_i = 0; yuan_i < yuan_spec.length; yuan_i++) {
+                    var yuan_layer = yuan_spec[yuan_i];
+                    var yuan_rows = yuan_layer.rows;
+                    var yuan_perRow = Math.ceil(yuan_layer.items.length / yuan_rows);
+                    var yuan_w = (yuan_right - yuan_left - yuan_gapX * (yuan_perRow - 1)) / yuan_perRow;
+                    var yuan_h = (yuan_layer.h - yuan_padY * 2 - yuan_gapY * (yuan_rows - 1)) / yuan_rows;
+
+                    for (var yuan_j = 0; yuan_j < yuan_layer.items.length; yuan_j++) {
+                        var yuan_r = Math.floor(yuan_j / yuan_perRow);
+                        var yuan_col = yuan_j % yuan_perRow;
+                        var yuan_item = yuan_layer.items[yuan_j];
+
+                        yuan_boxes.push({
+                            x: yuan_left + yuan_col * (yuan_w + yuan_gapX),
+                            y: yuan_layer.y + yuan_padY + yuan_r * (yuan_h + yuan_gapY),
+                            w: yuan_w,
+                            h: yuan_h,
+                            title: yuan_item.t,
+                            sub: yuan_item.s,
+                            desc: yuan_item.d,
+                            color: yuan_layer.color,
+                            layer: yuan_layer.name
+                        });
+                    }
+                }
+            }
+
+            /* ================= 绘制 ================= */
+            function yuan_drawLayerBand(yuan_layer) {
+                var yuan_c = yuan_ctx;
+
+                yuan_roundRect(24, yuan_layer.y, 1152, yuan_layer.h, 14);
+                yuan_c.fillStyle = "rgba(255,255,255,0.028)";
+                yuan_c.fill();
+                yuan_c.lineWidth = 1;
+                yuan_c.strokeStyle = "rgba(255,255,255,0.07)";
+                yuan_c.stroke();
+
+                yuan_roundRect(32, yuan_layer.y + 18, 4, yuan_layer.h - 36, 2);
+                yuan_c.fillStyle = yuan_layer.color;
+                yuan_c.fill();
+
+                yuan_c.textAlign = "left";
+                yuan_c.textBaseline = "middle";
+                yuan_c.fillStyle = yuan_layer.color;
+                yuan_c.font = "700 16px " + yuan_FONT;
+                yuan_c.fillText(yuan_layer.name, 46, yuan_layer.y + yuan_layer.h / 2 - 8);
+
+                yuan_c.fillStyle = "rgba(148,163,184,0.75)";
+                yuan_c.font = "10px " + yuan_MONO;
+                yuan_c.fillText(yuan_layer.en, 46, yuan_layer.y + yuan_layer.h / 2 + 13);
+            }
+
+            function yuan_drawBox(yuan_b) {
+                var yuan_c = yuan_ctx;
+                var yuan_hot = (yuan_b === yuan_hover) || (yuan_b === yuan_selected);
+
+                yuan_c.save();
+                if (yuan_hot) {
+                    yuan_c.shadowColor = yuan_alpha(yuan_b.color, 0.55);
+                    yuan_c.shadowBlur = 20;
+                }
+                yuan_roundRect(yuan_b.x, yuan_b.y, yuan_b.w, yuan_b.h, 10);
+                var yuan_g = yuan_c.createLinearGradient(0, yuan_b.y, 0, yuan_b.y + yuan_b.h);
+                yuan_g.addColorStop(0, yuan_alpha(yuan_b.color, yuan_hot ? 0.32 : 0.16));
+                yuan_g.addColorStop(1, yuan_alpha(yuan_b.color, yuan_hot ? 0.18 : 0.05));
+                yuan_c.fillStyle = yuan_g;
+                yuan_c.fill();
+                yuan_c.restore();
+
+                yuan_roundRect(yuan_b.x, yuan_b.y, yuan_b.w, yuan_b.h, 10);
+                yuan_c.lineWidth = yuan_hot ? 2 : 1;
+                yuan_c.strokeStyle = yuan_alpha(yuan_b.color, yuan_hot ? 1 : 0.42);
+                yuan_c.stroke();
+
+                var yuan_mid = yuan_b.y + yuan_b.h / 2;
+                yuan_c.textAlign = "left";
+                yuan_c.textBaseline = "middle";
+                yuan_c.fillStyle = "#f1f5f9";
+                yuan_c.font = "700 15px " + yuan_FONT;
+                yuan_c.fillText(yuan_b.title, yuan_b.x + 16, yuan_mid - 9);
+
+                yuan_c.fillStyle = "rgba(203,213,225,0.55)";
+                yuan_c.font = "11.5px " + yuan_FONT;
+                yuan_c.fillText(yuan_b.sub, yuan_b.x + 16, yuan_mid + 11);
+            }
+
+            function yuan_drawFlow(yuan_top, yuan_bottom) {
+                var yuan_c = yuan_ctx;
+                var yuan_xs = [320, 660, 1020];
+
+                for (var yuan_i = 0; yuan_i < yuan_xs.length; yuan_i++) {
+                    var yuan_x = yuan_xs[yuan_i];
+                    var yuan_y1 = yuan_top + 2;
+                    var yuan_y2 = yuan_bottom - 2;
+
+                    yuan_c.beginPath();
+                    yuan_c.setLineDash([3, 3]);
+                    yuan_c.moveTo(yuan_x, yuan_y1);
+                    yuan_c.lineTo(yuan_x, yuan_y2);
+                    yuan_c.strokeStyle = "rgba(129,140,248,0.45)";
+                    yuan_c.lineWidth = 1.2;
+                    yuan_c.stroke();
+                    yuan_c.setLineDash([]);
+
+                    yuan_c.fillStyle = "rgba(129,140,248,0.8)";
+                    yuan_c.beginPath();
+                    yuan_c.moveTo(yuan_x, yuan_y1 + 1);
+                    yuan_c.lineTo(yuan_x - 3.6, yuan_y1 + 7);
+                    yuan_c.lineTo(yuan_x + 3.6, yuan_y1 + 7);
+                    yuan_c.closePath();
+                    yuan_c.fill();
+
+                    yuan_c.beginPath();
+                    yuan_c.moveTo(yuan_x, yuan_y2 - 1);
+                    yuan_c.lineTo(yuan_x - 3.6, yuan_y2 - 7);
+                    yuan_c.lineTo(yuan_x + 3.6, yuan_y2 - 7);
+                    yuan_c.closePath();
+                    yuan_c.fill();
+
+                    /* 流动光点：模拟请求下行 */
+                    var yuan_len = yuan_y2 - yuan_y1;
+                    var yuan_p = (yuan_flowT * 0.55 + yuan_i * 0.33) % 1;
+                    var yuan_dy = yuan_y1 + yuan_p * yuan_len;
+
+                    yuan_c.beginPath();
+                    yuan_c.arc(yuan_x, yuan_dy, 2.6, 0, Math.PI * 2);
+                    yuan_c.fillStyle = "#a5b4fc";
+                    yuan_c.shadowColor = "rgba(165,180,252,0.9)";
+                    yuan_c.shadowBlur = 8;
+                    yuan_c.fill();
+                    yuan_c.shadowBlur = 0;
+                }
+            }
+
+            function yuan_drawOps() {
+                var yuan_c = yuan_ctx;
+                var yuan_y = 770;
+
+                yuan_roundRect(24, yuan_y, 1152, 64, 14);
+                yuan_c.fillStyle = "rgba(255,255,255,0.028)";
+                yuan_c.fill();
+                yuan_c.lineWidth = 1;
+                yuan_c.strokeStyle = "rgba(255,255,255,0.07)";
+                yuan_c.stroke();
+
+                yuan_c.textAlign = "left";
+                yuan_c.textBaseline = "middle";
+                yuan_c.fillStyle = "#94a3b8";
+                yuan_c.font = "700 15px " + yuan_FONT;
+                yuan_c.fillText("运维保障", 46, yuan_y + 32);
+
+                var yuan_left = 134;
+                var yuan_gap = 12;
+                var yuan_w = (1042 - yuan_gap * 3) / 4;
+
+                for (var yuan_i = 0; yuan_i < yuan_ops.length; yuan_i++) {
+                    var yuan_x = yuan_left + yuan_i * (yuan_w + yuan_gap);
+
+                    yuan_roundRect(yuan_x, yuan_y + 15, yuan_w, 34, 8);
+                    yuan_c.fillStyle = "rgba(148,163,184,0.08)";
+                    yuan_c.fill();
+                    yuan_c.strokeStyle = "rgba(148,163,184,0.22)";
+                    yuan_c.lineWidth = 1;
+                    yuan_c.stroke();
+
+                    yuan_c.fillStyle = "rgba(226,232,240,0.8)";
+                    yuan_c.font = "12px " + yuan_FONT;
+                    yuan_c.fillText(yuan_ops[yuan_i], yuan_x + 14, yuan_y + 33);
+                }
+            }
+
+            function yuan_drawTip(yuan_b) {
+                var yuan_c = yuan_ctx;
+                var yuan_charsPerLine = 17;
+                var yuan_lines = [];
+
+                for (var yuan_i = 0; yuan_i < yuan_b.desc.length; yuan_i += yuan_charsPerLine) {
+                    yuan_lines.push(yuan_b.desc.substr(yuan_i, yuan_charsPerLine));
+                }
+
+                var yuan_lineH = 19;
+                var yuan_pad = 12;
+                yuan_c.font = "12.5px " + yuan_FONT;
+
+                var yuan_w = yuan_c.measureText(yuan_b.title).width;
+                for (var yuan_j = 0; yuan_j < yuan_lines.length; yuan_j++) {
+                    yuan_w = Math.max(yuan_w, yuan_c.measureText(yuan_lines[yuan_j]).width);
+                }
+                yuan_w += yuan_pad * 2;
+
+                var yuan_h = 30 + yuan_lines.length * yuan_lineH + yuan_pad;
+
+                var yuan_x = yuan_b.x + yuan_b.w + 12;
+                if (yuan_x + yuan_w > 1176) {
+                    yuan_x = yuan_b.x - yuan_w - 12;
+                }
+                if (yuan_x < 24) {
+                    yuan_x = 24;
+                }
+
+                var yuan_y = yuan_b.y + yuan_b.h / 2 - yuan_h / 2;
+                if (yuan_y < 88) {
+                    yuan_y = 88;
+                }
+                if (yuan_y + yuan_h > 838) {
+                    yuan_y = 838 - yuan_h;
+                }
+
+                yuan_roundRect(yuan_x, yuan_y, yuan_w, yuan_h, 10);
+                yuan_c.fillStyle = "rgba(15,23,42,0.97)";
+                yuan_c.fill();
+                yuan_c.lineWidth = 1;
+                yuan_c.strokeStyle = yuan_alpha(yuan_b.color, 0.7);
+                yuan_c.stroke();
+
+                yuan_c.textAlign = "left";
+                yuan_c.textBaseline = "alphabetic";
+                yuan_c.fillStyle = yuan_b.color;
+                yuan_c.font = "700 13px " + yuan_FONT;
+                yuan_c.fillText(yuan_b.title, yuan_x + yuan_pad, yuan_y + yuan_pad + 8);
+
+                yuan_c.fillStyle = "rgba(226,232,240,0.85)";
+                yuan_c.font = "12.5px " + yuan_FONT;
+                for (var yuan_k = 0; yuan_k < yuan_lines.length; yuan_k++) {
+                    yuan_c.fillText(yuan_lines[yuan_k], yuan_x + yuan_pad, yuan_y + yuan_pad + 30 + yuan_k * yuan_lineH);
+                }
+            }
+
+            function yuan_drawAll() {
+                var yuan_c = yuan_ctx;
+                var yuan_i;
+
+                var yuan_bg = yuan_c.createLinearGradient(0, 0, yuan_DW, yuan_DH);
+                yuan_bg.addColorStop(0, "#0b1224");
+                yuan_bg.addColorStop(0.55, "#0b1020");
+                yuan_bg.addColorStop(1, "#0a0f1d");
+                yuan_c.fillStyle = yuan_bg;
+                yuan_c.fillRect(0, 0, yuan_DW, yuan_DH);
+
+                /* 标题 */
+                yuan_c.textAlign = "left";
+                yuan_c.textBaseline = "alphabetic";
+                yuan_c.fillStyle = "#f8fafc";
+                yuan_c.font = "700 26px " + yuan_FONT;
+                yuan_c.fillText("电商全站系统架构图", 28, 46);
+
+                yuan_c.fillStyle = "rgba(148,163,184,0.9)";
+                yuan_c.font = "13px " + yuan_FONT;
+                yuan_c.fillText("用户层 → 接入层 → 业务服务层 → 中间件层 → 数据层 · 5 层 24 个组件 · 关泉才", 28, 70);
+
+                yuan_c.textAlign = "right";
+                yuan_c.fillStyle = "rgba(148,163,184,0.65)";
+                yuan_c.font = "12px " + yuan_FONT;
+                yuan_c.fillText("Canvas 2D 原生绘制 · 无图片 · 悬停可看说明", 1176, 70);
+                yuan_c.textAlign = "left";
+
+                /* 层带与方块 */
+                for (yuan_i = 0; yuan_i < yuan_spec.length; yuan_i++) {
+                    yuan_drawLayerBand(yuan_spec[yuan_i]);
+                }
+                for (yuan_i = 0; yuan_i < yuan_boxes.length; yuan_i++) {
+                    yuan_drawBox(yuan_boxes[yuan_i]);
+                }
+
+                /* 层间连线 */
+                for (yuan_i = 0; yuan_i < yuan_spec.length - 1; yuan_i++) {
+                    yuan_drawFlow(
+                        yuan_spec[yuan_i].y + yuan_spec[yuan_i].h,
+                        yuan_spec[yuan_i + 1].y
+                    );
+                }
+
+                /* 运维带 */
+                yuan_drawOps();
+
+                /* 悬停提示 */
+                if (yuan_hover) {
+                    yuan_drawTip(yuan_hover);
+                }
+            }
+
+            /* ================= 交互 ================= */
+            function yuan_toDesign(yuan_event) {
+                var yuan_rect = yuan_canvas.getBoundingClientRect();
+                return {
+                    x: (yuan_event.clientX - yuan_rect.left) / yuan_rect.width * yuan_DW,
+                    y: (yuan_event.clientY - yuan_rect.top) / yuan_rect.height * yuan_DH
+                };
+            }
+
+            function yuan_hitTest(yuan_x, yuan_y) {
+                for (var yuan_i = yuan_boxes.length - 1; yuan_i >= 0; yuan_i--) {
+                    var yuan_b = yuan_boxes[yuan_i];
+                    if (yuan_x >= yuan_b.x && yuan_x <= yuan_b.x + yuan_b.w &&
+                        yuan_y >= yuan_b.y && yuan_y <= yuan_b.y + yuan_b.h) {
+                        return yuan_b;
+                    }
+                }
+                return null;
+            }
+
+            function yuan_showDetail(yuan_b) {
+                if (!yuan_b) {
+                    yuan_detail.innerHTML = "当前未选中模块 —— 点击图中任意方块，查看它在电商系统中的职责。";
+                    return;
+                }
+                yuan_detail.innerHTML =
+                    "<b>" + yuan_b.title + "</b>" +
+                    '<span class="yuan_detailTag">' + yuan_b.layer + "</span>" +
+                    "<p>" + yuan_b.desc + "</p>";
+            }
+
+            yuan_canvas.addEventListener("mousemove", function (yuan_event) {
+                var yuan_pt = yuan_toDesign(yuan_event);
+                var yuan_target = yuan_hitTest(yuan_pt.x, yuan_pt.y);
+                yuan_hover = yuan_target;
+                yuan_canvas.style.cursor = yuan_target ? "pointer" : "default";
+            });
+
+            yuan_canvas.addEventListener("mouseleave", function () {
+                yuan_hover = null;
+                yuan_canvas.style.cursor = "default";
+            });
+
+            yuan_canvas.addEventListener("click", function (yuan_event) {
+                var yuan_pt = yuan_toDesign(yuan_event);
+                yuan_selected = yuan_hitTest(yuan_pt.x, yuan_pt.y);
+                yuan_showDetail(yuan_selected);
+            });
+
+            document.getElementById("yuan_btnReset").addEventListener("click", function () {
+                yuan_selected = null;
+                yuan_showDetail(null);
+            });
+
+            document.getElementById("yuan_btnDownload").addEventListener("click", function () {
+                var yuan_hoverBak = yuan_hover;
+                yuan_hover = null;
+                yuan_drawAll();
+
+                var yuan_link = document.createElement("a");
+                yuan_link.download = "电商全站系统架构图-关泉才.png";
+                yuan_link.href = yuan_canvas.toDataURL("image/png");
+                yuan_link.click();
+
+                yuan_hover = yuan_hoverBak;
+            });
+
+            /* ================= 尺寸与循环 ================= */
+            function yuan_resize() {
+                var yuan_cssW = Math.max(940, yuan_canvasBox.clientWidth);
+                var yuan_cssH = Math.round(yuan_cssW * yuan_DH / yuan_DW);
+                var yuan_dpr = Math.min(window.devicePixelRatio || 1, 2);
+                var yuan_scale = yuan_cssW / yuan_DW;
+
+                yuan_canvas.style.width = yuan_cssW + "px";
+                yuan_canvas.style.height = yuan_cssH + "px";
+                yuan_canvas.width = Math.round(yuan_cssW * yuan_dpr);
+                yuan_canvas.height = Math.round(yuan_cssH * yuan_dpr);
+                yuan_ctx.setTransform(yuan_dpr * yuan_scale, 0, 0, yuan_dpr * yuan_scale, 0, 0);
+
+                yuan_layout();
+                yuan_drawAll();
+            }
+
+            function yuan_tick(yuan_stamp) {
+                if (!yuan_last) {
+                    yuan_last = yuan_stamp;
+                }
+                var yuan_dt = Math.min(0.05, (yuan_stamp - yuan_last) / 1000);
+                yuan_last = yuan_stamp;
+
+                yuan_flowT += yuan_dt;
+                yuan_drawAll();
+
+                window.requestAnimationFrame(yuan_tick);
+            }
+
+            window.addEventListener("resize", function () {
+                window.clearTimeout(yuan_resizeTimer);
+                yuan_resizeTimer = window.setTimeout(yuan_resize, 160);
+            });
+
+            yuan_resize();
+            window.requestAnimationFrame(yuan_tick);
+        })();
+    </script>
+</body>
+</html>

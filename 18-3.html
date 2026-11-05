@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-05 14:05
+    使用的大模型：DeepSeek-V4.1-Flash
+    功能名称：基于知识库的智能客服系统架构图（SVG 矢量图 + 科研方向标注 + 导出 SVG）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于知识库的智能客服系统架构图 · SVG · 关泉才</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .yuan_hero {
+            padding: 46px 24px 36px;
+            text-align: center;
+            color: #fff;
+            background: radial-gradient(120% 150% at 50% 0%, #1d4ed8 0%, #101a33 55%, #070b16 100%);
+        }
+
+        .yuan_heroTitle {
+            margin: 0 0 12px;
+            font-size: clamp(23px, 3.6vw, 34px);
+            letter-spacing: 2px;
+        }
+
+        .yuan_heroTitle span {
+            background: linear-gradient(90deg, #22d3ee, #818cf8, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .yuan_heroText {
+            margin: 0 auto;
+            max-width: 820px;
+            font-size: 15px;
+            color: #cbd5e1;
+        }
+
+        .yuan_heroMeta {
+            margin: 16px 0 0;
+            font-size: 12.5px;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+        }
+
+        /* ---------- 画布 ---------- */
+        .yuan_wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .yuan_stage {
+            margin-top: 26px;
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            background: #0b1020;
+            overflow: hidden;
+            box-shadow: 0 18px 44px rgba(15, 23, 42, .26);
+        }
+
+        .yuan_svgBox {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .yuan_svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            min-width: 900px;
+        }
+
+        /* ---------- 工具条 ---------- */
+        .yuan_bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+            padding: 16px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_btn {
+            padding: 8px 16px;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: #1d4ed8;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .yuan_btn:hover {
+            transform: translateY(-2px);
+            background: #1d4ed8;
+            color: #fff;
+        }
+
+        .yuan_btn.yuan_primary {
+            color: #fff;
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+        }
+
+        .yuan_btn.yuan_primary:hover {
+            background: #1e40af;
+        }
+
+        .yuan_hint {
+            margin-left: auto;
+            font-size: 12.5px;
+            color: #8b93a7;
+        }
+
+        /* ---------- 说明区 ---------- */
+        .yuan_section {
+            margin-top: 34px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #1e3a8a;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #1d4ed8;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        .yuan_cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .yuan_card {
+            padding: 16px 18px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-top: 4px solid #1d4ed8;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_c1 { border-top-color: #22d3ee; }
+        .yuan_c2 { border-top-color: #818cf8; }
+        .yuan_c3 { border-top-color: #34d399; }
+        .yuan_c4 { border-top-color: #fbbf24; }
+        .yuan_c5 { border-top-color: #f472b6; }
+
+        .yuan_card h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+        }
+
+        .yuan_card p {
+            margin: 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .yuan_steps {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: yuan_step;
+        }
+
+        .yuan_steps li {
+            position: relative;
+            padding: 10px 16px 10px 46px;
+            margin-bottom: 10px;
+            font-size: 13.5px;
+            color: #33405c;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-left: 4px solid #1d4ed8;
+            border-radius: 10px;
+            counter-increment: yuan_step;
+        }
+
+        .yuan_steps li::before {
+            content: counter(yuan_step);
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 22px;
+            text-align: center;
+            color: #fff;
+            background: #1d4ed8;
+            border-radius: 50%;
+        }
+
+        .yuan_steps code,
+        .yuan_card code {
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            color: #a4161a;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .yuan_panel {
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_code {
+            padding: 16px 18px;
+            background: #0f172a;
+            color: #dbeafe;
+            border-radius: 10px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.65;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        @media (max-width: 780px) {
+            .yuan_hint {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1 class="yuan_heroTitle">基于知识库的 <span>智能客服系统架构图</span></h1>
+        <p class="yuan_heroText">
+            用原生 SVG 画的矢量架构图：用户渠道 → 会话网关 → 语义理解 → 知识检索 → RAG 生成 → 回复与转人工，
+            下方是知识库底座、模型层，以及面向科研的评测与实验体系。缩放不失真，可直接导出 SVG。
+        </p>
+        <p class="yuan_heroMeta">高级网页设计 · SVG 矢量绘图 · 科研方向 · 关泉才</p>
+    </header>
+
+    <main class="yuan_wrap">
+        <!-- ============ 画布 ============ -->
+        <section class="yuan_stage" aria-label="智能客服系统架构图">
+            <div class="yuan_svgBox">
+                <svg id="yuan_svg" class="yuan_svg" width="1200" height="820" viewBox="0 0 1200 820"
+                     xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="yuan_svgTitle">
+                    <title id="yuan_svgTitle">基于知识库的智能客服系统架构图（科研方向）</title>
+
+                    <defs>
+                        <linearGradient id="yuan_bg" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#0b1224"/>
+                            <stop offset="0.55" stop-color="#0b1020"/>
+                            <stop offset="1" stop-color="#080d19"/>
+                        </linearGradient>
+                        <marker id="yuan_arrow" viewBox="0 0 10 10" refX="9" refY="5"
+                                markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+                        </marker>
+                        <marker id="yuan_arrowPink" viewBox="0 0 10 10" refX="9" refY="5"
+                                markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#f472b6"/>
+                        </marker>
+                    </defs>
+
+                    <style>
+                        .yuan_band {
+                            fill: rgba(255, 255, 255, 0.03);
+                            stroke: rgba(255, 255, 255, 0.07);
+                            stroke-width: 1;
+                        }
+                        .yuan_bandResearch {
+                            fill: rgba(244, 114, 182, 0.06);
+                            stroke: rgba(244, 114, 182, 0.45);
+                            stroke-width: 1;
+                            stroke-dasharray: 7 5;
+                        }
+                        .yuan_layerName {
+                            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
+                        .yuan_layerEn {
+                            font-family: Consolas, "Courier New", monospace;
+                            font-size: 10px;
+                            letter-spacing: 1px;
+                            fill: rgba(148, 163, 184, 0.75);
+                        }
+                        .yuan_t1 {
+                            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+                            font-size: 15px;
+                            font-weight: 700;
+                            fill: #f1f5f9;
+                        }
+                        .yuan_t2 {
+                            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+                            font-size: 13px;
+                            font-weight: 700;
+                            fill: #f1f5f9;
+                        }
+                        .yuan_s1 {
+                            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+                            font-size: 11.5px;
+                            fill: rgba(203, 213, 225, 0.62);
+                        }
+                        .yuan_s2 {
+                            font-family: Consolas, "Microsoft YaHei", monospace;
+                            font-size: 10.5px;
+                            fill: rgba(148, 163, 184, 0.85);
+                        }
+                        .yuan_box {
+                            stroke-width: 1;
+                            transition: stroke-width 0.15s ease;
+                        }
+                        .yuan_cyan .yuan_box { fill: rgba(34, 211, 238, 0.12); stroke: rgba(34, 211, 238, 0.5); }
+                        .yuan_indigo .yuan_box { fill: rgba(129, 140, 248, 0.14); stroke: rgba(129, 140, 248, 0.55); }
+                        .yuan_green .yuan_box { fill: rgba(52, 211, 153, 0.12); stroke: rgba(52, 211, 153, 0.5); }
+                        .yuan_amber .yuan_box { fill: rgba(251, 191, 36, 0.1); stroke: rgba(251, 191, 36, 0.45); }
+                        .yuan_pink .yuan_box { fill: rgba(244, 114, 182, 0.1); stroke: rgba(244, 114, 182, 0.5); }
+
+                        .yuan_node:hover .yuan_box { stroke-width: 2.4; }
+                        .yuan_node:hover .yuan_t1,
+                        .yuan_node:hover .yuan_t2 { fill: #ffffff; }
+                        .yuan_node:focus { outline: none; }
+                        .yuan_node:focus .yuan_box { stroke-width: 2.4; }
+
+                        .yuan_link {
+                            fill: none;
+                            stroke: #94a3b8;
+                            stroke-opacity: 0.55;
+                            stroke-width: 1.4;
+                        }
+                        .yuan_linkDash {
+                            fill: none;
+                            stroke: #f472b6;
+                            stroke-opacity: 0.6;
+                            stroke-width: 1.3;
+                            stroke-dasharray: 5 4;
+                        }
+                        .yuan_linkAmber {
+                            fill: none;
+                            stroke: #fbbf24;
+                            stroke-opacity: 0.55;
+                            stroke-width: 1.3;
+                            stroke-dasharray: 5 4;
+                        }
+                        .yuan_mark { font-size: 12px; fill: #f472b6; }
+                        .yuan_linkLabel {
+                            font-family: "Microsoft YaHei", sans-serif;
+                            font-size: 10px;
+                            fill: rgba(244, 114, 182, 0.9);
+                        }
+                        .yuan_linkLabelAmber {
+                            font-family: "Microsoft YaHei", sans-serif;
+                            font-size: 10px;
+                            fill: rgba(251, 191, 36, 0.9);
+                        }
+                        .yuan_legend {
+                            font-family: "Microsoft YaHei", sans-serif;
+                            font-size: 12px;
+                            fill: rgba(148, 163, 184, 0.9);
+                        }
+                        .yuan_note {
+                            font-family: "Microsoft YaHei", sans-serif;
+                            font-size: 11px;
+                            fill: rgba(100, 116, 139, 0.9);
+                        }
+                    </style>
+
+                    <rect x="0" y="0" width="1200" height="820" fill="url(#yuan_bg)"/>
+
+                    <!-- 标题 -->
+                    <text x="32" y="46" class="yuan_t1" style="font-size:26px">基于知识库的智能客服系统架构图</text>
+                    <text x="32" y="70" class="yuan_s1" style="font-size:13px">科研方向 · 检索增强生成（RAG）驱动的问答系统 · 5 个层次 · 27 个组件</text>
+
+                    <!-- 图例 -->
+                    <line x1="742" y1="46" x2="776" y2="46" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+                    <text x="784" y="50" class="yuan_legend">在线请求</text>
+                    <line x1="858" y1="46" x2="892" y2="46" class="yuan_linkDash"/>
+                    <text x="900" y="50" class="yuan_legend">数据 / 模型调用</text>
+                    <rect x="1054" y="38" width="16" height="12" rx="3"
+                          fill="rgba(244,114,182,0.12)" stroke="rgba(244,114,182,0.6)" stroke-dasharray="4 3"/>
+                    <text x="1078" y="50" class="yuan_legend">科研重点</text>
+
+                    <!-- ================= 第一层：用户渠道 ================= -->
+                    <rect class="yuan_band" x="24" y="92" width="1152" height="84" rx="12"/>
+                    <text x="44" y="138" class="yuan_layerName" fill="#22d3ee">用户层</text>
+                    <text x="44" y="155" class="yuan_layerEn">CHANNEL</text>
+
+                    <g class="yuan_node yuan_cyan">
+                        <title>移动 App / 小程序：iOS、Android 与微信小程序渠</title>
+                        <rect class="yuan_box" x="176" y="110" width="230" height="48" rx="9"/>
+                        <text class="yuan_t1" x="192" y="132">移动 App / 小程序</text>
+                        <text class="yuan_s1" x="192" y="150">iOS · Android · 微信</text>
+                    </g>
+                    <g class="yuan_node yuan_cyan">
+                        <title>Web 商城 / H5：PC 与手机浏览器入口</title>
+                        <rect class="yuan_box" x="420" y="110" width="230" height="48" rx="9"/>
+                        <text class="yuan_t1" x="436" y="132">Web 商城 / H5</text>
+                        <text class="yuan_s1" x="436" y="150">PC 与手机浏览器</text>
+                    </g>
+                    <g class="yuan_node yuan_cyan">
+                        <title>企业微信 / 公众号：私域与工单入口</title>
+                        <rect class="yuan_box" x="664" y="110" width="230" height="48" rx="9"/>
+                        <text class="yuan_t1" x="680" y="132">企业微信 / 公众号</text>
+                        <text class="yuan_s1" x="680" y="150">私域社群 · 工单入口</text>
+                    </g>
+                    <g class="yuan_node yuan_cyan">
+                        <title>电话 / 在线工单：语音转写后进入同一套问答链路</title>
+                        <rect class="yuan_box" x="908" y="110" width="230" height="48" rx="9"/>
+                        <text class="yuan_t1" x="924" y="132">电话 / 在线工单</text>
+                        <text class="yuan_s1" x="924" y="150">语音转写 · 人工坐席</text>
+                    </g>
+
+                    <!-- ================= 第二层：在线服务链路 ================= -->
+                    <rect class="yuan_band" x="24" y="200" width="1152" height="118" rx="12"/>
+                    <text x="44" y="252" class="yuan_layerName" fill="#818cf8">在线链路</text>
+                    <text x="44" y="269" class="yuan_layerEn">PIPELINE</text>
+
+                    <!-- 渠道汇聚到网关 -->
+                    <path class="yuan_link" d="M291,158 Q291,190 261,208"/>
+                    <path class="yuan_link" d="M535,158 Q535,190 261,208"/>
+                    <path class="yuan_link" d="M779,158 Q779,190 261,208"/>
+                    <path class="yuan_link" d="M1023,158 Q1023,190 261,208"/>
+                    <circle cx="261" cy="208" r="3" fill="#94a3b8"/>
+                    <line x1="261" y1="208" x2="261" y2="220" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_indigo">
+                        <title>会话网关：WebSocket 长连接、鉴权与会话保持</title>
+                        <rect class="yuan_box" x="176" y="222" width="170" height="74" rx="10"/>
+                        <text class="yuan_t1" x="190" y="250">会话网关</text>
+                        <text class="yuan_s1" x="190" y="269">WebSocket 长连接</text>
+                        <text class="yuan_s2" x="190" y="286">鉴权 · 限流 · 会话保持</text>
+                    </g>
+
+                    <line x1="346" y1="259" x2="370" y2="259" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_indigo">
+                        <title>语义理解：意图识别、实体抽取与多轮对话状态追踪</title>
+                        <rect class="yuan_box" x="374" y="222" width="170" height="74" rx="10"/>
+                        <text class="yuan_t1" x="388" y="250">语义理解 NLU</text>
+                        <text class="yuan_s1" x="388" y="269">意图识别 · 实体抽取</text>
+                        <text class="yuan_s2" x="388" y="286">多轮状态追踪 DST</text>
+                        <text class="yuan_mark" x="526" y="240">★</text>
+                    </g>
+
+                    <line x1="544" y1="259" x2="568" y2="259" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_indigo">
+                        <title>知识检索：向量召回 + BM25 关键词召回，再经 Rerank 精排</title>
+                        <rect class="yuan_box" x="572" y="222" width="170" height="74" rx="10"/>
+                        <text class="yuan_t1" x="586" y="250">知识检索</text>
+                        <text class="yuan_s1" x="586" y="269">向量召回 + BM25</text>
+                        <text class="yuan_s2" x="586" y="286">融合排序 Rerank</text>
+                        <text class="yuan_mark" x="724" y="240">★</text>
+                    </g>
+
+                    <line x1="742" y1="259" x2="766" y2="259" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_indigo">
+                        <title>答案生成：把 Top-K 片段和对话历史交给大模型生成答案</title>
+                        <rect class="yuan_box" x="770" y="222" width="170" height="74" rx="10"/>
+                        <text class="yuan_t1" x="784" y="250">答案生成</text>
+                        <text class="yuan_s1" x="784" y="269">RAG + 大模型 LLM</text>
+                        <text class="yuan_s2" x="784" y="286">引用溯源 · 拒答</text>
+                        <text class="yuan_mark" x="922" y="240">★</text>
+                    </g>
+
+                    <line x1="940" y1="259" x2="964" y2="259" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_indigo">
+                        <title>回复与转人工：按渠道格式化输出，复杂问题转人工坐席</title>
+                        <rect class="yuan_box" x="968" y="222" width="170" height="74" rx="10"/>
+                        <text class="yuan_t1" x="982" y="250">回复 / 转人工</text>
+                        <text class="yuan_s1" x="982" y="269">富文本 · 卡片 · 语音</text>
+                        <text class="yuan_s2" x="982" y="286">坐席协同 · 会话总结</text>
+                    </g>
+
+                    <!-- ================= 第三层：知识库 ================= -->
+                    <rect class="yuan_band" x="24" y="340" width="1152" height="176" rx="12"/>
+                    <text x="44" y="420" class="yuan_layerName" fill="#34d399">知识库</text>
+                    <text x="44" y="437" class="yuan_layerEn">KB</text>
+
+                    <!-- 检索 ↔ 知识库 -->
+                    <text x="665" y="322" class="yuan_linkLabel">召回 Top-K</text>
+                    <line x1="657" y1="299" x2="657" y2="337" class="yuan_linkDash"
+                          marker-start="url(#yuan_arrowPink)" marker-end="url(#yuan_arrowPink)"/>
+
+                    <g class="yuan_node yuan_green">
+                        <title>文档接入：产品手册、FAQ、工单记录、网页与内部文档</title>
+                        <rect class="yuan_box" x="176" y="362" width="170" height="64" rx="9"/>
+                        <text class="yuan_t1" x="190" y="386">文档接入</text>
+                        <text class="yuan_s1" x="190" y="404">PDF · FAQ · 工单</text>
+                        <text class="yuan_s2" x="190" y="420">网页 · 内部知识</text>
+                    </g>
+
+                    <line x1="346" y1="394" x2="370" y2="394" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_green">
+                        <title>解析与清洗：结构化解析、去重、去噪与敏感信息脱敏</title>
+                        <rect class="yuan_box" x="374" y="362" width="170" height="64" rx="9"/>
+                        <text class="yuan_t1" x="388" y="386">解析与清洗</text>
+                        <text class="yuan_s1" x="388" y="404">结构化 · 去重去噪</text>
+                        <text class="yuan_s2" x="388" y="420">脱敏 · 质量过滤</text>
+                    </g>
+
+                    <line x1="544" y1="394" x2="568" y2="394" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_green">
+                        <title>切片与标注：按语义切块，人工标注问答对与难例</title>
+                        <rect class="yuan_box" x="572" y="362" width="170" height="64" rx="9"/>
+                        <text class="yuan_t1" x="586" y="386">切片与标注</text>
+                        <text class="yuan_s1" x="586" y="404">语义切块 · 问答对</text>
+                        <text class="yuan_s2" x="586" y="420">人工标注 · 难例</text>
+                    </g>
+
+                    <line x1="742" y1="394" x2="766" y2="394" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_green">
+                        <title>向量化：用 Embedding 模型把文本块编码成向量</title>
+                        <rect class="yuan_box" x="770" y="362" width="170" height="64" rx="9"/>
+                        <text class="yuan_t1" x="784" y="386">向量化</text>
+                        <text class="yuan_s1" x="784" y="404">Embedding 编码</text>
+                        <text class="yuan_s2" x="784" y="420">维度归一化</text>
+                    </g>
+
+                    <line x1="940" y1="394" x2="964" y2="394" class="yuan_link" marker-end="url(#yuan_arrow)"/>
+
+                    <g class="yuan_node yuan_green">
+                        <title>索引构建：写入向量库与倒排索引，支持增量更新</title>
+                        <rect class="yuan_box" x="968" y="362" width="170" height="64" rx="9"/>
+                        <text class="yuan_t1" x="982" y="386">索引构建</text>
+                        <text class="yuan_s1" x="982" y="404">向量索引 ANN</text>
+                        <text class="yuan_s2" x="982" y="420">增量更新 · 重建</text>
+                    </g>
+
+                    <!-- 存储 -->
+                    <g class="yuan_node yuan_green">
+                        <title>向量库：Milvus / FAISS，存放知识块向量，支持近似最近邻检索</title>
+                        <rect class="yuan_box" x="176" y="444" width="230" height="46" rx="8"/>
+                        <text class="yuan_t2" x="192" y="464">向量库</text>
+                        <text class="yuan_s2" x="192" y="481">Milvus / FAISS · HNSW</text>
+                    </g>
+                    <g class="yuan_node yuan_green">
+                        <title>倒排索引：BM25 关键词检索，与向量召回互补</title>
+                        <rect class="yuan_box" x="420" y="444" width="230" height="46" rx="8"/>
+                        <text class="yuan_t2" x="436" y="464">倒排索引</text>
+                        <text class="yuan_s2" x="436" y="481">BM25 · 关键词召回</text>
+                    </g>
+                    <g class="yuan_node yuan_green">
+                        <title>知识图谱：实体与关系，支撑多跳推理与关联推荐</title>
+                        <rect class="yuan_box" x="664" y="444" width="230" height="46" rx="8"/>
+                        <text class="yuan_t2" x="680" y="464">知识图谱</text>
+                        <text class="yuan_s2" x="680" y="481">实体关系 · 多跳推理</text>
+                    </g>
+                    <g class="yuan_node yuan_green">
+                        <title>版本与权限：知识版本管理、审核发布与访问控制</title>
+                        <rect class="yuan_box" x="908" y="444" width="230" height="46" rx="8"/>
+                        <text class="yuan_t2" x="924" y="464">版本与权限</text>
+                        <text class="yuan_s2" x="924" y="481">审核发布 · 灰度生效</text>
+                    </g>
+
+                    <!-- ================= 第四层：模型与基础设施 ================= -->
+                    <rect class="yuan_band" x="24" y="538" width="1152" height="92" rx="12"/>
+                    <text x="44" y="580" class="yuan_layerName" fill="#fbbf24">模型层</text>
+                    <text x="44" y="597" class="yuan_layerEn">MODEL / INFRA</text>
+
+                    <text x="672" y="531" class="yuan_linkLabelAmber">模型调用</text>
+                    <line x1="657" y1="536" x2="657" y2="520" class="yuan_linkAmber"
+                          marker-start="url(#yuan_arrowPink)" marker-end="url(#yuan_arrowPink)"/>
+
+                    <g class="yuan_node yuan_amber">
+                        <title>大模型 LLM：私有化部署或 API 调用，负责最终答案生成</title>
+                        <rect class="yuan_box" x="176" y="556" width="182" height="56" rx="8"/>
+                        <text class="yuan_t2" x="190" y="582">大模型 LLM</text>
+                        <text class="yuan_s2" x="190" y="599">私有化 / API</text>
+                    </g>
+                    <g class="yuan_node yuan_amber">
+                        <title>Embedding 模型：把问题与知识块编码到同一向量空间</title>
+                        <rect class="yuan_box" x="371" y="556" width="182" height="56" rx="8"/>
+                        <text class="yuan_t2" x="385" y="582">Embedding 模型</text>
+                        <text class="yuan_s2" x="385" y="599">BGE · Text2Vec</text>
+                    </g>
+                    <g class="yuan_node yuan_amber">
+                        <title>Rerank 模型：对召回的候选片段做交叉编码精排</title>
+                        <rect class="yuan_box" x="566" y="556" width="182" height="56" rx="8"/>
+                        <text class="yuan_t2" x="580" y="582">Rerank 模型</text>
+                        <text class="yuan_s2" x="580" y="599">Cross-Encoder</text>
+                    </g>
+                    <g class="yuan_node yuan_amber">
+                        <title>规则与兜底：敏感词、黑名单、置信度阈值与拒答策略</title>
+                        <rect class="yuan_box" x="761" y="556" width="182" height="56" rx="8"/>
+                        <text class="yuan_t2" x="775" y="582">规则与兜底</text>
+                        <text class="yuan_s2" x="775" y="599">阈值 · 拒答 · 敏感词</text>
+                    </g>
+                    <g class="yuan_node yuan_amber">
+                        <title>缓存与消息队列：答案缓存、会话队列、异步写日志</title>
+                        <rect class="yuan_box" x="956" y="556" width="182" height="56" rx="8"/>
+                        <text class="yuan_t2" x="970" y="582">缓存 · 消息队列</text>
+                        <text class="yuan_s2" x="970" y="599">Redis · Kafka</text>
+                    </g>
+
+                    <!-- ================= 第五层：科研方向 ================= -->
+                    <rect class="yuan_bandResearch" x="24" y="652" width="1152" height="128" rx="12"/>
+                    <text x="44" y="704" class="yuan_layerName" fill="#f472b6">科研方向</text>
+                    <text x="44" y="721" class="yuan_layerEn">RESEARCH</text>
+
+                    <g class="yuan_node yuan_pink">
+                        <title>数据集与标注：真实会话数据、人工标注、难例挖掘与数据增强</title>
+                        <rect class="yuan_box" x="176" y="674" width="230" height="84" rx="10"/>
+                        <text class="yuan_t1" x="192" y="702">数据集与标注</text>
+                        <text class="yuan_s1" x="192" y="722">真实会话 · 人工标注</text>
+                        <text class="yuan_s2" x="192" y="740">难例挖掘 · 数据增强</text>
+                        <text class="yuan_mark" x="390" y="692">★</text>
+                    </g>
+                    <g class="yuan_node yuan_pink">
+                        <title>离线评测：检索与生成的自动指标</title>
+                        <rect class="yuan_box" x="420" y="674" width="230" height="84" rx="10"/>
+                        <text class="yuan_t1" x="436" y="702">离线评测</text>
+                        <text class="yuan_s1" x="436" y="722">Recall@K · MRR · nDCG</text>
+                        <text class="yuan_s2" x="436" y="740">F1 · BLEU / ROUGE</text>
+                        <text class="yuan_mark" x="634" y="692">★</text>
+                    </g>
+                    <g class="yuan_node yuan_pink">
+                        <title>在线 A/B 实验：分流、显著性检验与业务指标对照</title>
+                        <rect class="yuan_box" x="664" y="674" width="230" height="84" rx="10"/>
+                        <text class="yuan_t1" x="680" y="702">在线 A/B 实验</text>
+                        <text class="yuan_s1" x="680" y="722">流量分流 · 显著性检验</text>
+                        <text class="yuan_s2" x="680" y="740">解决率 · 转人工率</text>
+                        <text class="yuan_mark" x="878" y="692">★</text>
+                    </g>
+                    <g class="yuan_node yuan_pink">
+                        <title>误差与可解释性：错误归因、引用一致性与注意力可视化</title>
+                        <rect class="yuan_box" x="908" y="674" width="230" height="84" rx="10"/>
+                        <text class="yuan_t1" x="924" y="702">误差与可解释性</text>
+                        <text class="yuan_s1" x="924" y="722">错误归因 · 引用一致性</text>
+                        <text class="yuan_s2" x="924" y="740">幻觉检测 · 可视化分析</text>
+                        <text class="yuan_mark" x="1122" y="692">★</text>
+                    </g>
+
+                    <text x="32" y="806" class="yuan_note">
+                        实线箭头：在线请求流；粉色虚线：检索与数据回流；黄色虚线：模型服务调用。★ 为科研重点模块。
+                    </text>
+                </svg>
+            </div>
+        </section>
+
+        <div class="yuan_bar">
+            <button class="yuan_btn yuan_primary" id="yuan_btnSvg" type="button">下载 SVG</button>
+            <span class="yuan_hint">整张图是 SVG 矢量元素（rect / path / text），放大不虚、可打印、可二次编辑</span>
+        </div>
+
+        <!-- ============ 分层说明 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">一、五层结构一览 <small>从渠道到知识底座</small></h2>
+            <div class="yuan_cards">
+                <div class="yuan_card yuan_c1">
+                    <h3>用户层</h3>
+                    <p>App、小程序、H5、企业微信、电话与工单，多渠道统一接入同一套问答能力。</p>
+                </div>
+                <div class="yuan_card yuan_c2">
+                    <h3>在线链路</h3>
+                    <p>会话网关 → 语义理解 → 知识检索 → 答案生成 → 回复/转人工，是用户能感知到的响应过程。</p>
+                </div>
+                <div class="yuan_card yuan_c3">
+                    <h3>知识库</h3>
+                    <p>文档接入、清洗、切片、向量化、索引构建，落到向量库、倒排索引、知识图谱与版本管理。</p>
+                </div>
+                <div class="yuan_card yuan_c4">
+                    <h3>模型层</h3>
+                    <p>大模型、Embedding、Rerank，加上规则兜底与缓存队列，决定回答质量与响应成本。</p>
+                </div>
+                <div class="yuan_card yuan_c5">
+                    <h3>科研方向</h3>
+                    <p>数据集与标注、离线评测、在线 A/B、误差与可解释性，构成可复现的实验闭环。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ 问答链路 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">二、一次提问是怎么被回答的 <small>RAG 的完整链路</small></h2>
+            <ol class="yuan_steps">
+                <li>用户在多渠道发起提问，<b>会话网关</b> 建立长连接，带上会话 ID 与身份信息，做鉴权与限流。</li>
+                <li><b>语义理解</b> 做意图分类、实体抽取与多轮状态追踪，判断该走知识问答还是转人工。</li>
+                <li><b>知识检索</b> 把问题向量化后做 ANN 召回，同时用 BM25 做关键词召回，两路结果融合后由 Rerank 精排。</li>
+                <li><b>答案生成</b> 把 Top-K 片段、对话历史与系统提示词拼装进 Prompt，由大模型生成带引用的答案。</li>
+                <li><b>校验与兜底</b>：置信度低于阈值、命中敏感词或问题超出知识范围时拒答并转人工，避免编造。</li>
+                <li><b>回流沉淀</b>：会话日志、点击与转人工行为进入数据集，驱动知识更新与模型迭代。</li>
+            </ol>
+        </section>
+
+        <!-- ============ 科研方向 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">三、科研方向可以做什么 <small>★ 标注的模块</small></h2>
+            <div class="yuan_cards">
+                <div class="yuan_card yuan_c1">
+                    <h3>检索增强生成（RAG）</h3>
+                    <p>研究切片粒度、混合检索权重、重排序模型与上下文压缩对答案质量的影响，常用指标 <code>Recall@K</code>、<code>MRR</code>、<code>nDCG</code>。</p>
+                </div>
+                <div class="yuan_card yuan_c2">
+                    <h3>对话理解</h3>
+                    <p>小样本意图识别、多轮指代消解、槽位填充与状态追踪，指标看 <code>F1</code> 与意图混淆矩阵。</p>
+                </div>
+                <div class="yuan_card yuan_c3">
+                    <h3>可信回答</h3>
+                    <p>事实一致性、引用溯源、幻觉检测与拒答策略，是智能客服能否真正落地的关键问题。</p>
+                </div>
+                <div class="yuan_card yuan_c5">
+                    <h3>评测与实验</h3>
+                    <p>离线基准 + 在线 A/B 双轨评测，配合统计显著性检验与误差归因，保证实验结论可复现。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ SVG 要点 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">四、SVG 画图的关键点 <small>矢量、可缩放、可导出</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_code">&lt;!-- 1. 用 viewBox 定坐标系，宽高自适应，缩放不失真 --&gt;
+&lt;svg viewBox="0 0 1200 820" width="1200" height="820"&gt;
+
+  &lt;!-- 2. 箭头靠 marker 定义，线条直接复用 --&gt;
+  &lt;defs&gt;
+    &lt;marker id="yuan_arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse"&gt;
+      &lt;path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/&gt;
+    &lt;/marker&gt;
+  &lt;/defs&gt;
+
+  &lt;!-- 3. 节点 = 圆角矩形 + 两行文字，整组可悬停 --&gt;
+  &lt;g class="yuan_node yuan_indigo"&gt;
+    &lt;title&gt;知识检索：向量召回 + BM25 融合排序&lt;/title&gt;
+    &lt;rect class="yuan_box" x="572" y="222" width="170" height="74" rx="10"/&gt;
+    &lt;text class="yuan_t1" x="586" y="250"&gt;知识检索&lt;/text&gt;
+    &lt;text class="yuan_s1" x="586" y="269"&gt;向量召回 + BM25&lt;/text&gt;
+  &lt;/g&gt;
+
+  &lt;!-- 4. 连线 = path + marker，曲线用二次贝塞尔 Q --&gt;
+  &lt;path class="yuan_link" d="M291,158 Q291,190 261,208"
+        marker-end="url(#yuan_arrow)"/&gt;
+&lt;/svg&gt;</div>
+            </div>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · SVG 架构图练习，纯原生实现</p>
+    </main>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var yuan_svg = document.getElementById("yuan_svg");
+            var yuan_btnSvg = document.getElementById("yuan_btnSvg");
+
+            yuan_btnSvg.addEventListener("click", function () {
+                var yuan_source = new XMLSerializer().serializeToString(yuan_svg);
+                var yuan_blob = new Blob(
+                    ['<?xml version="1.0" encoding="UTF-8"?>\n' + yuan_source],
+                    { type: "image/svg+xml;charset=utf-8" }
+                );
+                var yuan_url = URL.createObjectURL(yuan_blob);
+                var yuan_link = document.createElement("a");
+
+                yuan_link.href = yuan_url;
+                yuan_link.download = "智能客服系统架构图-关泉才.svg";
+                yuan_link.click();
+
+                URL.revokeObjectURL(yuan_url);
+            });
+        })();
+    </script>
+</body>
+</html>

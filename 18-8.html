@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-05 14:52
+    使用的大模型：DeepSeek-V4.1-Flash
+    功能名称：智能客服运营数据大屏 —— 三列布局 · 中国地图 · 深色主题（ECharts 为本地文件）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能客服运营数据大屏 · 关泉才</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            color: #dbeafe;
+            background: #040a14;
+            background-image:
+                radial-gradient(120% 90% at 50% 0%, rgba(14, 116, 144, .28) 0%, rgba(4, 10, 20, 0) 55%),
+                radial-gradient(90% 70% at 100% 100%, rgba(29, 78, 216, .16) 0%, rgba(4, 10, 20, 0) 60%);
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .yuan_screen {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100%;
+            padding: 12px 16px 14px;
+        }
+
+        .yuan_head {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            height: 58px;
+            padding: 0 18px;
+            border: 1px solid rgba(56, 189, 248, .18);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(10, 32, 56, .9), rgba(5, 14, 26, .72));
+            box-shadow: inset 0 0 30px rgba(14, 116, 144, .18);
+        }
+
+        .yuan_head::before,
+        .yuan_head::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0), rgba(56, 189, 248, .65));
+        }
+
+        .yuan_head::before {
+            left: 30%;
+        }
+
+        .yuan_head::after {
+            right: 30%;
+            transform: rotate(180deg);
+        }
+
+        .yuan_headTitle {
+            margin: 0;
+            font-size: clamp(18px, 1.9vw, 26px);
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-align: center;
+            background: linear-gradient(180deg, #e0f7ff 20%, #38bdf8 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 24px rgba(56, 189, 248, .25);
+            white-space: nowrap;
+        }
+
+        .yuan_headSide {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 220px;
+            font-size: 12px;
+            color: #6f8bab;
+            letter-spacing: .5px;
+        }
+
+        .yuan_headRight {
+            justify-content: flex-end;
+            font-family: Consolas, "Courier New", monospace;
+            color: #8fd0ec;
+        }
+
+        .yuan_live {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #34d399;
+            box-shadow: 0 0 10px #34d399;
+            animation: yuan_blink 1.6s infinite;
+        }
+
+        @keyframes yuan_blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .25; }
+        }
+
+        /* ---------- 三列 ---------- */
+        .yuan_cols {
+            display: grid;
+            grid-template-columns: 340px minmax(0, 1fr) 340px;
+            gap: 10px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .yuan_col {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+        }
+
+        /* ---------- 面板 ---------- */
+        .yuan_panel {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            padding: 9px 12px 10px;
+            border: 1px solid rgba(56, 189, 248, .16);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(9, 27, 47, .86), rgba(5, 14, 26, .72));
+            box-shadow: inset 0 0 42px rgba(14, 116, 144, .12);
+        }
+
+        .yuan_panel::before,
+        .yuan_panel::after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 1px solid rgba(56, 189, 248, .55);
+            pointer-events: none;
+        }
+
+        .yuan_panel::before {
+            top: -1px;
+            left: -1px;
+            border-right: 0;
+            border-bottom: 0;
+        }
+
+        .yuan_panel::after {
+            right: -1px;
+            bottom: -1px;
+            border-top: 0;
+            border-left: 0;
+        }
+
+        .yuan_panelTitle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 4px;
+            font-size: 13.5px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #9fd8f5;
+        }
+
+        .yuan_panelTitle::before {
+            content: "";
+            width: 3px;
+            height: 13px;
+            border-radius: 2px;
+            background: linear-gradient(180deg, #22d3ee, #1d4ed8);
+        }
+
+        .yuan_panelTitle span {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 0;
+            color: #5f7896;
+        }
+
+        .yuan_chart {
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+        }
+
+        /* 中列比例 */
+        .yuan_panelMap {
+            flex: 1.75;
+        }
+
+        .yuan_panelMid {
+            flex: 1;
+        }
+
+        /* ---------- KPI ---------- */
+        .yuan_kpis {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .yuan_kpi {
+            position: relative;
+            padding: 10px 12px;
+            border: 1px solid rgba(56, 189, 248, .18);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(12, 34, 58, .9), rgba(6, 16, 30, .7));
+            text-align: center;
+        }
+
+        .yuan_kpiLabel {
+            font-size: 11.5px;
+            color: #6f8bab;
+            letter-spacing: 1px;
+        }
+
+        .yuan_kpiValue {
+            margin-top: 2px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: clamp(18px, 1.8vw, 26px);
+            font-weight: 700;
+            color: #e0f7ff;
+            text-shadow: 0 0 18px rgba(34, 211, 238, .45);
+        }
+
+        .yuan_kpiUnit {
+            margin-left: 3px;
+            font-size: 11px;
+            color: #5f7896;
+            text-shadow: none;
+        }
+
+        .yuan_kpi.yuan_warn .yuan_kpiValue {
+            color: #fde68a;
+            text-shadow: 0 0 18px rgba(251, 191, 36, .4);
+        }
+
+        /* ---------- 日志 ---------- */
+        .yuan_logs {
+            flex: 1;
+            min-height: 0;
+            margin: 0;
+            padding: 0 2px 0 0;
+            list-style: none;
+            overflow: hidden;
+        }
+
+        .yuan_logItem {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 5px 0;
+            font-size: 12px;
+            color: #9fb4cc;
+            border-bottom: 1px dashed rgba(56, 189, 248, .1);
+            animation: yuan_slide .5s ease;
+        }
+
+        .yuan_logItem .yuan_logTime {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 11px;
+            color: #56718f;
+        }
+
+        .yuan_logItem.yuan_warn {
+            color: #fcd34d;
+        }
+
+        .yuan_logItem.yuan_ok {
+            color: #6ee7b7;
+        }
+
+        @keyframes yuan_slide {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---------- 小屏 ---------- */
+        @media (max-width: 1280px) {
+            .yuan_cols {
+                grid-template-columns: 290px minmax(0, 1fr) 290px;
+            }
+        }
+
+        @media (max-width: 1080px) {
+            body {
+                overflow: auto;
+            }
+
+            .yuan_screen {
+                height: auto;
+            }
+
+            .yuan_head {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 10px 14px;
+            }
+
+            .yuan_head::before,
+            .yuan_head::after {
+                display: none;
+            }
+
+            .yuan_headSide {
+                min-width: 0;
+            }
+
+            .yuan_cols {
+                grid-template-columns: 1fr;
+            }
+
+            .yuan_chart {
+                height: 240px;
+                flex: none;
+            }
+
+            .yuan_panelMap {
+                flex: none;
+            }
+
+            .yuan_panelMap .yuan_chart {
+                height: 320px;
+            }
+
+            .yuan_kpis {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .yuan_logs {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="yuan_screen">
+        <header class="yuan_head">
+            <div class="yuan_headSide">
+                <span class="yuan_live"></span>
+                系统运行中 · 关泉才 24001010301
+            </div>
+            <h1 class="yuan_headTitle">智能客服运营数据大屏</h1>
+            <div class="yuan_headSide yuan_headRight" id="yuan_clock">---- -- ----</div>
+        </header>
+
+        <main class="yuan_cols">
+            <!-- ============ 左列 ============ -->
+            <section class="yuan_col">
+                <section class="yuan_panel" style="flex:1.25">
+                    <h2 class="yuan_panelTitle">会话量趋势<span>近 12 小时</span></h2>
+                    <div class="yuan_chart" id="yuan_chartTrend"></div>
+                </section>
+
+                <section class="yuan_panel">
+                    <h2 class="yuan_panelTitle">问题类型分布<span>占比 %</span></h2>
+                    <div class="yuan_chart" id="yuan_chartTopic"></div>
+                </section>
+
+                <section class="yuan_panel">
+                    <h2 class="yuan_panelTitle">渠道来源占比<span>本周</span></h2>
+                    <div class="yuan_chart" id="yuan_chartChannel"></div>
+                </section>
+            </section>
+
+            <!-- ============ 中列 ============ -->
+            <section class="yuan_col">
+                <section class="yuan_panel yuan_panelMap">
+                    <h2 class="yuan_panelTitle">全国会话热力分布<span>单位：次 / 日</span></h2>
+                    <div class="yuan_chart" id="yuan_chartMap"></div>
+                </section>
+
+                <section class="yuan_kpis">
+                    <div class="yuan_kpi">
+                        <div class="yuan_kpiLabel">今日会话总量</div>
+                        <div class="yuan_kpiValue" id="yuan_kpiTotal">12,846<span class="yuan_kpiUnit">次</span></div>
+                    </div>
+                    <div class="yuan_kpi">
+                        <div class="yuan_kpiLabel">平均响应时长</div>
+                        <div class="yuan_kpiValue" id="yuan_kpiResp">1.24<span class="yuan_kpiUnit">s</span></div>
+                    </div>
+                    <div class="yuan_kpi">
+                        <div class="yuan_kpiLabel">一次解决率</div>
+                        <div class="yuan_kpiValue" id="yuan_kpiSolve">86.5<span class="yuan_kpiUnit">%</span></div>
+                    </div>
+                    <div class="yuan_kpi yuan_warn">
+                        <div class="yuan_kpiLabel">转人工率</div>
+                        <div class="yuan_kpiValue" id="yuan_kpiHand">24.3<span class="yuan_kpiUnit">%</span></div>
+                    </div>
+                </section>
+
+                <section class="yuan_panel yuan_panelMid">
+                    <h2 class="yuan_panelTitle">近 24 小时实时接入<span>每 2 分钟采样</span></h2>
+                    <div class="yuan_chart" id="yuan_chartRealtime"></div>
+                </section>
+            </section>
+
+            <!-- ============ 右列 ============ -->
+            <section class="yuan_col">
+                <section class="yuan_panel">
+                    <h2 class="yuan_panelTitle">服务满意度<span>今日</span></h2>
+                    <div class="yuan_chart" id="yuan_chartGauge"></div>
+                </section>
+
+                <section class="yuan_panel">
+                    <h2 class="yuan_panelTitle">坐席接起量排行<span>TOP 5</span></h2>
+                    <div class="yuan_chart" id="yuan_chartAgent"></div>
+                </section>
+
+                <section class="yuan_panel">
+                    <h2 class="yuan_panelTitle">实时告警<span>最新 7 条</span></h2>
+                    <ul class="yuan_logs" id="yuan_logs"></ul>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <script src="./cdn/echarts.min.js"></script>
+    <script src="./cdn/map/china.js"></script>
+    <script>
+        (function () {
+            "use strict";
+
+            /* ================= 主题常量 ================= */
+            var yuan_axisLabel = { color: "#7d9ab8", fontSize: 11 };
+            var yuan_axisLine = { lineStyle: { color: "rgba(56,189,248,0.22)" } };
+            var yuan_splitLine = { lineStyle: { color: "rgba(56,189,248,0.1)" } };
+            var yuan_tooltip = {
+                backgroundColor: "rgba(6,18,35,0.94)",
+                borderColor: "rgba(56,189,248,0.35)",
+                borderWidth: 1,
+                textStyle: { color: "#dbeafe", fontSize: 12 },
+                extraCssText: "box-shadow:0 8px 24px rgba(0,0,0,.5);"
+            };
+
+            function yuan_gradient(yuan_from, yuan_to) {
+                return new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: yuan_from },
+                    { offset: 1, color: yuan_to }
+                ]);
+            }
+
+            function yuan_gradientX(yuan_from, yuan_to) {
+                return new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                    { offset: 0, color: yuan_from },
+                    { offset: 1, color: yuan_to }
+                ]);
+            }
+
+            /* ================= 数据 ================= */
+            var yuan_hours = ["00", "02", "04", "06", "08", "10", "12", "14", "16", "18", "20", "22"];
+            var yuan_bot = [420, 380, 350, 520, 860, 1120, 1240, 1180, 1320, 1460, 1380, 980];
+            var yuan_human = [90, 70, 60, 120, 210, 280, 310, 300, 340, 380, 350, 240];
+
+            var yuan_topics = [
+                { name: "订单与物流", value: 32 },
+                { name: "退换货", value: 24 },
+                { name: "商品咨询", value: 18 },
+                { name: "账号与支付", value: 14 },
+                { name: "其他", value: 12 }
+            ];
+
+            var yuan_channels = [
+                { name: "小程序", value: 42 },
+                { name: "App", value: 28 },
+                { name: "H5", value: 18 },
+                { name: "企业微信", value: 12 }
+            ];
+
+            var yuan_provinces = [
+                { name: "广东", value: 5200 }, { name: "江苏", value: 3400 },
+                { name: "浙江", value: 3100 }, { name: "山东", value: 2600 },
+                { name: "上海", value: 2400 }, { name: "北京", value: 2200 },
+                { name: "四川", value: 1900 }, { name: "河南", value: 1700 },
+                { name: "湖北", value: 1500 }, { name: "福建", value: 1400 },
+                { name: "湖南", value: 1300 }, { name: "河北", value: 1200 },
+                { name: "安徽", value: 1100 }, { name: "辽宁", value: 900 },
+                { name: "陕西", value: 850 }, { name: "江西", value: 800 },
+                { name: "重庆", value: 780 }, { name: "天津", value: 700 },
+                { name: "广西", value: 650 }, { name: "云南", value: 600 },
+                { name: "山西", value: 520 }, { name: "黑龙江", value: 480 },
+                { name: "吉林", value: 420 }, { name: "贵州", value: 400 },
+                { name: "内蒙古", value: 360 }, { name: "新疆", value: 320 },
+                { name: "甘肃", value: 280 }, { name: "海南", value: 260 },
+                { name: "宁夏", value: 180 }, { name: "青海", value: 150 },
+                { name: "西藏", value: 90 }, { name: "香港", value: 220 },
+                { name: "澳门", value: 80 }, { name: "台湾", value: 300 }
+            ];
+
+            var yuan_cities = [
+                { name: "深圳", coord: [114.06, 22.55], value: 3200 },
+                { name: "广州", coord: [113.26, 23.13], value: 3100 },
+                { name: "上海", coord: [121.47, 31.23], value: 2400 },
+                { name: "北京", coord: [116.40, 39.90], value: 2200 },
+                { name: "成都", coord: [104.07, 30.67], value: 1900 },
+                { name: "杭州", coord: [120.15, 30.28], value: 1800 },
+                { name: "武汉", coord: [114.30, 30.59], value: 1500 },
+                { name: "西安", coord: [108.94, 34.34], value: 850 }
+            ];
+
+            var yuan_realtime = [
+                210, 186, 168, 152, 148, 176, 235, 320, 468, 640, 820, 960,
+                1040, 980, 1120, 1240, 1180, 1320, 1460, 1380, 1220, 1040, 860, 640
+            ];
+            var yuan_realtimeX = [];
+            for (var yuan_h = 0; yuan_h < 24; yuan_h++) {
+                yuan_realtimeX.push((yuan_h < 10 ? "0" : "") + yuan_h + ":00");
+            }
+
+            var yuan_agents = ["张伟", "李娜", "王强", "赵敏", "陈晨"];
+            var yuan_agentValues = [286, 264, 241, 218, 195];
+
+            /* ================= 图表实例 ================= */
+            var yuan_charts = {};
+
+            function yuan_init(yuan_id) {
+                var yuan_el = document.getElementById(yuan_id);
+                if (!yuan_el) {
+                    return null;
+                }
+                var yuan_chart = echarts.init(yuan_el, null, { renderer: "canvas" });
+                yuan_charts[yuan_id] = yuan_chart;
+                return yuan_chart;
+            }
+
+            /* ---------- 1. 会话量趋势 ---------- */
+            var yuan_chartTrend = yuan_init("yuan_chartTrend");
+            if (yuan_chartTrend) {
+                yuan_chartTrend.setOption({
+                    tooltip: Object.assign({ trigger: "axis" }, yuan_tooltip),
+                    legend: {
+                        top: 0,
+                        right: 0,
+                        itemWidth: 10,
+                        itemHeight: 6,
+                        icon: "roundRect",
+                        textStyle: { color: "#7d9ab8", fontSize: 11 },
+                        data: ["机器人会话", "人工会话"]
+                    },
+                    grid: { left: 4, right: 12, top: 34, bottom: 2, containLabel: true },
+                    xAxis: {
+                        type: "category",
+                        boundaryGap: false,
+                        data: yuan_hours,
+                        axisTick: { show: false },
+                        axisLine: yuan_axisLine,
+                        axisLabel: yuan_axisLabel
+                    },
+                    yAxis: {
+                        type: "value",
+                        axisLine: { show: false },
+                        axisLabel: yuan_axisLabel,
+                        splitLine: yuan_splitLine
+                    },
+                    series: [
+                        {
+                            name: "机器人会话",
+                            type: "line",
+                            smooth: true,
+                            symbol: "circle",
+                            symbolSize: 4,
+                            data: yuan_bot,
+                            itemStyle: { color: "#22d3ee" },
+                            lineStyle: { width: 2, color: "#22d3ee" },
+                            areaStyle: { color: yuan_gradient("rgba(34,211,238,.4)", "rgba(34,211,238,0)") }
+                        },
+                        {
+                            name: "人工会话",
+                            type: "line",
+                            smooth: true,
+                            symbol: "circle",
+                            symbolSize: 4,
+                            data: yuan_human,
+                            itemStyle: { color: "#a78bfa" },
+                            lineStyle: { width: 2, color: "#a78bfa" },
+                            areaStyle: { color: yuan_gradient("rgba(167,139,250,.32)", "rgba(167,139,250,0)") }
+                        }
+                    ]
+                });
+            }
+
+            /* ---------- 2. 问题类型 ---------- */
+            var yuan_chartTopic = yuan_init("yuan_chartTopic");
+            if (yuan_chartTopic) {
+                yuan_chartTopic.setOption({
+                    tooltip: Object.assign({ trigger: "axis", axisPointer: { type: "shadow" } }, yuan_tooltip),
+                    grid: { left: 4, right: 42, top: 8, bottom: 2, containLabel: true },
+                    xAxis: {
+                        type: "value",
+                        max: 40,
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        axisLabel: { show: false },
+                        splitLine: yuan_splitLine
+                    },
+                    yAxis: {
+                        type: "category",
+                        inverse: true,
+                        data: yuan_topics.map(function (yuan_item) { return yuan_item.name; }),
+                        axisTick: { show: false },
+                        axisLine: yuan_axisLine,
+                        axisLabel: { color: "#9fb4cc", fontSize: 11.5 }
+                    },
+                    series: [
+                        {
+                            type: "bar",
+                            barWidth: 10,
+                            data: yuan_topics.map(function (yuan_item) { return yuan_item.value; }),
+                            itemStyle: {
+                                borderRadius: [0, 5, 5, 0],
+                                color: yuan_gradientX("#1d4ed8", "#22d3ee")
+                            },
+                            label: {
+                                show: true,
+                                position: "right",
+                                formatter: "{c}%",
+                                color: "#8fd0ec",
+                                fontSize: 11
+                            }
+                        }
+                    ]
+                });
+            }
+
+            /* ---------- 3. 渠道占比 ---------- */
+            var yuan_chartChannel = yuan_init("yuan_chartChannel");
+            if (yuan_chartChannel) {
+                yuan_chartChannel.setOption({
+                    tooltip: Object.assign({ trigger: "item" }, yuan_tooltip),
+                    legend: {
+                        bottom: 0,
+                        icon: "circle",
+                        itemWidth: 8,
+                        itemHeight: 8,
+                        itemGap: 12,
+                        textStyle: { color: "#7d9ab8", fontSize: 11 }
+                    },
+                    series: [
+                        {
+                            type: "pie",
+                            radius: ["48%", "70%"],
+                            center: ["50%", "44%"],
+                            avoidLabelOverlap: true,
+                            itemStyle: { borderColor: "rgba(4,10,20,.9)", borderWidth: 2 },
+                            label: {
+                                color: "#8fd0ec",
+                                fontSize: 11,
+                                formatter: "{b}\n{d}%"
+                            },
+                            labelLine: { length: 8, length2: 10, lineStyle: { color: "rgba(56,189,248,.4)" } },
+                            color: ["#22d3ee", "#4f46e5", "#34d399", "#fbbf24"],
+                            data: yuan_channels
+                        }
+                    ]
+                });
+            }
+
+            /* ---------- 4. 中国地图 ---------- */
+            var yuan_chartMap = yuan_init("yuan_chartMap");
+
+            if (yuan_chartMap) {
+                if (typeof window.yuan_chinaGeo === "undefined") {
+                    yuan_chartMap.setOption({
+                        title: {
+                            text: "地图数据未加载\n请确认 cdn/map/china.js 存在",
+                            left: "center",
+                            top: "middle",
+                            textStyle: { color: "#f87171", fontSize: 13, lineHeight: 22 }
+                        }
+                    });
+                } else {
+                    echarts.registerMap("china", window.yuan_chinaGeo);
+
+                    yuan_chartMap.setOption({
+                        tooltip: Object.assign({
+                            trigger: "item",
+                            formatter: function (yuan_param) {
+                                var yuan_v = yuan_param.value;
+                                if (Array.isArray(yuan_v)) {
+                                    yuan_v = yuan_v[2];
+                                }
+                                if (yuan_v === undefined || yuan_v === null || isNaN(yuan_v)) {
+                                    return yuan_param.name;
+                                }
+                                return yuan_param.name + "<br/>会话量：" + yuan_v + " 次";
+                            }
+                        }, yuan_tooltip),
+                        visualMap: {
+                            min: 0,
+                            max: 5200,
+                            left: 16,
+                            bottom: 16,
+                            calculable: false,
+                            itemWidth: 10,
+                            itemHeight: 76,
+                            inRange: { color: ["#0a2740", "#0f5b7d", "#1d9bbf", "#43e0f5"] },
+                            text: ["高", "低"],
+                            textStyle: { color: "#7d9ab8", fontSize: 11 }
+                        },
+                        geo: {
+                            map: "china",
+                            roam: true,
+                            zoom: 1.05,
+                            top: 4,
+                            bottom: 10,
+                            itemStyle: {
+                                areaColor: "#0a2440",
+                                borderColor: "rgba(56,189,248,0.38)",
+                                borderWidth: 0.8,
+                                shadowColor: "rgba(34,211,238,0.35)",
+                                shadowBlur: 12
+                            },
+                            emphasis: {
+                                itemStyle: { areaColor: "#155e8a" },
+                                label: { show: true, color: "#ffffff", fontSize: 11 }
+                            }
+                        },
+                        series: [
+                            {
+                                name: "会话量",
+                                type: "map",
+                                map: "china",
+                                geoIndex: 0,
+                                data: yuan_provinces,
+                                emphasis: {
+                                    label: { show: true, color: "#ffffff", fontSize: 11 },
+                                    itemStyle: { areaColor: "#1a6f95" }
+                                }
+                            },
+                            {
+                                name: "重点城市",
+                                type: "effectScatter",
+                                coordinateSystem: "geo",
+                                geoIndex: 0,
+                                rippleEffect: { scale: 3.4, brushType: "stroke" },
+                                symbolSize: function (yuan_val) {
+                                    return Math.max(6, yuan_val[2] / 520);
+                                },
+                                itemStyle: {
+                                    color: "#67e8f9",
+                                    shadowBlur: 10,
+                                    shadowColor: "#22d3ee"
+                                },
+                                data: yuan_cities.map(function (yuan_city) {
+                                    return {
+                                        name: yuan_city.name,
+                                        value: [yuan_city.coord[0], yuan_city.coord[1], yuan_city.value]
+                                    };
+                                })
+                            }
+                        ]
+                    });
+                }
+            }
+
+            /* ---------- 5. 近 24 小时 ---------- */
+            var yuan_chartRealtime = yuan_init("yuan_chartRealtime");
+            if (yuan_chartRealtime) {
+                yuan_chartRealtime.setOption({
+                    tooltip: Object.assign({ trigger: "axis" }, yuan_tooltip),
+                    grid: { left: 4, right: 14, top: 14, bottom: 2, containLabel: true },
+                    xAxis: {
+                        type: "category",
+                        boundaryGap: false,
+                        data: yuan_realtimeX,
+                        axisTick: { show: false },
+                        axisLine: yuan_axisLine,
+                        axisLabel: { color: "#7d9ab8", fontSize: 10, interval: 3 }
+                    },
+                    yAxis: {
+                        type: "value",
+                        axisLine: { show: false },
+                        axisLabel: yuan_axisLabel,
+                        splitLine: yuan_splitLine
+                    },
+                    series: [
+                        {
+                            name: "接入量",
+                            type: "line",
+                            smooth: true,
+                            symbol: "none",
+                            data: yuan_realtime,
+                            lineStyle: { width: 2, color: "#38bdf8" },
+                            areaStyle: { color: yuan_gradient("rgba(56,189,248,.45)", "rgba(56,189,248,0)") },
+                            markPoint: {
+                                symbol: "pin",
+                                symbolSize: 34,
+                                label: { color: "#04121f", fontSize: 10 },
+                                itemStyle: { color: "#67e8f9" },
+                                data: [{ type: "max", name: "峰值" }]
+                            }
+                        }
+                    ]
+                });
+            }
+
+            /* ---------- 6. 满意度仪表盘 ---------- */
+            var yuan_chartGauge = yuan_init("yuan_chartGauge");
+            if (yuan_chartGauge) {
+                yuan_chartGauge.setOption({
+                    series: [
+                        {
+                            type: "gauge",
+                            startAngle: 210,
+                            endAngle: -30,
+                            min: 0,
+                            max: 100,
+                            radius: "88%",
+                            center: ["50%", "56%"],
+                            progress: {
+                                show: true,
+                                width: 9,
+                                itemStyle: { color: yuan_gradientX("#22d3ee", "#34d399") }
+                            },
+                            axisLine: { lineStyle: { width: 9, color: [[1, "rgba(56,189,248,.14)"]] } },
+                            axisTick: { show: false },
+                            splitLine: { length: 9, lineStyle: { color: "rgba(56,189,248,.32)", width: 1 } },
+                            axisLabel: { color: "#5f7896", fontSize: 10, distance: 12 },
+                            pointer: { width: 3, length: "58%", itemStyle: { color: "#67e8f9" } },
+                            anchor: { show: true, size: 8, itemStyle: { color: "#67e8f9" } },
+                            title: { offsetCenter: [0, "82%"], color: "#7d9ab8", fontSize: 11.5 },
+                            detail: {
+                                valueAnimation: true,
+                                offsetCenter: [0, "55%"],
+                                fontSize: 26,
+                                fontWeight: 700,
+                                color: "#e0f7ff",
+                                formatter: "{value}%"
+                            },
+                            data: [{ value: 92.6, name: "满意率" }]
+                        }
+                    ]
+                });
+            }
+
+            /* ---------- 7. 坐席排行 ---------- */
+            var yuan_chartAgent = yuan_init("yuan_chartAgent");
+            if (yuan_chartAgent) {
+                yuan_chartAgent.setOption({
+                    tooltip: Object.assign({ trigger: "axis", axisPointer: { type: "shadow" } }, yuan_tooltip),
+                    grid: { left: 4, right: 44, top: 8, bottom: 2, containLabel: true },
+                    xAxis: {
+                        type: "value",
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        axisLabel: { show: false },
+                        splitLine: yuan_splitLine
+                    },
+                    yAxis: {
+                        type: "category",
+                        inverse: true,
+                        data: yuan_agents,
+                        axisTick: { show: false },
+                        axisLine: yuan_axisLine,
+                        axisLabel: { color: "#9fb4cc", fontSize: 11.5 }
+                    },
+                    series: [
+                        {
+                            type: "bar",
+                            barWidth: 10,
+                            data: yuan_agentValues,
+                            itemStyle: {
+                                borderRadius: [0, 5, 5, 0],
+                                color: yuan_gradientX("#0e7490", "#34d399")
+                            },
+                            label: {
+                                show: true,
+                                position: "right",
+                                formatter: "{c}",
+                                color: "#8fd0ec",
+                                fontSize: 11
+                            }
+                        }
+                    ]
+                });
+            }
+
+            /* ================= 时钟 ================= */
+            var yuan_clock = document.getElementById("yuan_clock");
+            var yuan_week = ["日", "一", "二", "三", "四", "五", "六"];
+
+            function yuan_pad(yuan_n) {
+                return (yuan_n < 10 ? "0" : "") + yuan_n;
+            }
+
+            function yuan_tickClock() {
+                var yuan_now = new Date();
+                yuan_clock.textContent =
+                    yuan_now.getFullYear() + "-" + yuan_pad(yuan_now.getMonth() + 1) + "-" + yuan_pad(yuan_now.getDate()) +
+                    " " + yuan_pad(yuan_now.getHours()) + ":" + yuan_pad(yuan_now.getMinutes()) + ":" + yuan_pad(yuan_now.getSeconds()) +
+                    " 星期" + yuan_week[yuan_now.getDay()];
+            }
+
+            yuan_tickClock();
+            window.setInterval(yuan_tickClock, 1000);
+
+            /* ================= 实时告警 ================= */
+            var yuan_logs = document.getElementById("yuan_logs");
+            var yuan_logPool = [
+                { text: "会话 #A1832 转人工：退款进度查询", cls: "yuan_warn" },
+                { text: "知识库切片更新完成，新增 128 条", cls: "yuan_ok" },
+                { text: "接口 /api/chat 平均耗时 1.24s", cls: "" },
+                { text: "坐席「李娜」接起超时，已自动改派", cls: "yuan_warn" },
+                { text: "敏感词拦截 2 次，已转人工复核", cls: "yuan_warn" },
+                { text: "检索召回率 0.91，低于阈值 0.93", cls: "yuan_warn" },
+                { text: "向量库索引重建完成，耗时 42s", cls: "yuan_ok" },
+                { text: "新增知识文档 6 篇，待审核", cls: "" }
+            ];
+            var yuan_logIndex = 0;
+
+            function yuan_addLog(yuan_item) {
+                var yuan_now = new Date();
+                var yuan_li = document.createElement("li");
+                var yuan_time = document.createElement("span");
+                var yuan_text = document.createElement("span");
+
+                yuan_li.className = "yuan_logItem" + (yuan_item.cls ? " " + yuan_item.cls : "");
+                yuan_time.className = "yuan_logTime";
+                yuan_time.textContent = yuan_pad(yuan_now.getHours()) + ":" + yuan_pad(yuan_now.getMinutes()) + ":" + yuan_pad(yuan_now.getSeconds());
+                yuan_text.textContent = yuan_item.text;
+
+                yuan_li.appendChild(yuan_time);
+                yuan_li.appendChild(yuan_text);
+                yuan_logs.insertBefore(yuan_li, yuan_logs.firstChild);
+
+                while (yuan_logs.children.length > 7) {
+                    yuan_logs.removeChild(yuan_logs.lastChild);
+                }
+            }
+
+            for (var yuan_l = 0; yuan_l < 5; yuan_l++) {
+                yuan_addLog(yuan_logPool[yuan_l]);
+                yuan_logIndex = yuan_l + 1;
+            }
+
+            window.setInterval(function () {
+                yuan_addLog(yuan_logPool[yuan_logIndex % yuan_logPool.length]);
+                yuan_logIndex += 1;
+            }, 3600);
+
+            /* ================= 自适应 ================= */
+            function yuan_resizeAll() {
+                Object.keys(yuan_charts).forEach(function (yuan_key) {
+                    if (yuan_charts[yuan_key]) {
+                        yuan_charts[yuan_key].resize();
+                    }
+                });
+            }
+
+            var yuan_resizeTimer = 0;
+            window.addEventListener("resize", function () {
+                window.clearTimeout(yuan_resizeTimer);
+                yuan_resizeTimer = window.setTimeout(yuan_resizeAll, 120);
+            });
+
+            window.addEventListener("load", function () {
+                window.setTimeout(yuan_resizeAll, 60);
+            });
+
+            window.setTimeout(yuan_resizeAll, 200);
+        })();
+    </script>
+</body>
+</html>

@@ -234,3 +234,117 @@ http://jsonplaceholder.typicode.com/users17-1.html 展示 JSON17-2.html fetch �
 ```text
 帮我上传到git
 ```
+
+---
+
+## 2026-11-04 00:00:00 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+@image:企业微信截图_17937773238076.png @C:/Users/GGC/Desktop/指导书.docx 给我做一下
+```
+
+---
+
+## 2026-11-04 00:00:01 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+@image:image.png 在这个地方给我加汽车3D模型
+```
+
+---
+
+## 2026-11-04 00:00:02 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+先用卡片里放一张车图 + 旋转动画做占位效果
+```
+
+---
+
+## 2026-11-04 00:00:03 +08:00
+- 模型 (model): codebuddy/auto
+- 提示词 (prompt):
+
+```text
+你给我生成一张汽车图片
+```
+
+---
+
+## 2026-11-05 13:39:44
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+18-1.html ：Canvas动画，文字关泉才，文字关落动画效果
+
+2.  18-2.html ：Canvas绘制电商全站系统架构图
+```
+
+---
+
+## 2026-11-05 13:58:18
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+2. 完成18-3.html，其中包括基于知识库智能客服的系统的系统架构图，图的格式为svg，科研方向。
+
+3. 实现18-4.html，其中包括echarts的两个图：和，cdn文件下载到cdn目录下。
+```
+
+---
+
+## 2026-11-05 14:22:29
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+5. 18-6.html：Mermaid，智能客服流程图 + ER图，mermaid文件放到cdn文件夹
+```
+
+---
+
+## 2026-11-05 14:29:29
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+6. 18-7.html：Three.js 两个3D图表，three.js文件放cdn目录
+```
+
+---
+
+## 2026-11-05 14:43:39
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+18-8.html 数据大屏（ECharts，三列布局，中间上方地理地图）
+
+需求：
+
+1. 页面三列布局
+
+2. 中间列上方放地理信息地图（中国地图）
+
+3. 使用ECharts，js文件放在本地 cdn/echarts.min.js 
+
+4. 数据大屏深色风格
+```
+
+---
+
+## 2026-11-05 14:48:51
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+帮我上传githup
+```

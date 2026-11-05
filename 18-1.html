@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-05 13:40
+    使用的大模型：DeepSeek-V4.1-Flash
+    功能名称：Canvas 文字降落动画 —— "关泉才"逐字下落弹跳定格 + 文字雨背景
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 文字降落动画 · 关泉才</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px;
+            background: #f4f6fb;
+            color: #1f2430;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            line-height: 1.6;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .yuan_hero {
+            padding: 46px 24px 36px;
+            text-align: center;
+            color: #fff;
+            background: radial-gradient(120% 150% at 50% 0%, #1e3a8a 0%, #101a33 55%, #070b16 100%);
+        }
+
+        .yuan_heroTitle {
+            margin: 0 0 12px;
+            font-size: clamp(24px, 4vw, 36px);
+            letter-spacing: 2px;
+        }
+
+        .yuan_heroTitle span {
+            background: linear-gradient(90deg, #67e8f9, #818cf8, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .yuan_heroText {
+            margin: 0 auto;
+            max-width: 760px;
+            font-size: 15px;
+            color: #cbd5e1;
+        }
+
+        .yuan_heroMeta {
+            margin: 16px 0 0;
+            font-size: 12.5px;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+        }
+
+        /* ---------- 舞台 ---------- */
+        .yuan_wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .yuan_stage {
+            margin-top: 28px;
+            border: 1px solid #1e293b;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #080c18;
+            box-shadow: 0 18px 44px rgba(15, 23, 42, .28);
+        }
+
+        .yuan_canvas {
+            display: block;
+            width: 100%;
+            height: 520px;
+        }
+
+        /* ---------- 控制条 ---------- */
+        .yuan_ctrl {
+            margin-top: 18px;
+            padding: 18px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_ctrlRow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .yuan_ctrlRow + .yuan_ctrlRow {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px dashed #e4e7ee;
+        }
+
+        .yuan_btn {
+            padding: 8px 16px;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: #3730a3;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease, color .15s ease;
+        }
+
+        .yuan_btn:hover {
+            transform: translateY(-2px);
+            background: #4f46e5;
+            color: #fff;
+        }
+
+        .yuan_btn.yuan_primary {
+            color: #fff;
+            background: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        .yuan_btn.yuan_primary:hover {
+            background: #4338ca;
+        }
+
+        .yuan_field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .yuan_field b {
+            min-width: 40px;
+            font-family: Consolas, "Courier New", monospace;
+            color: #0e7490;
+        }
+
+        .yuan_input {
+            width: 150px;
+            padding: 6px 10px;
+            font: inherit;
+            font-size: 13.5px;
+            color: #1f2430;
+            background: #f8fafc;
+            border: 1px solid #d7dbe5;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        .yuan_input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .12);
+        }
+
+        .yuan_range {
+            width: 150px;
+            accent-color: #4f46e5;
+            cursor: pointer;
+        }
+
+        .yuan_status {
+            margin-left: auto;
+            padding: 3px 12px;
+            font-size: 12.5px;
+            color: #0e7490;
+            background: #ecfeff;
+            border: 1px solid #a5f3fc;
+            border-radius: 999px;
+        }
+
+        /* ---------- 说明区 ---------- */
+        .yuan_section {
+            margin-top: 34px;
+        }
+
+        .yuan_h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #312e81;
+        }
+
+        .yuan_h2::before {
+            content: "";
+            width: 8px;
+            height: 22px;
+            border-radius: 4px;
+            background: #4f46e5;
+        }
+
+        .yuan_h2 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #8b93a7;
+        }
+
+        .yuan_cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .yuan_card {
+            padding: 18px 20px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-top: 4px solid #4f46e5;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_card.yuan_cyan {
+            border-top-color: #06b6d4;
+        }
+
+        .yuan_card.yuan_pink {
+            border-top-color: #db2777;
+        }
+
+        .yuan_card h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+            color: #1f2430;
+        }
+
+        .yuan_card p {
+            margin: 0;
+            font-size: 13.5px;
+            color: #6b7280;
+        }
+
+        .yuan_card code {
+            padding: 1px 5px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            color: #a4161a;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .yuan_panel {
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #e4e7ee;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(31, 36, 48, .06);
+        }
+
+        .yuan_code {
+            padding: 16px 18px;
+            background: #0f172a;
+            color: #dbeafe;
+            border-radius: 10px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.65;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .yuan_footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #8b93a7;
+        }
+
+        @media (max-width: 820px) {
+            .yuan_cards {
+                grid-template-columns: 1fr;
+            }
+
+            .yuan_canvas {
+                height: 380px;
+            }
+
+            .yuan_status {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="yuan_hero">
+        <h1 class="yuan_heroTitle">Canvas <span>文字降落</span> 动画</h1>
+        <p class="yuan_heroText">
+            用 <b>canvas</b> 的 <b>fillText()</b> 逐帧绘制文字，配合 <b>requestAnimationFrame</b> 与重力加速，
+            让"关泉才"三个字从空中落下、回弹、定格，背景是不断下落的文字雨。
+        </p>
+        <p class="yuan_heroMeta">高级网页设计 · Canvas 动画 · 原生实现，无任何外部库</p>
+    </header>
+
+    <main class="yuan_wrap">
+        <!-- ============ 舞台 ============ -->
+        <section class="yuan_stage" aria-label="文字降落动画舞台">
+            <canvas id="yuan_canvas" class="yuan_canvas">你的浏览器不支持 canvas，请更换现代浏览器。</canvas>
+        </section>
+
+        <!-- ============ 控制条 ============ -->
+        <section class="yuan_ctrl" aria-label="动画控制">
+            <div class="yuan_ctrlRow">
+                <button class="yuan_btn yuan_primary" id="yuan_btnPlay" type="button">暂停</button>
+                <button class="yuan_btn" id="yuan_btnReplay" type="button">重新落下</button>
+                <button class="yuan_btn" id="yuan_btnTrail" type="button">关闭拖尾</button>
+                <span class="yuan_status" id="yuan_status">下落中</span>
+            </div>
+            <div class="yuan_ctrlRow">
+                <label class="yuan_field" for="yuan_text">落下的文字
+                    <input class="yuan_input" id="yuan_text" type="text" value="关泉才" maxlength="8" autocomplete="off">
+                </label>
+                <label class="yuan_field" for="yuan_speed">下落速度 <b id="yuan_speedVal">1.0×</b>
+                    <input class="yuan_range" id="yuan_speed" type="range" min="0.4" max="2.4" step="0.1" value="1">
+                </label>
+                <label class="yuan_field" for="yuan_density">文字雨密度 <b id="yuan_densityVal">45</b>
+                    <input class="yuan_range" id="yuan_density" type="range" min="10" max="100" step="5" value="45">
+                </label>
+            </div>
+        </section>
+
+        <!-- ============ 原理 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">一、动画是怎么"动"起来的 <small>三件事：逐帧、物理、绘制</small></h2>
+            <div class="yuan_cards">
+                <div class="yuan_card">
+                    <h3>① 逐帧循环</h3>
+                    <p>
+                        <code>requestAnimationFrame</code> 会在浏览器每次重绘前调用回调，大约每秒 60 次。
+                        每帧算一次时间差 <code>dt</code>，用"每秒多少像素"乘上去，动画速度就与帧率无关。
+                    </p>
+                </div>
+                <div class="yuan_card yuan_cyan">
+                    <h3>② 重力加速与回弹</h3>
+                    <p>
+                        每帧执行 <code>vy += g * dt</code>、<code>y += vy * dt</code>，下落越来越快；
+                        碰到目标位置时把速度反向并乘 <code>0.26</code> 的阻尼，就得到真实的弹跳，直到速度足够小才定格。
+                    </p>
+                </div>
+                <div class="yuan_card yuan_pink">
+                    <h3>③ 绘制文字</h3>
+                    <p>
+                        <code>fillText</code> 负责画字，<code>createLinearGradient</code> 做渐变填充，
+                        <code>shadowColor / shadowBlur</code> 做发光；文字雨则把一串字符按 y 递减画出来，越靠上越淡。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ 代码 ============ -->
+        <section class="yuan_section">
+            <h2 class="yuan_h2">二、核心代码 <small>去掉样式后的骨架</small></h2>
+            <div class="yuan_panel">
+                <div class="yuan_code">/* ---------- 1. 高清屏适配：逻辑像素与物理像素分开 ---------- */
+var dpr = Math.min(window.devicePixelRatio || 1, 2);
+canvas.width  = width  * dpr;
+canvas.height = height * dpr;
+ctx.setTransform(dpr, 0, 0, dpr, 0, 0);   // 之后按 CSS 像素坐标画
+
+/* ---------- 2. 逐帧循环 ---------- */
+function frame(stamp) {
+    var dt = Math.min(0.05, (stamp - last) / 1000);  // 秒，限制最大值防跳帧
+    last = stamp;
+    update(dt);
+    draw();
+    requestAnimationFrame(frame);
+}
+
+/* ---------- 3. 重力 + 阻尼回弹 ---------- */
+char.vy += 2400 * dt;                 // 加速度
+char.y  += char.vy * dt;              // 位移
+if (char.y >= char.targetY) {
+    char.y  = char.targetY;
+    char.vy = -char.vy * 0.26;        // 反向 + 衰减
+    if (Math.abs(char.vy) &lt; 110) {    // 弹不动了就定格
+        char.vy = 0;
+        char.settled = true;
+    }
+}
+
+/* ---------- 4. 渐变文字 + 光晕 ---------- */
+var g = ctx.createLinearGradient(0, y - size / 2, 0, y + size / 2);
+g.addColorStop(0, '#a5f3fc');
+g.addColorStop(0.5, '#818cf8');
+g.addColorStop(1, '#f472b6');
+ctx.font = '700 ' + size + 'px "Microsoft YaHei", sans-serif';
+ctx.shadowColor = 'rgba(129,140,248,.85)';
+ctx.shadowBlur = 24;
+ctx.fillStyle = g;
+ctx.fillText(char.ch, x, y);</div>
+            </div>
+        </section>
+
+        <p class="yuan_footer">关泉才 · 24001010301 · 《高级网页设计》 · Canvas 动画练习，纯原生实现</p>
+    </main>
+
+    <script>
+        (function () {
+            "use strict";
+
+            /* ================= 基础引用 ================= */
+            var yuan_canvas = document.getElementById("yuan_canvas");
+            var yuan_ctx = yuan_canvas.getContext("2d");
+
+            var yuan_btnPlay = document.getElementById("yuan_btnPlay");
+            var yuan_btnReplay = document.getElementById("yuan_btnReplay");
+            var yuan_btnTrail = document.getElementById("yuan_btnTrail");
+            var yuan_status = document.getElementById("yuan_status");
+            var yuan_textInput = document.getElementById("yuan_text");
+            var yuan_speedInput = document.getElementById("yuan_speed");
+            var yuan_speedVal = document.getElementById("yuan_speedVal");
+            var yuan_densityInput = document.getElementById("yuan_density");
+            var yuan_densityVal = document.getElementById("yuan_densityVal");
+
+            /* ================= 状态 ================= */
+            var yuan_RAIN_CHARS = "关泉才高级网页设计课堂实践动画文字降落特效".split("");
+
+            var yuan_rain = [];          // 文字雨列
+            var yuan_word = [];          // 下落的大字
+            var yuan_rings = [];         // 落点光斑
+            var yuan_W = 0;
+            var yuan_H = 0;
+            var yuan_DPR = 1;
+            var yuan_speed = 1;
+            var yuan_density = 45;
+            var yuan_trail = true;
+            var yuan_running = true;
+            var yuan_wordText = "关泉才";
+            var yuan_subAlpha = 0;
+            var yuan_settledCount = 0;
+            var yuan_lastStamp = 0;
+            var yuan_frameId = 0;
+            var yuan_resizeTimer = 0;
+
+            /* ================= 工具函数 ================= */
+            function yuan_rand(yuan_min, yuan_max) {
+                return yuan_min + Math.random() * (yuan_max - yuan_min);
+            }
+
+            function yuan_pickChar() {
+                return yuan_RAIN_CHARS[Math.floor(Math.random() * yuan_RAIN_CHARS.length)];
+            }
+
+            function yuan_columnCount() {
+                var yuan_base = yuan_W / 26;
+                var yuan_target = Math.round(yuan_base * yuan_density / 50);
+                return Math.max(6, Math.min(90, yuan_target));
+            }
+
+            function yuan_updateStatus() {
+                var yuan_total = yuan_word.length;
+                if (!yuan_running) {
+                    yuan_status.textContent = "已暂停";
+                } else if (yuan_total > 0 && yuan_settledCount >= yuan_total) {
+                    yuan_status.textContent = "已全部落位 " + yuan_settledCount + " / " + yuan_total;
+                } else {
+                    yuan_status.textContent = "下落中 " + yuan_settledCount + " / " + yuan_total;
+                }
+            }
+
+            /* ================= 文字雨 ================= */
+            function yuan_makeColumn(yuan_anywhere) {
+                var yuan_size = yuan_rand(12, 19);
+                return {
+                    x: yuan_rand(8, Math.max(20, yuan_W - 8)),
+                    y: yuan_anywhere ? yuan_rand(-yuan_H, yuan_H) : yuan_rand(-yuan_H * 1.2, -20),
+                    speed: yuan_rand(46, 132),
+                    size: yuan_size,
+                    len: Math.round(yuan_rand(6, 16)),
+                    chars: []
+                };
+            }
+
+            function yuan_fillChars(yuan_col) {
+                yuan_col.chars = [];
+                for (var yuan_i = 0; yuan_i < yuan_col.len; yuan_i++) {
+                    yuan_col.chars.push(yuan_pickChar());
+                }
+            }
+
+            function yuan_buildRain(yuan_keep) {
+                var yuan_target = yuan_columnCount();
+                var yuan_i;
+
+                if (yuan_keep) {
+                    while (yuan_rain.length > yuan_target) {
+                        yuan_rain.pop();
+                    }
+                    while (yuan_rain.length < yuan_target) {
+                        var yuan_add = yuan_makeColumn(false);
+                        yuan_fillChars(yuan_add);
+                        yuan_rain.push(yuan_add);
+                    }
+                    return;
+                }
+
+                yuan_rain = [];
+                for (yuan_i = 0; yuan_i < yuan_target; yuan_i++) {
+                    var yuan_col = yuan_makeColumn(true);
+                    yuan_fillChars(yuan_col);
+                    yuan_rain.push(yuan_col);
+                }
+            }
+
+            /* ================= 大字布局 ================= */
+            function yuan_buildWord() {
+                var yuan_chars = yuan_wordText.replace(/\s+/g, "").split("");
+                if (yuan_chars.length === 0) {
+                    yuan_chars = ["关", "泉", "才"];
+                }
+                if (yuan_chars.length > 8) {
+                    yuan_chars = yuan_chars.slice(0, 8);
+                }
+
+                var yuan_n = yuan_chars.length;
+                var yuan_size = Math.min(yuan_W / (yuan_n * 1.32), yuan_H * 0.34, 168);
+                var yuan_gap = yuan_size * 1.12;
+                var yuan_total = yuan_gap * (yuan_n - 1);
+                var yuan_startX = yuan_W / 2 - yuan_total / 2;
+                var yuan_targetY = yuan_H * 0.62;
+
+                yuan_word = [];
+                for (var yuan_i = 0; yuan_i < yuan_n; yuan_i++) {
+                    yuan_word.push({
+                        ch: yuan_chars[yuan_i],
+                        x: yuan_startX + yuan_i * yuan_gap,
+                        y: -yuan_size - yuan_i * yuan_size * 0.6 - Math.random() * 60,
+                        vy: 0,
+                        size: yuan_size,
+                        targetY: yuan_targetY,
+                        delay: yuan_i * 0.24,
+                        t: 0,
+                        settled: false
+                    });
+                }
+
+                yuan_rings = [];
+                yuan_subAlpha = 0;
+                yuan_settledCount = 0;
+                yuan_updateStatus();
+            }
+
+            /* ================= 绘制 ================= */
+            function yuan_paintBase() {
+                var yuan_ctx2 = yuan_ctx;
+                var yuan_g = yuan_ctx2.createLinearGradient(0, 0, 0, yuan_H);
+                yuan_g.addColorStop(0, "#0b1428");
+                yuan_g.addColorStop(0.6, "#080d1a");
+                yuan_g.addColorStop(1, "#05070f");
+                yuan_ctx2.fillStyle = yuan_g;
+                yuan_ctx2.fillRect(0, 0, yuan_W, yuan_H);
+
+                var yuan_halo = yuan_ctx2.createRadialGradient(
+                    yuan_W / 2, yuan_H * 0.62, 10,
+                    yuan_W / 2, yuan_H * 0.62, yuan_W * 0.45
+                );
+                yuan_halo.addColorStop(0, "rgba(79,70,229,0.20)");
+                yuan_halo.addColorStop(1, "rgba(79,70,229,0)");
+                yuan_ctx2.fillStyle = yuan_halo;
+                yuan_ctx2.fillRect(0, 0, yuan_W, yuan_H);
+            }
+
+            function yuan_drawBackdrop() {
+                if (yuan_trail) {
+                    yuan_ctx.fillStyle = "rgba(6, 10, 22, 0.26)";
+                    yuan_ctx.fillRect(0, 0, yuan_W, yuan_H);
+                } else {
+                    yuan_paintBase();
+                }
+            }
+
+            function yuan_drawRain() {
+                var yuan_ctx2 = yuan_ctx;
+                yuan_ctx2.textAlign = "center";
+                yuan_ctx2.textBaseline = "middle";
+
+                for (var yuan_i = 0; yuan_i < yuan_rain.length; yuan_i++) {
+                    var yuan_col = yuan_rain[yuan_i];
+                    var yuan_step = yuan_col.size * 1.15;
+
+                    for (var yuan_j = 0; yuan_j < yuan_col.len; yuan_j++) {
+                        var yuan_y = yuan_col.y - yuan_j * yuan_step;
+                        if (yuan_y < -yuan_step || yuan_y > yuan_H + yuan_step) {
+                            continue;
+                        }
+                        if (yuan_j === 0) {
+                            yuan_ctx2.shadowColor = "rgba(103,232,249,0.9)";
+                            yuan_ctx2.shadowBlur = 14;
+                            yuan_ctx2.fillStyle = "rgba(236,254,255,0.95)";
+                        } else {
+                            yuan_ctx2.shadowBlur = 0;
+                            var yuan_alpha = (1 - yuan_j / yuan_col.len) * 0.7;
+                            yuan_ctx2.fillStyle = "rgba(56,189,248," + yuan_alpha.toFixed(3) + ")";
+                        }
+                        yuan_ctx2.font = yuan_col.size + 'px "Microsoft YaHei", Consolas, monospace';
+                        yuan_ctx2.fillText(yuan_col.chars[yuan_j % yuan_col.chars.length], yuan_col.x, yuan_y);
+                    }
+                }
+                yuan_ctx2.shadowBlur = 0;
+            }
+
+            function yuan_drawWord() {
+                var yuan_ctx2 = yuan_ctx;
+                var yuan_i;
+                yuan_ctx2.textAlign = "center";
+                yuan_ctx2.textBaseline = "middle";
+
+                for (yuan_i = 0; yuan_i < yuan_word.length; yuan_i++) {
+                    var yuan_c = yuan_word[yuan_i];
+                    var yuan_size = yuan_c.size;
+                    var yuan_grad = yuan_ctx2.createLinearGradient(
+                        0, yuan_c.y - yuan_size * 0.55,
+                        0, yuan_c.y + yuan_size * 0.55
+                    );
+                    yuan_grad.addColorStop(0, "#a5f3fc");
+                    yuan_grad.addColorStop(0.45, "#818cf8");
+                    yuan_grad.addColorStop(1, "#f472b6");
+
+                    yuan_ctx2.save();
+                    yuan_ctx2.font = "700 " + Math.round(yuan_size) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+                    yuan_ctx2.shadowColor = "rgba(129,140,248,0.85)";
+                    yuan_ctx2.shadowBlur = yuan_c.settled ? 30 : 18;
+                    yuan_ctx2.fillStyle = yuan_grad;
+                    yuan_ctx2.fillText(yuan_c.ch, yuan_c.x, yuan_c.y);
+                    yuan_ctx2.shadowBlur = 0;
+                    yuan_ctx2.lineWidth = 1.2;
+                    yuan_ctx2.strokeStyle = "rgba(255,255,255,0.32)";
+                    yuan_ctx2.strokeText(yuan_c.ch, yuan_c.x, yuan_c.y);
+                    yuan_ctx2.restore();
+                }
+
+                /* 落点光斑 */
+                for (yuan_i = yuan_rings.length - 1; yuan_i >= 0; yuan_i--) {
+                    var yuan_r = yuan_rings[yuan_i];
+                    var yuan_p = yuan_r.t / 0.75;
+                    if (yuan_p >= 1) {
+                        continue;
+                    }
+                    var yuan_a = 1 - yuan_p;
+                    yuan_ctx2.beginPath();
+                    yuan_ctx2.ellipse(
+                        yuan_r.x, yuan_r.y,
+                        yuan_r.size * (0.3 + yuan_p * 1.2),
+                        yuan_r.size * (0.08 + yuan_p * 0.3),
+                        0, 0, Math.PI * 2
+                    );
+                    yuan_ctx2.strokeStyle = "rgba(129,140,248," + (yuan_a * 0.55).toFixed(3) + ")";
+                    yuan_ctx2.lineWidth = 2;
+                    yuan_ctx2.stroke();
+                }
+
+                /* 全部落位后的副标题 */
+                if (yuan_subAlpha > 0.01) {
+                    var yuan_baseY = yuan_word.length > 0
+                        ? yuan_word[0].targetY + yuan_word[0].size * 0.62 + 30
+                        : yuan_H * 0.82;
+                    yuan_ctx2.font = '13px "Microsoft YaHei", sans-serif';
+                    yuan_ctx2.fillStyle = "rgba(203,213,225," + yuan_subAlpha.toFixed(3) + ")";
+                    yuan_ctx2.fillText("关泉才 · Canvas 逐帧绘制，无任何外部库", yuan_W / 2, Math.min(yuan_baseY, yuan_H - 24));
+                }
+
+                yuan_ctx2.shadowBlur = 0;
+            }
+
+            function yuan_draw() {
+                yuan_drawBackdrop();
+                yuan_drawRain();
+                yuan_drawWord();
+            }
+
+            /* ================= 更新 ================= */
+            function yuan_update(yuan_dt) {
+                var yuan_i;
+
+                for (yuan_i = 0; yuan_i < yuan_rain.length; yuan_i++) {
+                    var yuan_col = yuan_rain[yuan_i];
+                    yuan_col.y += yuan_col.speed * yuan_dt * yuan_speed;
+
+                    if (yuan_col.y - yuan_col.len * yuan_col.size * 1.15 > yuan_H + 40) {
+                        var yuan_new = yuan_makeColumn(false);
+                        yuan_col.y = yuan_new.y;
+                        yuan_col.x = yuan_new.x;
+                        yuan_col.speed = yuan_new.speed;
+                        yuan_col.size = yuan_new.size;
+                        yuan_col.len = yuan_new.len;
+                        yuan_fillChars(yuan_col);
+                    }
+                }
+
+                for (yuan_i = 0; yuan_i < yuan_word.length; yuan_i++) {
+                    var yuan_c = yuan_word[yuan_i];
+                    if (yuan_c.settled) {
+                        continue;
+                    }
+                    yuan_c.t += yuan_dt;
+                    if (yuan_c.t < yuan_c.delay) {
+                        continue;
+                    }
+
+                    yuan_c.vy += 2400 * yuan_dt * (0.55 + yuan_speed * 0.45);
+                    yuan_c.y += yuan_c.vy * yuan_dt;
+
+                    if (yuan_c.y >= yuan_c.targetY) {
+                        yuan_c.y = yuan_c.targetY;
+                        yuan_c.vy = -yuan_c.vy * 0.26;
+                        if (Math.abs(yuan_c.vy) < 110) {
+                            yuan_c.vy = 0;
+                            yuan_c.settled = true;
+                            yuan_settledCount += 1;
+                            yuan_rings.push({
+                                x: yuan_c.x,
+                                y: yuan_c.targetY,
+                                size: yuan_c.size * 0.5,
+                                t: 0
+                            });
+                            yuan_updateStatus();
+                        }
+                    }
+                }
+
+                for (yuan_i = yuan_rings.length - 1; yuan_i >= 0; yuan_i--) {
+                    yuan_rings[yuan_i].t += yuan_dt;
+                    if (yuan_rings[yuan_i].t > 0.75) {
+                        yuan_rings.splice(yuan_i, 1);
+                    }
+                }
+
+                if (yuan_word.length > 0 && yuan_settledCount >= yuan_word.length) {
+                    yuan_subAlpha = Math.min(1, yuan_subAlpha + yuan_dt * 1.6);
+                }
+            }
+
+            /* ================= 主循环 ================= */
+            function yuan_frame(yuan_stamp) {
+                if (!yuan_running) {
+                    return;
+                }
+                var yuan_dt = yuan_lastStamp
+                    ? Math.min(0.05, (yuan_stamp - yuan_lastStamp) / 1000)
+                    : 0.016;
+                yuan_lastStamp = yuan_stamp;
+
+                yuan_update(yuan_dt);
+                yuan_draw();
+
+                yuan_frameId = window.requestAnimationFrame(yuan_frame);
+            }
+
+            /* ================= 尺寸 ================= */
+            function yuan_resizeStage() {
+                var yuan_rect = yuan_canvas.getBoundingClientRect();
+                yuan_W = Math.max(300, Math.round(yuan_rect.width));
+                yuan_H = Math.max(240, Math.round(yuan_rect.height));
+                yuan_DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+                yuan_canvas.width = Math.round(yuan_W * yuan_DPR);
+                yuan_canvas.height = Math.round(yuan_H * yuan_DPR);
+                yuan_ctx.setTransform(yuan_DPR, 0, 0, yuan_DPR, 0, 0);
+
+                yuan_paintBase();
+                yuan_buildRain(false);
+                yuan_buildWord();
+                yuan_draw();
+            }
+
+            /* ================= 交互 ================= */
+            yuan_btnPlay.addEventListener("click", function () {
+                yuan_running = !yuan_running;
+                yuan_btnPlay.textContent = yuan_running ? "暂停" : "继续";
+                if (yuan_running) {
+                    yuan_lastStamp = 0;
+                    yuan_frameId = window.requestAnimationFrame(yuan_frame);
+                } else {
+                    window.cancelAnimationFrame(yuan_frameId);
+                }
+                yuan_updateStatus();
+            });
+
+            yuan_btnReplay.addEventListener("click", function () {
+                yuan_buildWord();
+                yuan_buildRain(false);
+                yuan_paintBase();
+                yuan_draw();
+                yuan_updateStatus();
+            });
+
+            yuan_btnTrail.addEventListener("click", function () {
+                yuan_trail = !yuan_trail;
+                yuan_btnTrail.textContent = yuan_trail ? "关闭拖尾" : "开启拖尾";
+                yuan_paintBase();
+                yuan_draw();
+            });
+
+            yuan_textInput.addEventListener("input", function () {
+                yuan_wordText = yuan_textInput.value || "关泉才";
+                yuan_buildWord();
+                if (!yuan_running) {
+                    yuan_paintBase();
+                    yuan_draw();
+                }
+            });
+
+            yuan_speedInput.addEventListener("input", function () {
+                yuan_speed = parseFloat(yuan_speedInput.value);
+                yuan_speedVal.textContent = yuan_speed.toFixed(1) + "×";
+            });
+
+            yuan_densityInput.addEventListener("input", function () {
+                yuan_density = parseInt(yuan_densityInput.value, 10);
+                yuan_densityVal.textContent = String(yuan_density);
+                yuan_buildRain(true);
+            });
+
+            window.addEventListener("resize", function () {
+                window.clearTimeout(yuan_resizeTimer);
+                yuan_resizeTimer = window.setTimeout(yuan_resizeStage, 160);
+            });
+
+            /* ================= 启动 ================= */
+            yuan_resizeStage();
+            yuan_frameId = window.requestAnimationFrame(yuan_frame);
+        })();
+    </script>
+</body>
+</html>
