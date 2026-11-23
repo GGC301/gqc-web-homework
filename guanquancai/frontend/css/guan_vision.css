@@ -1,0 +1,194 @@
+/**
+ * 姓名：关泉才 | 学号：24001010301 |
+ * 时间：2026-11-19 | 大模型：deepseek-v4.1-flash
+ * 说明：识图页样式：上传区、图片预览、结构化结果卡与识别记录列表。
+ */
+
+.guan_vision_layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+/* ========== 上传区 ========== */
+.guan_vision_dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 30px 20px;
+  border-radius: 16px;
+  border: 1.5px dashed rgba(126, 158, 214, 0.4);
+  background: rgba(86, 216, 255, 0.04);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.guan_vision_dropzone:hover,
+.guan_vision_dropzone:focus-visible {
+  outline: none;
+  border-color: var(--guan_cyan);
+  background: rgba(86, 216, 255, 0.1);
+}
+
+.guan_vision_dropzone_active {
+  border-color: var(--guan_green);
+  background: rgba(62, 224, 151, 0.12);
+  transform: scale(1.005);
+}
+
+.guan_vision_dropzone_busy { pointer-events: none; opacity: 0.6; }
+
+.guan_vision_drop_icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: var(--guan_cyan);
+  background: rgba(86, 216, 255, 0.12);
+  margin-bottom: 4px;
+}
+
+.guan_vision_drop_icon svg { width: 22px; height: 22px; }
+
+.guan_vision_drop_title { margin: 0; font-size: 15px; font-weight: 600; }
+.guan_vision_drop_desc { margin: 0; font-size: 13px; color: var(--guan_muted); }
+.guan_vision_drop_meta { margin: 4px 0 0; font-size: 12px; color: rgba(147, 163, 196, 0.85); }
+
+.guan_vision_progress { margin-top: 14px; }
+
+.guan_vision_progress_track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(126, 158, 214, 0.16);
+  overflow: hidden;
+}
+
+.guan_vision_progress_bar {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--guan_cyan), var(--guan_violet));
+  transition: width 0.3s ease;
+}
+
+.guan_vision_progress_text { margin: 8px 0 0; font-size: 12.5px; color: var(--guan_muted); }
+
+.guan_vision_preview { margin-top: 14px; }
+
+.guan_vision_preview img {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--guan_line);
+  display: block;
+}
+
+.guan_vision_preview_meta { margin: 8px 0 0; font-size: 12px; color: var(--guan_muted); }
+
+/* ========== 结果 ========== */
+.guan_vision_result { display: flex; flex-direction: column; gap: 12px; }
+
+.guan_vision_summary {
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  border: 1px solid rgba(86, 216, 255, 0.3);
+  background: rgba(86, 216, 255, 0.08);
+}
+
+.guan_vision_fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 9px;
+  margin: 0;
+}
+
+.guan_vision_field {
+  padding: 9px 11px;
+  border-radius: 11px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.5);
+}
+
+.guan_vision_field dt { font-size: 11.5px; color: var(--guan_muted); }
+.guan_vision_field dd { margin: 2px 0 0; font-size: 13.5px; word-break: break-all; }
+
+.guan_vision_tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.guan_vision_text_head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--guan_muted);
+}
+
+.guan_vision_text {
+  margin: 6px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  max-height: 260px;
+  overflow: auto;
+  font-family: "Cascadia Mono", Consolas, "Microsoft YaHei", monospace;
+  font-size: 13px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(4, 8, 18, 0.72);
+  border: 1px solid var(--guan_line);
+}
+
+/* ========== 记录 ========== */
+.guan_vision_records { display: flex; flex-direction: column; gap: 9px; }
+
+.guan_vision_record {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.5);
+}
+
+.guan_vision_record_thumb {
+  width: 96px;
+  height: 58px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--guan_line);
+  background: rgba(4, 8, 18, 0.7);
+}
+
+.guan_vision_record_main { min-width: 0; }
+
+.guan_vision_record_title {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guan_vision_record_meta {
+  display: block;
+  font-size: 11.5px;
+  color: var(--guan_muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 980px) {
+  .guan_vision_layout { grid-template-columns: minmax(0, 1fr); }
+  .guan_vision_record { grid-template-columns: 72px minmax(0, 1fr) auto; }
+  .guan_vision_record_thumb { width: 72px; height: 46px; }
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 / 注册 | 关泉才 · 课堂实践</title>
+  <meta name="description" content="关泉才全栈项目的用户登录与注册：scrypt 加盐哈希存储密码，HMAC-SHA256 签名 token 鉴权。">
+  <link rel="stylesheet" href="./css/guan_auth.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-19 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_auth_body">
+
+  <canvas id="guan_canvas_bg" class="guan_auth_canvas" aria-hidden="true"></canvas>
+  <div class="guan_auth_aurora guan_auth_aurora_a" aria-hidden="true"></div>
+  <div class="guan_auth_aurora guan_auth_aurora_b" aria-hidden="true"></div>
+
+  <div class="guan_auth_shell">
+    <header class="guan_auth_topbar">
+      <a class="guan_auth_brand" href="./index.html">
+        <span class="guan_auth_mark">GQ</span>
+        <span class="guan_auth_brand_text">
+          <span class="guan_auth_brand_title">关泉才 · 课堂实践</span>
+          <span class="guan_auth_brand_sub">Account · Auth</span>
+        </span>
+      </a>
+      <nav class="guan_auth_nav" aria-label="主导航">
+        <a class="guan_auth_nav_link" href="./index.html">首页</a>
+        <a class="guan_auth_nav_link" href="./knowledge.html">知识库管理</a>
+        <a class="guan_auth_nav_link" href="./rag.html">RAG 智能问答</a>
+        <a class="guan_auth_nav_link" href="./review.html">商业评论分析</a>
+        <a class="guan_auth_nav_link" href="./chat.html">AI 聊天</a>
+        <a class="guan_auth_nav_link" href="./vision.html">识图</a>
+        <a class="guan_auth_nav_link guan_auth_nav_active" href="./login.html">登录 / 注册</a>
+        <a class="guan_auth_nav_link" href="./database.html">数据库测试</a>
+      </nav>
+    </header>
+
+    <main class="guan_auth_main">
+      <section class="guan_auth_hero">
+        <p class="guan_auth_tag">账号体系 · 服务端鉴权</p>
+        <h1 class="guan_auth_h1">登录你的账号，<span class="guan_auth_h1_strong">继续用 AI 干活</span></h1>
+        <p class="guan_auth_lead">
+          密码经 scrypt 加盐哈希后入库，明文不落库也不返回；登录成功后由服务端签发 HMAC-SHA256 签名 token，
+          前端只保存 token、不接触任何密钥。
+        </p>
+
+        <ul class="guan_auth_points">
+          <li class="guan_auth_point">
+            <span class="guan_auth_point_dot"></span>
+            <div>
+              <strong>密码安全</strong>
+              <p>node:crypto scrypt + 16 字节随机盐，定长比较防时序攻击</p>
+            </div>
+          </li>
+          <li class="guan_auth_point">
+            <span class="guan_auth_point_dot"></span>
+            <div>
+              <strong>签名 token</strong>
+              <p>载荷含用户 ID、昵称与过期时间，服务端 HMAC 校验，默认 7 天有效</p>
+            </div>
+          </li>
+          <li class="guan_auth_point">
+            <span class="guan_auth_point_dot"></span>
+            <div>
+              <strong>统一响应</strong>
+              <p>注册 / 登录 / 校验 / 退出四个接口，全部 { code, msg, data } 格式</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="guan_auth_stats">
+          <div class="guan_auth_stat">
+            <span class="guan_auth_stat_key">注册账号</span>
+            <strong class="guan_auth_stat_val" id="guan_auth_user_total">—</strong>
+          </div>
+          <div class="guan_auth_stat">
+            <span class="guan_auth_stat_key">鉴权方式</span>
+            <strong class="guan_auth_stat_val guan_auth_stat_text">HMAC-SHA256</strong>
+          </div>
+          <div class="guan_auth_stat">
+            <span class="guan_auth_stat_key">token 有效期</span>
+            <strong class="guan_auth_stat_val guan_auth_stat_text">7 天</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="guan_auth_card">
+        <div class="guan_auth_tabs" id="guan_auth_tabs" role="tablist">
+          <button class="guan_auth_tab guan_auth_tab_active" type="button" data-guan-tab="login" role="tab"
+            aria-selected="true">登录</button>
+          <button class="guan_auth_tab" type="button" data-guan-tab="register" role="tab" aria-selected="false">注册</button>
+        </div>
+
+        <form class="guan_auth_form" id="guan_auth_login_form" autocomplete="on" novalidate>
+          <label class="guan_auth_field">
+            <span class="guan_auth_label">用户名</span>
+            <input class="guan_auth_input" id="guan_auth_login_username" name="guan_username" type="text"
+              placeholder="如 guanquancai" autocomplete="username" maxlength="20">
+          </label>
+          <label class="guan_auth_field">
+            <span class="guan_auth_label">密码</span>
+            <input class="guan_auth_input" id="guan_auth_login_password" name="guan_password" type="password"
+              placeholder="6-32 位，含字母与数字" autocomplete="current-password" maxlength="32">
+          </label>
+          <button class="guan_auth_btn guan_auth_btn_primary" id="guan_auth_login_btn" type="submit">登录</button>
+        </form>
+
+        <form class="guan_auth_form" id="guan_auth_register_form" autocomplete="on" novalidate hidden>
+          <label class="guan_auth_field">
+            <span class="guan_auth_label">用户名<span class="guan_auth_label_note">字母开头，3-20 位</span></span>
+            <input class="guan_auth_input" id="guan_auth_reg_username" name="guan_username" type="text"
+              placeholder="如 guan2026" autocomplete="username" maxlength="20">
+          </label>
+          <label class="guan_auth_field">
+            <span class="guan_auth_label">昵称<span class="guan_auth_label_note">可选，最多 20 字</span></span>
+            <input class="guan_auth_input" id="guan_auth_reg_nickname" name="guan_nickname" type="text"
+              placeholder="如 阿关" maxlength="20">
+          </label>
+          <label class="guan_auth_field">
+            <span class="guan_auth_label">密码<span class="guan_auth_label_note">6-32 位，含字母与数字</span></span>
+            <input class="guan_auth_input" id="guan_auth_reg_password" name="guan_password" type="password"
+              placeholder="建议字母 + 数字组合" autocomplete="new-password" maxlength="32">
+          </label>
+          <label class="guan_auth_field">
+            <span class="guan_auth_label">确认密码</span>
+            <input class="guan_auth_input" id="guan_auth_reg_password2" name="guan_password2" type="password"
+              placeholder="再输入一次密码" autocomplete="new-password" maxlength="32">
+          </label>
+          <button class="guan_auth_btn guan_auth_btn_primary" id="guan_auth_register_btn" type="submit">注册并登录</button>
+        </form>
+
+        <p class="guan_auth_msg" id="guan_auth_msg" hidden></p>
+
+        <p class="guan_auth_hint">
+          演示账号：<code>guanquancai</code> / <code>abc123456</code>（也可直接在“注册”页新建账号）
+        </p>
+
+        <div class="guan_auth_profile" id="guan_auth_profile" hidden>
+          <div class="guan_auth_profile_head">
+            <span class="guan_auth_avatar" id="guan_auth_avatar">GQ</span>
+            <div>
+              <strong id="guan_auth_profile_name">—</strong>
+              <p class="guan_auth_profile_sub" id="guan_auth_profile_sub">—</p>
+            </div>
+          </div>
+          <dl class="guan_auth_meta">
+            <div><dt>用户名</dt><dd id="guan_auth_meta_username">—</dd></div>
+            <div><dt>角色</dt><dd id="guan_auth_meta_role">—</dd></div>
+            <div><dt>累计登录</dt><dd id="guan_auth_meta_count">—</dd></div>
+            <div><dt>上次登录</dt><dd id="guan_auth_meta_last">—</dd></div>
+          </dl>
+          <div class="guan_auth_profile_actions">
+            <a class="guan_auth_btn" href="./index.html">返回首页</a>
+            <button class="guan_auth_btn guan_auth_btn_ghost" id="guan_auth_logout_btn" type="button">退出登录</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="guan_auth_footer">
+      <p>© 2026 关泉才 · 学号 24001010301 · 《高级网页设计 I》LLM 应用设计 · 登录注册</p>
+    </footer>
+  </div>
+
+  <script src="./js/guan_bg.js"></script>
+  <script src="./js/guan_auth.js"></script>
+</body>
+
+</html>

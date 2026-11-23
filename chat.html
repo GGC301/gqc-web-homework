@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<!--
+    姓名：关泉才
+    建立时间：2026-11-12 13:55
+    使用的大模型：DeepSeek-V4.1-Flash
+    功能名称：调用 SiliconFlow 大模型接口的网页版对话（提示词与返回数据全部输出到控制台）
+-->
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="description" content="调用 SiliconFlow Chat Completions 接口的聊天页面，发送的提示词与接收到的数据都会打印到浏览器控制台。">
+    <title>AI 智能对话 · 关泉才</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            color: #e2e8f0;
+            background: #060a12;
+            background-image:
+                radial-gradient(90% 60% at 12% 0%, rgba(56, 189, 248, .16) 0%, rgba(6, 10, 18, 0) 60%),
+                radial-gradient(80% 60% at 100% 100%, rgba(99, 102, 241, .18) 0%, rgba(6, 10, 18, 0) 62%);
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        button,
+        input,
+        textarea {
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+        }
+
+        /* ========== 整体骨架 ========== */
+        .yuan_app {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1000px;
+            height: 100dvh;
+            margin: 0 auto;
+            padding: 14px 16px 16px;
+            gap: 10px;
+        }
+
+        /* ========== 顶栏 ========== */
+        .yuan_head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(148, 163, 184, .16);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, .88), rgba(9, 14, 25, .72));
+            box-shadow: 0 12px 30px rgba(2, 6, 23, .55), inset 0 1px 0 rgba(255, 255, 255, .04);
+            backdrop-filter: blur(10px);
+        }
+
+        .yuan_logo {
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            flex: 0 0 auto;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            box-shadow: 0 6px 18px rgba(56, 189, 248, .35);
+            color: #04121f;
+        }
+
+        .yuan_logo svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .yuan_brand {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .yuan_title {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .yuan_sub {
+            margin: 3px 0 0;
+            font-size: 12px;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .yuan_sub b {
+            color: #7dd3fc;
+            font-weight: 600;
+        }
+
+        .yuan_tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 0 0 auto;
+        }
+
+        .yuan_btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 34px;
+            padding: 0 12px;
+            border: 1px solid rgba(148, 163, 184, .22);
+            border-radius: 9px;
+            background: rgba(148, 163, 184, .08);
+            color: #cbd5e1;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+        }
+
+        .yuan_btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .yuan_btn:hover {
+            color: #f8fafc;
+            border-color: rgba(56, 189, 248, .55);
+            background: rgba(56, 189, 248, .14);
+        }
+
+        .yuan_btn:active {
+            transform: translateY(1px);
+        }
+
+        .yuan_btn--danger:hover {
+            color: #fecaca;
+            border-color: rgba(248, 113, 113, .5);
+            background: rgba(248, 113, 113, .12);
+        }
+
+        /* ========== 设置面板 ========== */
+        .yuan_panel {
+            display: none;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 1px solid rgba(56, 189, 248, .22);
+            border-radius: 14px;
+            background: rgba(11, 19, 33, .92);
+            box-shadow: 0 14px 30px rgba(2, 6, 23, .5);
+        }
+
+        .yuan_panel--open {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .yuan_field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .yuan_field--wide {
+            grid-column: 1 / -1;
+        }
+
+        .yuan_label {
+            font-size: 12px;
+            color: #94a3b8;
+            letter-spacing: .3px;
+        }
+
+        .yuan_inputWrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 10px;
+            border: 1px solid rgba(148, 163, 184, .22);
+            border-radius: 9px;
+            background: rgba(2, 6, 23, .6);
+            transition: border-color .18s ease, box-shadow .18s ease;
+        }
+
+        .yuan_inputWrap:focus-within {
+            border-color: rgba(56, 189, 248, .7);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, .12);
+        }
+
+        .yuan_inputWrap input,
+        .yuan_inputWrap textarea {
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 9px 0;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            font-size: 13px;
+        }
+
+        .yuan_inputWrap textarea {
+            resize: vertical;
+            min-height: 58px;
+            line-height: 1.6;
+        }
+
+        .yuan_eye {
+            flex: 0 0 auto;
+            padding: 2px 4px;
+            border: 0;
+            background: transparent;
+            color: #64748b;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .yuan_eye:hover {
+            color: #7dd3fc;
+        }
+
+        .yuan_panelNote {
+            grid-column: 1 / -1;
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.7;
+            color: #64748b;
+        }
+
+        /* ========== 对话区 ========== */
+        .yuan_main {
+            position: relative;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 6px 4px 4px;
+            scroll-behavior: smooth;
+        }
+
+        .yuan_main::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .yuan_main::-webkit-scrollbar-thumb {
+            border-radius: 99px;
+            background: rgba(148, 163, 184, .28);
+        }
+
+        .yuan_welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 100%;
+            padding: 24px 12px;
+            text-align: center;
+        }
+
+        .yuan_welcomeIcon {
+            display: grid;
+            place-items: center;
+            width: 62px;
+            height: 62px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, .22), rgba(99, 102, 241, .22));
+            border: 1px solid rgba(56, 189, 248, .32);
+            color: #7dd3fc;
+        }
+
+        .yuan_welcomeIcon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .yuan_welcomeTitle {
+            margin: 6px 0 0;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #e0f2fe, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .yuan_welcomeText {
+            margin: 0;
+            max-width: 460px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #94a3b8;
+        }
+
+        .yuan_chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .yuan_chip {
+            padding: 8px 13px;
+            border: 1px solid rgba(148, 163, 184, .22);
+            border-radius: 99px;
+            background: rgba(148, 163, 184, .07);
+            color: #cbd5e1;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+        }
+
+        .yuan_chip:hover {
+            transform: translateY(-2px);
+            color: #e0f2fe;
+            border-color: rgba(56, 189, 248, .55);
+            background: rgba(56, 189, 248, .13);
+        }
+
+        /* 消息行 */
+        .yuan_msg {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 0 0 16px;
+            animation: yuan_rise .26s ease both;
+        }
+
+        .yuan_msg--user {
+            flex-direction: row-reverse;
+        }
+
+        .yuan_avatar {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            flex: 0 0 auto;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .5px;
+        }
+
+        .yuan_msg--ai .yuan_avatar {
+            background: linear-gradient(135deg, rgba(56, 189, 248, .28), rgba(99, 102, 241, .28));
+            border: 1px solid rgba(56, 189, 248, .4);
+            color: #bae6fd;
+        }
+
+        .yuan_msg--user .yuan_avatar {
+            background: linear-gradient(135deg, #2563eb, #6366f1);
+            color: #f8fafc;
+        }
+
+        .yuan_msg--error .yuan_avatar {
+            background: rgba(248, 113, 113, .18);
+            border: 1px solid rgba(248, 113, 113, .45);
+            color: #fecaca;
+        }
+
+        .yuan_msgBody {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+            max-width: min(78%, 720px);
+        }
+
+        .yuan_msg--user .yuan_msgBody {
+            align-items: flex-end;
+        }
+
+        .yuan_msgHead {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
+            color: #64748b;
+        }
+
+        .yuan_who {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .yuan_bubble {
+            padding: 11px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.78;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .yuan_msg--ai .yuan_bubble {
+            border: 1px solid rgba(148, 163, 184, .16);
+            border-top-left-radius: 4px;
+            background: rgba(148, 163, 184, .08);
+            color: #e2e8f0;
+        }
+
+        .yuan_msg--user .yuan_bubble {
+            border-top-right-radius: 4px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #f8fafc;
+            box-shadow: 0 8px 22px rgba(37, 99, 235, .28);
+        }
+
+        .yuan_msg--error .yuan_bubble {
+            border: 1px solid rgba(248, 113, 113, .38);
+            border-top-left-radius: 4px;
+            background: rgba(248, 113, 113, .1);
+            color: #fecaca;
+        }
+
+        .yuan_bubble strong {
+            color: #f8fafc;
+            font-weight: 700;
+        }
+
+        .yuan_bubble--typing {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 14px 16px;
+        }
+
+        .yuan_point {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #38bdf8;
+            animation: yuan_blink 1.2s infinite ease-in-out;
+        }
+
+        .yuan_point:nth-child(2) {
+            animation-delay: .18s;
+        }
+
+        .yuan_point:nth-child(3) {
+            animation-delay: .36s;
+        }
+
+        .yuan_pre {
+            margin: 9px 0;
+            padding: 11px 13px;
+            border: 1px solid rgba(148, 163, 184, .18);
+            border-radius: 10px;
+            background: rgba(2, 6, 23, .78);
+            overflow-x: auto;
+        }
+
+        .yuan_pre code {
+            font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            line-height: 1.7;
+            color: #a5f3fc;
+            white-space: pre;
+        }
+
+        .yuan_codeInline {
+            padding: 1px 5px;
+            border-radius: 5px;
+            background: rgba(56, 189, 248, .14);
+            color: #7dd3fc;
+            font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+        }
+
+        .yuan_msgFoot {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity .18s ease;
+        }
+
+        .yuan_msg:hover .yuan_msgFoot {
+            opacity: 1;
+        }
+
+        .yuan_mini {
+            padding: 2px 8px;
+            border: 1px solid rgba(148, 163, 184, .22);
+            border-radius: 6px;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 11.5px;
+            cursor: pointer;
+        }
+
+        .yuan_mini:hover {
+            color: #7dd3fc;
+            border-color: rgba(56, 189, 248, .5);
+        }
+
+        .yuan_stat {
+            font-size: 11.5px;
+            color: #475569;
+        }
+
+        /* ========== 输入区 ========== */
+        .yuan_composer {
+            flex: 0 0 auto;
+            padding: 10px 12px 8px;
+            border: 1px solid rgba(148, 163, 184, .18);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, .9), rgba(9, 14, 25, .85));
+            box-shadow: 0 14px 34px rgba(2, 6, 23, .55);
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .yuan_composer:focus-within {
+            border-color: rgba(56, 189, 248, .45);
+            box-shadow: 0 14px 34px rgba(2, 6, 23, .55), 0 0 0 3px rgba(56, 189, 248, .08);
+        }
+
+        .yuan_composerRow {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .yuan_textarea {
+            flex: 1 1 auto;
+            min-height: 46px;
+            max-height: 160px;
+            padding: 12px 4px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+        }
+
+        .yuan_textarea::placeholder {
+            color: #525f75;
+        }
+
+        .yuan_send {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            flex: 0 0 auto;
+            margin-bottom: 2px;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            color: #04121f;
+            cursor: pointer;
+            transition: transform .16s ease, filter .16s ease, opacity .16s ease;
+        }
+
+        .yuan_send svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .yuan_send:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.08);
+        }
+
+        .yuan_send:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .yuan_composerBar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 2px 4px 0;
+            font-size: 11.5px;
+            color: #526078;
+        }
+
+        .yuan_hintCode {
+            padding: 1px 5px;
+            border-radius: 4px;
+            background: rgba(148, 163, 184, .14);
+            color: #94a3b8;
+            font-family: Consolas, monospace;
+        }
+
+        .yuan_tip {
+            color: #7dd3fc;
+            opacity: 0;
+            transition: opacity .2s ease;
+        }
+
+        .yuan_tip--show {
+            opacity: 1;
+        }
+
+        @keyframes yuan_rise {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes yuan_blink {
+
+            0%,
+            80%,
+            100% {
+                opacity: .25;
+                transform: translateY(0);
+            }
+
+            40% {
+                opacity: 1;
+                transform: translateY(-3px);
+            }
+        }
+
+        @media (max-width: 720px) {
+            .yuan_app {
+                padding: 10px 10px 12px;
+                gap: 8px;
+            }
+
+            .yuan_head {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+
+            .yuan_sub {
+                display: none;
+            }
+
+            .yuan_btn span {
+                display: none;
+            }
+
+            .yuan_btn {
+                width: 34px;
+                padding: 0;
+                justify-content: center;
+            }
+
+            .yuan_panel--open {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .yuan_msgBody {
+                max-width: 86%;
+            }
+
+            .yuan_composerBar {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="yuan_app">
+        <!-- ========== 顶栏 ========== -->
+        <header class="yuan_head">
+            <div class="yuan_logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M12 8V4H8"></path>
+                    <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                    <path d="M2 14h2M20 14h2M15 13v2M9 13v2"></path>
+                </svg>
+            </div>
+            <div class="yuan_brand">
+                <h1 class="yuan_title">AI 智能对话</h1>
+                <p class="yuan_sub">SiliconFlow 接口 · <b id="yuan_modelLabel">deepseek-ai/DeepSeek-V4-Flash</b></p>
+            </div>
+            <div class="yuan_tools">
+                <button class="yuan_btn" id="yuan_settingBtn" type="button" title="接口设置">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path
+                            d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
+                        </path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>设置</span>
+                </button>
+                <button class="yuan_btn yuan_btn--danger" id="yuan_clearBtn" type="button" title="清空对话">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6">
+                        </path>
+                        <path d="M10 11v6M14 11v6"></path>
+                    </svg>
+                    <span>清空</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ========== 设置面板 ========== -->
+        <section class="yuan_panel" id="yuan_panel">
+            <div class="yuan_field yuan_field--wide">
+                <label class="yuan_label" for="yuan_key">API Key（Authorization: Bearer …）</label>
+                <div class="yuan_inputWrap">
+                    <input id="yuan_key" type="password" spellcheck="false" autocomplete="off"
+                        placeholder="sk-xxxxxxxxxxxxxxxx">
+                    <button class="yuan_eye" id="yuan_keyEye" type="button">显示</button>
+                </div>
+            </div>
+            <div class="yuan_field">
+                <label class="yuan_label" for="yuan_model">模型 model</label>
+                <div class="yuan_inputWrap">
+                    <input id="yuan_model" type="text" spellcheck="false" list="yuan_modelList"
+                        placeholder="deepseek-ai/DeepSeek-V4-Flash">
+                </div>
+                <datalist id="yuan_modelList">
+                    <option value="deepseek-ai/DeepSeek-V4-Flash"></option>
+                    <option value="Qwen/Qwen3-8B"></option>
+                    <option value="THUDM/glm-4-9b-chat"></option>
+                </datalist>
+            </div>
+            <div class="yuan_field">
+                <label class="yuan_label" for="yuan_temp">温度 temperature（0 ~ 1.5）</label>
+                <div class="yuan_inputWrap">
+                    <input id="yuan_temp" type="number" min="0" max="1.5" step="0.1" placeholder="0.7">
+                </div>
+            </div>
+            <div class="yuan_field yuan_field--wide">
+                <label class="yuan_label" for="yuan_sys">系统提示词 system</label>
+                <div class="yuan_inputWrap">
+                    <textarea id="yuan_sys" spellcheck="false"
+                        placeholder="你是一个有用的助手">你是一个有用的助手</textarea>
+                </div>
+            </div>
+            <p class="yuan_panelNote">
+                接口地址：<span class="yuan_hintCode">https://api.siliconflow.cn/v1/chat/completions</span>　·　
+                设置会保存在浏览器本地 localStorage，刷新后仍然有效。API Key 只存在本机，不会上传到其它地方。
+            </p>
+        </section>
+
+        <!-- ========== 对话区 ========== -->
+        <main class="yuan_main" id="yuan_chat">
+            <div class="yuan_welcome" id="yuan_welcome">
+                <div class="yuan_welcomeIcon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z">
+                        </path>
+                    </svg>
+                </div>
+                <h2 class="yuan_welcomeTitle">有什么可以帮你的？</h2>
+                <p class="yuan_welcomeText">
+                    页面通过 fetch 调用 SiliconFlow 的 Chat Completions 接口。每次请求发送的提示词（payload / messages）
+                    与接收到的原始响应，都会完整打印在浏览器控制台，按 <span class="yuan_hintCode">F12</span> 打开
+                    Console 即可查看。
+                </p>
+                <div class="yuan_chips" id="yuan_chips">
+                    <button class="yuan_chip" type="button" data-yuan-prompt="你好，请介绍一下你自己">你好，请介绍一下你自己</button>
+                    <button class="yuan_chip" type="button" data-yuan-prompt="用三句话说明什么是 HTTP 的 CORS 跨域">什么是 CORS 跨域</button>
+                    <button class="yuan_chip" type="button" data-yuan-prompt="用原生 JavaScript 写一个深拷贝函数，并解释原理">写一个深拷贝函数</button>
+                    <button class="yuan_chip" type="button" data-yuan-prompt="用表格对比 CSS flex 与 grid 布局的适用场景">对比 flex 与 grid</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- ========== 输入区 ========== -->
+        <footer class="yuan_composer">
+            <div class="yuan_composerRow">
+                <textarea class="yuan_textarea" id="yuan_input" rows="1"
+                    placeholder="输入你的问题，Enter 发送，Shift + Enter 换行…"></textarea>
+                <button class="yuan_send" id="yuan_sendBtn" type="button" title="发送">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 19V5M5 12l7-7 7 7"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="yuan_composerBar">
+                <span>提示词与返回数据已在控制台输出（F12 → Console）</span>
+                <span class="yuan_tip" id="yuan_tip"></span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            /* ================= 常量与状态 ================= */
+            var yuan_API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
+            var yuan_DEFAULT_KEY = 'sk-uxdjlakwkdnnhtdsoiawellpnmpjrmfvikayhdjgcbjkzrua';
+            var yuan_DEFAULT_MODEL = 'deepseek-ai/DeepSeek-V4-Flash';
+            var yuan_STORE = {
+                key: 'yuan_chat_api_key',
+                model: 'yuan_chat_model',
+                temp: 'yuan_chat_temperature',
+                sys: 'yuan_chat_system'
+            };
+
+            var yuan_isBusy = false;
+            var yuan_history = [];
+            var yuan_tipTimer = null;
+
+            /* ================= DOM ================= */
+            var yuan_chatEl = document.getElementById('yuan_chat');
+            var yuan_welcomeEl = document.getElementById('yuan_welcome');
+            var yuan_chipBox = document.getElementById('yuan_chips');
+            var yuan_inputEl = document.getElementById('yuan_input');
+            var yuan_sendBtn = document.getElementById('yuan_sendBtn');
+            var yuan_tipEl = document.getElementById('yuan_tip');
+            var yuan_panelEl = document.getElementById('yuan_panel');
+            var yuan_settingBtn = document.getElementById('yuan_settingBtn');
+            var yuan_clearBtn = document.getElementById('yuan_clearBtn');
+            var yuan_keyEl = document.getElementById('yuan_key');
+            var yuan_keyEye = document.getElementById('yuan_keyEye');
+            var yuan_modelEl = document.getElementById('yuan_model');
+            var yuan_tempEl = document.getElementById('yuan_temp');
+            var yuan_sysEl = document.getElementById('yuan_sys');
+            var yuan_modelLabel = document.getElementById('yuan_modelLabel');
+
+            /* ================= 工具函数 ================= */
+            function yuan_escape(yuan_str) {
+                return String(yuan_str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+
+            function yuan_formatTime() {
+                var yuan_now = new Date();
+                var yuan_h = String(yuan_now.getHours()).padStart(2, '0');
+                var yuan_m = String(yuan_now.getMinutes()).padStart(2, '0');
+                return yuan_h + ':' + yuan_m;
+            }
+
+            function yuan_showTip(yuan_text) {
+                yuan_tipEl.textContent = yuan_text;
+                yuan_tipEl.classList.add('yuan_tip--show');
+                clearTimeout(yuan_tipTimer);
+                yuan_tipTimer = setTimeout(function () {
+                    yuan_tipEl.classList.remove('yuan_tip--show');
+                }, 2600);
+            }
+
+            function yuan_scrollToBottom() {
+                yuan_chatEl.scrollTop = yuan_chatEl.scrollHeight;
+            }
+
+            /* ================= 轻量 Markdown 渲染 ================= */
+            function yuan_inline(yuan_text) {
+                return yuan_text
+                    .replace(/`([^`\n]+)`/g, '<code class="yuan_codeInline">$1</code>')
+                    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+            }
+
+            function yuan_render(yuan_text) {
+                var yuan_parts = String(yuan_text).split('```');
+                var yuan_html = '';
+                for (var yuan_i = 0; yuan_i < yuan_parts.length; yuan_i++) {
+                    var yuan_part = yuan_parts[yuan_i];
+                    if (yuan_i % 2 === 1) {
+                        yuan_part = yuan_part.replace(/^[a-zA-Z0-9+#._-]*\r?\n/, '');
+                        yuan_html += '<pre class="yuan_pre"><code>' + yuan_escape(yuan_part.replace(/\s+$/, '')) +
+                            '</code></pre>';
+                    } else {
+                        yuan_html += yuan_inline(yuan_escape(yuan_part));
+                    }
+                }
+                return yuan_html;
+            }
+
+            /* ================= 渲染消息 ================= */
+            function yuan_hideWelcome() {
+                if (yuan_welcomeEl && yuan_welcomeEl.parentNode) {
+                    yuan_welcomeEl.parentNode.removeChild(yuan_welcomeEl);
+                    yuan_welcomeEl = null;
+                }
+            }
+
+            function yuan_addMessage(yuan_role, yuan_text, yuan_meta) {
+                yuan_hideWelcome();
+
+                var yuan_row = document.createElement('div');
+                yuan_row.className = 'yuan_msg yuan_msg--' + (yuan_role === 'user' ? 'user' : 'ai') +
+                    (yuan_role === 'error' ? ' yuan_msg--error' : '');
+
+                var yuan_avatar = document.createElement('div');
+                yuan_avatar.className = 'yuan_avatar';
+                yuan_avatar.textContent = yuan_role === 'user' ? '我' : 'AI';
+
+                var yuan_body = document.createElement('div');
+                yuan_body.className = 'yuan_msgBody';
+
+                var yuan_headRow = document.createElement('div');
+                yuan_headRow.className = 'yuan_msgHead';
+
+                var yuan_who = document.createElement('span');
+                yuan_who.className = 'yuan_who';
+                yuan_who.textContent = yuan_role === 'user' ? '我' : (yuan_role === 'error' ? '请求失败' : 'AI 助手');
+
+                var yuan_time = document.createElement('span');
+                yuan_time.textContent = yuan_formatTime();
+
+                yuan_headRow.appendChild(yuan_who);
+                yuan_headRow.appendChild(yuan_time);
+                if (yuan_meta) {
+                    var yuan_stat = document.createElement('span');
+                    yuan_stat.className = 'yuan_stat';
+                    yuan_stat.textContent = yuan_meta;
+                    yuan_headRow.appendChild(yuan_stat);
+                }
+
+                var yuan_bubble = document.createElement('div');
+                yuan_bubble.className = 'yuan_bubble';
+                if (yuan_role === 'user') {
+                    yuan_bubble.textContent = yuan_text;
+                } else {
+                    yuan_bubble.innerHTML = yuan_render(yuan_text);
+                }
+
+                yuan_body.appendChild(yuan_headRow);
+                yuan_body.appendChild(yuan_bubble);
+
+                if (yuan_role === 'ai') {
+                    var yuan_foot = document.createElement('div');
+                    yuan_foot.className = 'yuan_msgFoot';
+                    var yuan_copyBtn = document.createElement('button');
+                    yuan_copyBtn.className = 'yuan_mini';
+                    yuan_copyBtn.type = 'button';
+                    yuan_copyBtn.textContent = '复制';
+                    yuan_copyBtn.addEventListener('click', function () {
+                        yuan_copy(yuan_bubble.innerText, yuan_copyBtn);
+                    });
+                    yuan_foot.appendChild(yuan_copyBtn);
+                    yuan_body.appendChild(yuan_foot);
+                }
+
+                yuan_row.appendChild(yuan_avatar);
+                yuan_row.appendChild(yuan_body);
+                yuan_chatEl.appendChild(yuan_row);
+                yuan_scrollToBottom();
+                return yuan_row;
+            }
+
+            function yuan_showTyping() {
+                yuan_hideWelcome();
+                var yuan_row = document.createElement('div');
+                yuan_row.className = 'yuan_msg yuan_msg--ai';
+                yuan_row.innerHTML =
+                    '<div class="yuan_avatar">AI</div>' +
+                    '<div class="yuan_msgBody">' +
+                    '<div class="yuan_bubble yuan_bubble--typing">' +
+                    '<span class="yuan_point"></span><span class="yuan_point"></span><span class="yuan_point"></span>' +
+                    '</div></div>';
+                yuan_chatEl.appendChild(yuan_row);
+                yuan_scrollToBottom();
+                return yuan_row;
+            }
+
+            function yuan_copy(yuan_text, yuan_btn) {
+                var yuan_done = function () {
+                    yuan_btn.textContent = '已复制';
+                    setTimeout(function () {
+                        yuan_btn.textContent = '复制';
+                    }, 1400);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(yuan_text).then(yuan_done, function () {
+                        yuan_showTip('复制失败，请手动选择文本');
+                    });
+                } else {
+                    var yuan_area = document.createElement('textarea');
+                    yuan_area.value = yuan_text;
+                    document.body.appendChild(yuan_area);
+                    yuan_area.select();
+                    try {
+                        document.execCommand('copy');
+                        yuan_done();
+                    } catch (yuan_err) {
+                        yuan_showTip('当前浏览器不支持自动复制');
+                    }
+                    document.body.removeChild(yuan_area);
+                }
+            }
+
+            /* ================= 设置持久化 ================= */
+            function yuan_loadSettings() {
+                var yuan_key = null;
+                var yuan_model = null;
+                var yuan_temp = null;
+                var yuan_sys = null;
+                try {
+                    yuan_key = localStorage.getItem(yuan_STORE.key);
+                    yuan_model = localStorage.getItem(yuan_STORE.model);
+                    yuan_temp = localStorage.getItem(yuan_STORE.temp);
+                    yuan_sys = localStorage.getItem(yuan_STORE.sys);
+                } catch (yuan_err) {
+                    console.warn('[chat.html] 本地存储不可用：', yuan_err);
+                }
+
+                yuan_keyEl.value = yuan_key || yuan_DEFAULT_KEY;
+                yuan_modelEl.value = yuan_model || yuan_DEFAULT_MODEL;
+                yuan_tempEl.value = yuan_temp || '0.7';
+                yuan_sysEl.value = yuan_sys !== null && yuan_sys !== '' ? yuan_sys : '你是一个有用的助手';
+                yuan_modelLabel.textContent = yuan_modelEl.value;
+            }
+
+            function yuan_saveSettings() {
+                try {
+                    localStorage.setItem(yuan_STORE.key, yuan_keyEl.value.trim());
+                    localStorage.setItem(yuan_STORE.model, yuan_modelEl.value.trim());
+                    localStorage.setItem(yuan_STORE.temp, yuan_tempEl.value.trim());
+                    localStorage.setItem(yuan_STORE.sys, yuan_sysEl.value);
+                } catch (yuan_err) {
+                    console.warn('[chat.html] 保存设置失败：', yuan_err);
+                }
+                yuan_modelLabel.textContent = yuan_modelEl.value.trim() || yuan_DEFAULT_MODEL;
+            }
+
+            /* ================= 请求体组装 ================= */
+            function yuan_buildPayload(yuan_userText) {
+                var yuan_systemText = yuan_sysEl.value.trim() || '你是一个有用的助手';
+                var yuan_msgs = [{ role: 'system', content: yuan_systemText }];
+
+                for (var yuan_i = 0; yuan_i < yuan_history.length; yuan_i++) {
+                    yuan_msgs.push(yuan_history[yuan_i]);
+                }
+                yuan_msgs.push({ role: 'user', content: yuan_userText });
+
+                var yuan_tempValue = parseFloat(yuan_tempEl.value);
+                var yuan_payload = {
+                    model: yuan_modelEl.value.trim() || yuan_DEFAULT_MODEL,
+                    messages: yuan_msgs,
+                    stream: false
+                };
+                if (!isNaN(yuan_tempValue)) {
+                    yuan_payload.temperature = yuan_tempValue;
+                }
+                return yuan_payload;
+            }
+
+            /* ================= 控制台输出（题目要求） ================= */
+            function yuan_logRequest(yuan_payload) {
+                var yuan_maskedKey = yuan_keyEl.value.trim().replace(/^(.{6}).*(.{4})$/, '$1********$2');
+                console.group('%c[chat.html] 发送请求 → ' + yuan_payload.model, 'color:#38bdf8;font-weight:700');
+                console.log('%c接口地址', 'color:#94a3b8', yuan_API_URL);
+                console.log('%c请求方法', 'color:#94a3b8', 'POST');
+                console.log('%cAuthorization', 'color:#94a3b8', 'Bearer ' + yuan_maskedKey);
+                console.log('%c发送的提示词（完整请求体 payload）', 'color:#22d3ee;font-weight:700', yuan_payload);
+                console.log('%c请求体 JSON 字符串', 'color:#94a3b8', JSON.stringify(yuan_payload, null, 2));
+                console.table(yuan_payload.messages.map(function (yuan_m, yuan_idx) {
+                    return {
+                        '#': yuan_idx,
+                        role: yuan_m.role,
+                        content: String(yuan_m.content).slice(0, 120)
+                    };
+                }));
+                console.groupEnd();
+            }
+
+            function yuan_logResponse(yuan_status, yuan_elapsed, yuan_raw, yuan_data) {
+                console.group('%c[chat.html] 接收响应 ← HTTP ' + yuan_status + '（' + yuan_elapsed + ' ms）',
+                    'color:#34d399;font-weight:700');
+                console.log('%c原始响应文本 raw text', 'color:#94a3b8', yuan_raw);
+                if (yuan_data) {
+                    console.log('%c接收到的数据（解析后的 JSON）', 'color:#22d3ee;font-weight:700', yuan_data);
+                    if (yuan_data.usage) {
+                        console.log('%c用量 usage', 'color:#94a3b8', yuan_data.usage);
+                    }
+                    if (yuan_data.choices && yuan_data.choices[0] && yuan_data.choices[0].message) {
+                        console.log('%c模型回复内容', 'color:#a5b4fc', yuan_data.choices[0].message.content);
+                    }
+                } else {
+                    console.warn('%c响应不是合法 JSON，已原样输出', 'color:#fbbf24');
+                }
+                console.groupEnd();
+            }
+
+            /* ================= 发送 ================= */
+            function yuan_setBusy(yuan_flag) {
+                yuan_isBusy = yuan_flag;
+                yuan_sendBtn.disabled = yuan_flag;
+            }
+
+            function yuan_send(yuan_text) {
+                if (yuan_isBusy) {
+                    return;
+                }
+                var yuan_content = String(yuan_text || yuan_inputEl.value).trim();
+                if (!yuan_content) {
+                    yuan_showTip('请先输入内容');
+                    yuan_inputEl.focus();
+                    return;
+                }
+                var yuan_apiKey = yuan_keyEl.value.trim();
+                if (!yuan_apiKey) {
+                    yuan_panelEl.classList.add('yuan_panel--open');
+                    yuan_showTip('请先在设置里填写 API Key');
+                    yuan_keyEl.focus();
+                    return;
+                }
+
+                var yuan_payload = yuan_buildPayload(yuan_content);
+                yuan_addMessage('user', yuan_content, '');
+                yuan_inputEl.value = '';
+                yuan_resizeInput();
+
+                var yuan_typingRow = yuan_showTyping();
+                yuan_setBusy(true);
+
+                yuan_logRequest(yuan_payload);
+
+                var yuan_startedAt = Date.now();
+                var yuan_ctrl = new AbortController();
+                var yuan_timeout = setTimeout(function () {
+                    yuan_ctrl.abort();
+                }, 60000);
+
+                fetch(yuan_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + yuan_apiKey
+                    },
+                    body: JSON.stringify(yuan_payload),
+                    signal: yuan_ctrl.signal
+                }).then(function (yuan_res) {
+                    return yuan_res.text().then(function (yuan_raw) {
+                        return { res: yuan_res, raw: yuan_raw };
+                    });
+                }).then(function (yuan_pack) {
+                    var yuan_elapsed = Date.now() - yuan_startedAt;
+                    var yuan_data = null;
+                    try {
+                        yuan_data = JSON.parse(yuan_pack.raw);
+                    } catch (yuan_err) {
+                        yuan_data = null;
+                    }
+                    yuan_logResponse(yuan_pack.res.status, yuan_elapsed, yuan_pack.raw, yuan_data);
+
+                    if (!yuan_pack.res.ok) {
+                        var yuan_reason = 'HTTP ' + yuan_pack.res.status;
+                        if (yuan_data && yuan_data.message) {
+                            yuan_reason += ' · ' + yuan_data.message;
+                        } else if (yuan_data && yuan_data.error && yuan_data.error.message) {
+                            yuan_reason += ' · ' + yuan_data.error.message;
+                        }
+                        throw new Error(yuan_reason);
+                    }
+                    if (!yuan_data || !yuan_data.choices || !yuan_data.choices[0] ||
+                        !yuan_data.choices[0].message) {
+                        throw new Error('返回数据格式异常，请查看控制台原始响应');
+                    }
+                    return {
+                        data: yuan_data,
+                        elapsed: yuan_elapsed
+                    };
+                }).then(function (yuan_pack) {
+                    var yuan_reply = yuan_pack.data.choices[0].message.content || '';
+                    var yuan_usage = yuan_pack.data.usage;
+                    var yuan_meta = (yuan_pack.data.model || yuan_modelEl.value.trim()) +
+                        (yuan_usage && yuan_usage.total_tokens ? ' · ' + yuan_usage.total_tokens + ' tokens · ' +
+                            yuan_pack.elapsed + 'ms' : '');
+                    if (yuan_typingRow.parentNode) {
+                        yuan_typingRow.parentNode.removeChild(yuan_typingRow);
+                    }
+                    yuan_addMessage('ai', yuan_reply, yuan_meta);
+                    yuan_history.push({ role: 'user', content: yuan_content });
+                    yuan_history.push({ role: 'assistant', content: yuan_reply });
+                    if (yuan_history.length > 20) {
+                        yuan_history = yuan_history.slice(yuan_history.length - 20);
+                    }
+                }).catch(function (yuan_err) {
+                    var yuan_msg = yuan_err && yuan_err.name === 'AbortError'
+                        ? '请求超时（60 秒）或被取消，请重试'
+                        : (yuan_err && yuan_err.message ? yuan_err.message : '网络异常');
+                    console.error('%c[chat.html] 请求失败', 'color:#f87171;font-weight:700', yuan_err);
+
+                    if (yuan_typingRow.parentNode) {
+                        yuan_typingRow.parentNode.removeChild(yuan_typingRow);
+                    }
+                    yuan_addMessage('error',
+                        '请求失败：' + yuan_msg +
+                        '\n如果浏览器控制台提示 CORS / Failed to fetch，请用本地服务器打开本页（如 VS Code Live Server），或检查 API Key 与账户余额。',
+                        '');
+                }).then(function () {
+                    clearTimeout(yuan_timeout);
+                    yuan_setBusy(false);
+                    yuan_inputEl.focus();
+                });
+            }
+
+            /* ================= 输入框自适应高度 ================= */
+            function yuan_resizeInput() {
+                yuan_inputEl.style.height = 'auto';
+                yuan_inputEl.style.height = Math.min(yuan_inputEl.scrollHeight, 160) + 'px';
+            }
+
+            /* ================= 事件绑定 ================= */
+            yuan_sendBtn.addEventListener('click', function () {
+                yuan_send();
+            });
+
+            yuan_inputEl.addEventListener('input', yuan_resizeInput);
+
+            yuan_inputEl.addEventListener('keydown', function (yuan_event) {
+                if (yuan_event.key === 'Enter' && !yuan_event.shiftKey && !yuan_event.isComposing) {
+                    yuan_event.preventDefault();
+                    yuan_send();
+                }
+            });
+
+            if (yuan_chipBox) {
+                yuan_chipBox.addEventListener('click', function (yuan_event) {
+                    var yuan_target = yuan_event.target.closest('.yuan_chip');
+                    if (!yuan_target) {
+                        return;
+                    }
+                    yuan_send(yuan_target.getAttribute('data-yuan-prompt') || yuan_target.textContent);
+                });
+            }
+
+            yuan_settingBtn.addEventListener('click', function () {
+                yuan_panelEl.classList.toggle('yuan_panel--open');
+            });
+
+            yuan_keyEye.addEventListener('click', function () {
+                var yuan_isPwd = yuan_keyEl.type === 'password';
+                yuan_keyEl.type = yuan_isPwd ? 'text' : 'password';
+                yuan_keyEye.textContent = yuan_isPwd ? '隐藏' : '显示';
+            });
+
+            yuan_modelEl.addEventListener('input', yuan_saveSettings);
+            yuan_tempEl.addEventListener('input', yuan_saveSettings);
+            yuan_sysEl.addEventListener('input', yuan_saveSettings);
+            yuan_keyEl.addEventListener('change', yuan_saveSettings);
+
+            yuan_clearBtn.addEventListener('click', function () {
+                if (!yuan_history.length && !yuan_chatEl.querySelector('.yuan_msg')) {
+                    yuan_showTip('当前没有对话记录');
+                    return;
+                }
+                var yuan_ok = window.confirm('确定清空当前对话？此操作不可撤销。');
+                if (!yuan_ok) {
+                    return;
+                }
+                yuan_history = [];
+                var yuan_rows = yuan_chatEl.querySelectorAll('.yuan_msg');
+                for (var yuan_i = 0; yuan_i < yuan_rows.length; yuan_i++) {
+                    yuan_chatEl.removeChild(yuan_rows[yuan_i]);
+                }
+                yuan_chatEl.innerHTML =
+                    '<div class="yuan_welcome" id="yuan_welcome">' +
+                    '<div class="yuan_welcomeIcon">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+                    'stroke-linecap="round" stroke-linejoin="round">' +
+                    '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path>' +
+                    '</svg></div>' +
+                    '<h2 class="yuan_welcomeTitle">对话已清空</h2>' +
+                    '<p class="yuan_welcomeText">历史消息已从页面与记忆中移除，可以开始新的提问。' +
+                    '所有请求与响应仍会打印在控制台。</p>' +
+                    '</div>';
+                yuan_welcomeEl = document.getElementById('yuan_welcome');
+                yuan_showTip('对话已清空');
+                console.clear();
+                console.log('%c[chat.html] 对话已清空，历史记录重置', 'color:#94a3b8');
+                yuan_inputEl.focus();
+            });
+
+            /* ================= 初始化 ================= */
+            yuan_loadSettings();
+            yuan_resizeInput();
+            console.log('%c[chat.html] 页面已就绪', 'color:#38bdf8;font-weight:700',
+                '\n接口：' + yuan_API_URL + '\n模型：' + (yuan_modelEl.value || yuan_DEFAULT_MODEL) +
+                '\n提示：发送的提示词与接收到的数据都会打印在本控制台。');
+        })();
+    </script>
+</body>
+
+</html>

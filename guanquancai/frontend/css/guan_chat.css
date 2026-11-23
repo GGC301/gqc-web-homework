@@ -1,0 +1,200 @@
+/**
+ * 姓名：关泉才 | 学号：24001010301 |
+ * 时间：2026-11-19 | 大模型：deepseek-v4.1-flash
+ * 说明：基础 AI 聊天页样式：左侧会话列表、右侧消息区与输入框、历史压缩提示条。
+ */
+
+.guan_chat_layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.guan_chat_talk_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.guan_chat_talk_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.55);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.guan_chat_talk_row:hover { border-color: rgba(86, 216, 255, 0.45); transform: translateX(2px); }
+
+.guan_chat_talk_active {
+  border-color: rgba(86, 216, 255, 0.6);
+  background: rgba(86, 216, 255, 0.1);
+}
+
+.guan_chat_talk_main { flex: 1; min-width: 0; }
+
+.guan_chat_talk_name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guan_chat_talk_meta {
+  display: block;
+  font-size: 11.5px;
+  color: var(--guan_muted);
+}
+
+.guan_chat_talk_del {
+  padding: 3px 8px;
+  font-size: 11.5px;
+  border-radius: 8px;
+  color: var(--guan_red);
+  border: 1px solid rgba(255, 123, 147, 0.32);
+  background: rgba(255, 123, 147, 0.08);
+  cursor: pointer;
+}
+
+.guan_chat_talk_del:hover { background: rgba(255, 123, 147, 0.18); }
+
+.guan_chat_budget {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--guan_line);
+  font-size: 11.5px;
+  color: var(--guan_muted);
+  line-height: 1.6;
+}
+
+/* ========== 消息区 ========== */
+.guan_chat_main { display: flex; flex-direction: column; min-height: 560px; }
+
+.guan_chat_messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 6px 2px 14px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.guan_chat_msg { display: flex; gap: 10px; align-items: flex-start; }
+.guan_chat_msg_user { flex-direction: row-reverse; }
+
+.guan_chat_avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #04101f;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+}
+
+.guan_chat_avatar_user { background: linear-gradient(135deg, #3ee097, #56d8ff); }
+
+.guan_chat_bubble {
+  max-width: min(680px, 82%);
+  padding: 11px 13px;
+  border-radius: 14px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.62);
+  font-size: 14px;
+  line-height: 1.72;
+  word-break: break-word;
+}
+
+.guan_chat_bubble_user {
+  border-color: rgba(86, 216, 255, 0.35);
+  background: rgba(86, 216, 255, 0.12);
+}
+
+.guan_chat_bubble p { margin: 0 0 8px; }
+.guan_chat_bubble p:last-child { margin-bottom: 0; }
+.guan_chat_bubble ul { margin: 6px 0; padding-left: 20px; }
+.guan_chat_bubble li { margin: 2px 0; }
+.guan_chat_bubble strong { color: #cfe6ff; }
+
+.guan_chat_bubble code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 12.5px;
+  background: rgba(126, 158, 214, 0.14);
+}
+
+.guan_chat_bubble pre {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  overflow-x: auto;
+  background: rgba(4, 8, 18, 0.85);
+  border: 1px solid var(--guan_line);
+}
+
+.guan_chat_bubble pre code {
+  padding: 0;
+  background: transparent;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.guan_chat_meta_row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--guan_muted);
+}
+
+.guan_chat_notice {
+  align-self: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--guan_amber);
+  border: 1px dashed rgba(255, 198, 92, 0.45);
+  background: rgba(255, 198, 92, 0.08);
+}
+
+.guan_chat_typing {
+  align-self: flex-start;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--guan_muted);
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.55);
+}
+
+/* ========== 输入区 ========== */
+.guan_chat_composer { margin-top: 6px; }
+
+.guan_chat_composer_foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .guan_chat_layout { grid-template-columns: minmax(0, 1fr); }
+  .guan_chat_talk_list { max-height: 200px; }
+  .guan_chat_messages { max-height: 420px; }
+}

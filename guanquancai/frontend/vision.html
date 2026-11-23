@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>识图 · OCR 与信息抽取 | 关泉才 · 课堂实践</title>
+  <meta name="description" content="上传票据或截图，由视觉大模型识别文字并抽取结构化信息（类型、标题、金额、日期、关键词）。">
+  <link rel="stylesheet" href="./css/guan_app.css">
+  <link rel="stylesheet" href="./css/guan_vision.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-19 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_app_body">
+
+  <canvas id="guan_canvas_bg" class="guan_app_canvas" aria-hidden="true"></canvas>
+  <div class="guan_app_aurora guan_app_aurora_a" aria-hidden="true"></div>
+  <div class="guan_app_aurora guan_app_aurora_b" aria-hidden="true"></div>
+
+  <div class="guan_app_shell">
+    <header class="guan_app_topbar">
+      <a class="guan_app_brand" href="./index.html">
+        <span class="guan_app_mark">GQ</span>
+        <span class="guan_app_brand_text">
+          <span class="guan_app_brand_title">关泉才 · 课堂实践</span>
+          <span class="guan_app_brand_sub">Vision · OCR</span>
+        </span>
+      </a>
+      <nav class="guan_app_nav" aria-label="主导航">
+        <a class="guan_app_nav_link" href="./index.html">首页</a>
+        <a class="guan_app_nav_link" href="./knowledge.html">知识库管理</a>
+        <a class="guan_app_nav_link" href="./rag.html">RAG 智能问答</a>
+        <a class="guan_app_nav_link" href="./review.html">商业评论分析</a>
+        <a class="guan_app_nav_link" href="./chat.html">AI 聊天</a>
+        <a class="guan_app_nav_link guan_app_nav_active" href="./vision.html">识图</a>
+        <a class="guan_app_nav_link" href="./login.html">登录 / 注册</a>
+      </nav>
+    </header>
+
+    <main class="guan_app_page">
+      <section class="guan_app_head">
+        <div>
+          <p class="guan_app_tag">选题四 · 基于 LLM API 调用的自选题目</p>
+          <h1 class="guan_app_h1">上传一张图，<span class="guan_app_h1_strong">读出文字并抽成 JSON</span></h1>
+          <p class="guan_app_lead">
+            使用多模态视觉模型 Qwen3-VL：图片以 base64 内联在 messages 里发送，模型按约定的 JSON 结构返回
+            文档类型、标题、金额、日期、关键词、摘要与识别全文，结果落库并可在下方记录中回看。
+          </p>
+        </div>
+        <div class="guan_app_head_actions">
+          <a class="guan_app_btn" href="./chat.html">去看 AI 聊天</a>
+        </div>
+      </section>
+
+      <section class="guan_vision_layout">
+        <div class="guan_app_panel">
+          <div class="guan_app_panel_head">
+            <h2 class="guan_app_title">上传图片</h2>
+            <span class="guan_app_note">png / jpg / jpeg / webp · ≤ 8 MB</span>
+          </div>
+
+          <div class="guan_vision_dropzone" id="guan_vision_dropzone" role="button" tabindex="0"
+            aria-label="选择或拖拽图片上传">
+            <div class="guan_vision_drop_icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                <circle cx="8.5" cy="9.5" r="1.5"></circle>
+                <path d="m21 16-5-5-9 9"></path>
+              </svg>
+            </div>
+            <p class="guan_vision_drop_title">点击选择图片，或拖到这里</p>
+            <p class="guan_vision_drop_desc">票据、订单截图、名片、菜单、文档截图都可以</p>
+            <p class="guan_vision_drop_meta" id="guan_vision_drop_meta">等待上传 · 识别结果会显示在右侧</p>
+            <input type="file" id="guan_vision_file_input" accept=".png,.jpg,.jpeg,.webp" hidden>
+          </div>
+
+          <div class="guan_vision_progress" id="guan_vision_progress" hidden>
+            <div class="guan_vision_progress_track">
+              <div class="guan_vision_progress_bar" id="guan_vision_progress_bar"></div>
+            </div>
+            <p class="guan_vision_progress_text" id="guan_vision_progress_text">正在上传…</p>
+          </div>
+
+          <div class="guan_vision_preview" id="guan_vision_preview" hidden>
+            <img id="guan_vision_preview_img" alt="待识别的图片预览">
+            <p class="guan_vision_preview_meta" id="guan_vision_preview_meta">—</p>
+          </div>
+        </div>
+
+        <div class="guan_app_panel">
+          <div class="guan_app_panel_head">
+            <h2 class="guan_app_title">识别结果</h2>
+            <span class="guan_app_note" id="guan_vision_meta">—</span>
+          </div>
+
+          <div class="guan_vision_result" id="guan_vision_result">
+            <div class="guan_app_empty">上传图片后，这里会显示结构化识别结果</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="guan_app_panel">
+        <div class="guan_app_panel_head">
+          <h2 class="guan_app_title">识别记录</h2>
+          <span class="guan_app_note" id="guan_vision_record_note">—</span>
+        </div>
+        <div class="guan_vision_records" id="guan_vision_records">
+          <div class="guan_app_empty">正在加载记录…</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="guan_app_footer">
+      <p>© 2026 关泉才 · 学号 24001010301 · 《高级网页设计 I》LLM 应用设计 · 识图（OCR 与信息抽取）</p>
+    </footer>
+  </div>
+
+  <script src="./js/guan_bg.js"></script>
+  <script src="./js/guan_vision.js"></script>
+</body>
+
+</html>

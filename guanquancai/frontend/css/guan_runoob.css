@@ -1,0 +1,665 @@
+/**
+ * 姓名：关泉才 | 学号：24001010301 |
+ * 时间：2026-11-09 | 大模型：deepseek-v4.1-flash
+ * 说明：模仿菜鸟教程首页版式的浅色主题样式（三栏布局：目录 / 教程列表 / 侧栏）。
+ */
+
+:root {
+  --guan_rb_bg: #f1f4f8;
+  --guan_rb_card: #ffffff;
+  --guan_rb_ink: #1f2b3d;
+  --guan_rb_sub: #6b7a90;
+  --guan_rb_line: #e3e8ef;
+  --guan_rb_green: #2f9e63;
+  --guan_rb_green_soft: #eaf6ef;
+  --guan_rb_blue: #1a6fd4;
+  --guan_rb_radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+body.guan_rb_body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--guan_rb_bg);
+  color: var(--guan_rb_ink);
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--guan_rb_blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============ 顶部条 ============ */
+.guan_rb_top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--guan_rb_card);
+  border-bottom: 1px solid var(--guan_rb_line);
+  box-shadow: 0 2px 10px rgba(31, 43, 61, 0.05);
+}
+
+.guan_rb_top_inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 18px;
+}
+
+.guan_rb_logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 0 0 auto;
+  color: var(--guan_rb_ink);
+  text-decoration: none;
+}
+
+.guan_rb_logo:hover {
+  text-decoration: none;
+}
+
+.guan_rb_logo_mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #45b97c, var(--guan_rb_green));
+  box-shadow: 0 6px 14px rgba(47, 158, 99, 0.28);
+}
+
+.guan_rb_logo_text {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--guan_rb_green);
+}
+
+.guan_rb_logo_em {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--guan_rb_sub);
+  background: #f0f3f7;
+  border: 1px solid var(--guan_rb_line);
+}
+
+.guan_rb_search {
+  display: flex;
+  flex: 1 1 auto;
+  max-width: 420px;
+  border: 1px solid var(--guan_rb_line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f7f9fc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.guan_rb_search:focus-within {
+  border-color: rgba(47, 158, 99, 0.55);
+  box-shadow: 0 0 0 3px rgba(47, 158, 99, 0.12);
+}
+
+.guan_rb_search_input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 14px;
+  border: 0;
+  outline: none;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--guan_rb_ink);
+  background: transparent;
+}
+
+.guan_rb_search_btn {
+  flex: 0 0 auto;
+  padding: 0 18px;
+  border: 0;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: #fff;
+  background: var(--guan_rb_green);
+  transition: background 0.2s ease;
+}
+
+.guan_rb_search_btn:hover {
+  background: #268553;
+}
+
+.guan_rb_topnav {
+  display: flex;
+  gap: 16px;
+  flex: 0 0 auto;
+  font-size: 13.5px;
+}
+
+.guan_rb_topnav a {
+  color: var(--guan_rb_sub);
+}
+
+.guan_rb_topnav a:hover {
+  color: var(--guan_rb_green);
+  text-decoration: none;
+}
+
+.guan_rb_topnav_active {
+  color: var(--guan_rb_green) !important;
+  font-weight: 600;
+}
+
+/* ============ 分类条 ============ */
+.guan_rb_catbar {
+  background: var(--guan_rb_card);
+  border-bottom: 1px solid var(--guan_rb_line);
+}
+
+.guan_rb_catbar_inner {
+  display: flex;
+  gap: 8px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 18px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.guan_rb_chip {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--guan_rb_line);
+  background: #fff;
+  color: var(--guan_rb_sub);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+
+.guan_rb_chip:hover {
+  color: var(--guan_rb_green);
+  border-color: rgba(47, 158, 99, 0.4);
+}
+
+.guan_rb_chip_active {
+  color: #fff;
+  border-color: var(--guan_rb_green);
+  background: var(--guan_rb_green);
+}
+
+.guan_rb_chip_active:hover {
+  color: #fff;
+  background: #268553;
+  border-color: #268553;
+}
+
+/* ============ 三栏主体 ============ */
+.guan_rb_main {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr) 250px;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px;
+  align-items: start;
+}
+
+/* 左侧目录 */
+.guan_rb_side {
+  position: sticky;
+  top: 118px;
+  padding: 16px;
+  background: var(--guan_rb_card);
+  border: 1px solid var(--guan_rb_line);
+  border-radius: var(--guan_rb_radius);
+}
+
+.guan_rb_side_title {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--guan_rb_line);
+}
+
+.guan_rb_side_list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guan_rb_side_list li + li {
+  margin-top: 2px;
+}
+
+.guan_rb_side_list a {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: var(--guan_rb_ink);
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.guan_rb_side_list a:hover {
+  color: var(--guan_rb_green);
+  background: var(--guan_rb_green_soft);
+  text-decoration: none;
+}
+
+.guan_rb_side_tip {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--guan_rb_sub);
+}
+
+.guan_rb_side_box {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #f7f9fc;
+  border: 1px dashed var(--guan_rb_line);
+}
+
+.guan_rb_side_box_title {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--guan_rb_green);
+}
+
+.guan_rb_side_box_text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--guan_rb_sub);
+}
+
+/* 中间内容 */
+.guan_rb_content {
+  min-width: 0;
+}
+
+.guan_rb_banner {
+  padding: 20px 22px;
+  margin-bottom: 16px;
+  border-radius: var(--guan_rb_radius);
+  background: linear-gradient(120deg, #eef9f2, #eaf1fb 70%);
+  border: 1px solid var(--guan_rb_line);
+}
+
+.guan_rb_banner_tag {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--guan_rb_green);
+  background: #fff;
+  border: 1px solid rgba(47, 158, 99, 0.35);
+}
+
+.guan_rb_banner_title {
+  margin: 0 0 8px;
+  font-size: clamp(19px, 2.4vw, 24px);
+  line-height: 1.45;
+  font-weight: 800;
+}
+
+.guan_rb_banner_desc {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--guan_rb_sub);
+}
+
+.guan_rb_group {
+  padding: 18px 20px 20px;
+  margin-bottom: 16px;
+  background: var(--guan_rb_card);
+  border: 1px solid var(--guan_rb_line);
+  border-radius: var(--guan_rb_radius);
+}
+
+.guan_rb_group_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding-left: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  border-left: 3px solid var(--guan_rb_green);
+}
+
+.guan_rb_group_title em {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--guan_rb_sub);
+}
+
+.guan_rb_items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.guan_rb_item {
+  position: relative;
+  display: block;
+  padding: 14px 16px 34px;
+  border-radius: 6px;
+  border: 1px solid var(--guan_rb_line);
+  background: #fcfdfe;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.guan_rb_item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 158, 99, 0.45);
+  box-shadow: 0 10px 20px rgba(31, 43, 61, 0.08);
+  text-decoration: none;
+}
+
+.guan_rb_item_name {
+  margin: 0 0 6px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--guan_rb_blue);
+}
+
+.guan_rb_item:hover .guan_rb_item_name {
+  color: var(--guan_rb_green);
+}
+
+.guan_rb_item_desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--guan_rb_sub);
+}
+
+.guan_rb_item_tag {
+  position: absolute;
+  left: 16px;
+  bottom: 12px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  color: var(--guan_rb_green);
+  background: var(--guan_rb_green_soft);
+}
+
+.guan_rb_empty {
+  padding: 26px;
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--guan_rb_sub);
+  background: var(--guan_rb_card);
+  border: 1px dashed var(--guan_rb_line);
+  border-radius: var(--guan_rb_radius);
+}
+
+/* 右侧栏 */
+.guan_rb_right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guan_rb_panel {
+  padding: 16px;
+  background: var(--guan_rb_card);
+  border: 1px solid var(--guan_rb_line);
+  border-radius: var(--guan_rb_radius);
+}
+
+.guan_rb_panel_title {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--guan_rb_line);
+}
+
+.guan_rb_route {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guan_rb_route li {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--guan_rb_line);
+}
+
+.guan_rb_route li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.guan_rb_route_no {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--guan_rb_green);
+  background: var(--guan_rb_green_soft);
+}
+
+.guan_rb_route_body strong {
+  display: block;
+  font-size: 13.5px;
+}
+
+.guan_rb_route_body p {
+  margin: 1px 0 0;
+  font-size: 12px;
+  color: var(--guan_rb_sub);
+}
+
+.guan_rb_hot {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guan_rb_hot li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 13px;
+  border-bottom: 1px dashed var(--guan_rb_line);
+}
+
+.guan_rb_hot li:last-child {
+  border-bottom: 0;
+}
+
+.guan_rb_hot_no {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--guan_rb_sub);
+  background: #f0f3f7;
+}
+
+.guan_rb_hot_top {
+  color: #fff;
+  background: var(--guan_rb_green);
+}
+
+.guan_rb_hot a {
+  color: var(--guan_rb_ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guan_rb_hot a:hover {
+  color: var(--guan_rb_green);
+  text-decoration: none;
+}
+
+.guan_rb_stats {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guan_rb_stats li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 12.5px;
+  color: var(--guan_rb_sub);
+  border-bottom: 1px dashed var(--guan_rb_line);
+}
+
+.guan_rb_stats li:last-child {
+  border-bottom: 0;
+}
+
+.guan_rb_stats strong {
+  color: var(--guan_rb_ink);
+  font-weight: 600;
+}
+
+/* ============ 页脚 ============ */
+.guan_rb_footer {
+  margin-top: 8px;
+  background: var(--guan_rb_card);
+  border-top: 1px solid var(--guan_rb_line);
+}
+
+.guan_rb_footer_inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 18px 26px;
+  text-align: center;
+}
+
+.guan_rb_footer_main {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--guan_rb_ink);
+}
+
+.guan_rb_footer_sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--guan_rb_sub);
+}
+
+/* ============ 轻提示 ============ */
+.guan_rb_toast {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  z-index: 50;
+  transform: translate(-50%, 12px);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #fff;
+  background: rgba(31, 43, 61, 0.92);
+  box-shadow: 0 12px 26px rgba(31, 43, 61, 0.25);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.guan_rb_toast[data-guan_show="1"] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ============ 响应式 ============ */
+@media (max-width: 1080px) {
+  .guan_rb_main {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+
+  .guan_rb_right {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .guan_rb_main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guan_rb_side {
+    position: static;
+  }
+
+  .guan_rb_side_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .guan_rb_top_inner {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .guan_rb_search {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .guan_rb_topnav {
+    margin-left: auto;
+  }
+}

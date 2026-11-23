@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识库管理 · RAG | 关泉才 · 课堂实践</title>
+  <meta name="description" content="知识库（RAG）文件上传、文本解析、片段切分与向量化入库管理页。">
+  <link rel="stylesheet" href="./css/guan_kb.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-12 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_kb_body">
+
+  <canvas id="guan_canvas_bg" class="guan_canvas_bg" aria-hidden="true"></canvas>
+  <div class="guan_aurora guan_aurora_a" aria-hidden="true"></div>
+  <div class="guan_aurora guan_aurora_b" aria-hidden="true"></div>
+
+  <div class="guan_shell">
+    <header class="guan_topbar">
+      <a class="guan_brand" href="./index.html">
+        <span class="guan_brand_mark">GQ</span>
+        <span class="guan_brand_text">
+          <span class="guan_brand_title">关泉才 · 课堂实践</span>
+          <span class="guan_brand_sub">Knowledge Base · RAG</span>
+        </span>
+      </a>
+      <nav class="guan_nav" aria-label="主导航">
+        <a class="guan_nav_link" href="./index.html">首页</a>
+        <a class="guan_nav_link guan_nav_link_active" href="./knowledge.html">知识库管理</a>
+        <a class="guan_nav_link" href="./rag.html">RAG 智能问答</a>
+        <a class="guan_nav_link" href="./review.html">商业评论分析</a>
+        <a class="guan_nav_link" href="./chat.html">AI 聊天</a>
+        <a class="guan_nav_link" href="./vision.html">识图</a>
+        <a class="guan_nav_link" href="./login.html">登录 / 注册</a>
+        <a class="guan_nav_link" href="./database.html">数据库测试</a>
+      </nav>
+    </header>
+
+    <main class="guan_page">
+      <div class="guan_head_row">
+        <div>
+          <p class="guan_tag">LLM 应用设计 · 选题二 · 知识库管理（RAG）</p>
+          <h1 class="guan_h1">知识库上传与<span class="guan_h1_strong">向量化入库</span></h1>
+          <p class="guan_lead">
+            上传 TXT / MD / CSV / JSON / HTML / PDF 文档，服务端完成格式校验、文本解析、480 字切分（80 字重叠）、
+            调用 BAAI/bge-m3 向量化并写入 SQLite。所有请求与响应都会打印到浏览器控制台，密钥只保存在后端。
+          </p>
+        </div>
+        <div>
+          <a class="guan_btn guan_btn_primary" href="./rag.html">
+            去提问
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <section class="guan_stat_grid" id="guan_stat_grid">
+        <div class="guan_stat_card">
+          <span class="guan_stat_key">文档总数</span>
+          <div class="guan_stat_val" id="guan_stat_doc">—<small>篇</small></div>
+        </div>
+        <div class="guan_stat_card">
+          <span class="guan_stat_key">片段总数</span>
+          <div class="guan_stat_val" id="guan_stat_chunk">—<small>段</small></div>
+        </div>
+        <div class="guan_stat_card">
+          <span class="guan_stat_key">已向量化</span>
+          <div class="guan_stat_val" id="guan_stat_embed">—<small>段</small></div>
+        </div>
+        <div class="guan_stat_card">
+          <span class="guan_stat_key">知识库字符量</span>
+          <div class="guan_stat_val" id="guan_stat_chars">—<small>字</small></div>
+        </div>
+      </section>
+
+      <section class="guan_upload_grid">
+        <div class="guan_panel">
+          <div class="guan_dropzone" id="guan_dropzone" role="button" tabindex="0" aria-label="选择或拖拽文件上传">
+            <div class="guan_drop_icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 3v12"></path>
+                <path d="m7 8 5-5 5 5"></path>
+                <path d="M4 15v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3"></path>
+              </svg>
+            </div>
+            <p class="guan_drop_title">点击选择文件，或把文件拖到这里</p>
+            <p class="guan_drop_desc">支持 TXT / MD / CSV / JSON / HTML / PDF，可一次上传多个</p>
+            <p class="guan_drop_meta">单文件 ≤ 10 MB · 上传后自动解析、切分与向量化</p>
+            <input type="file" id="guan_file_input" multiple accept=".txt,.md,.markdown,.csv,.json,.log,.html,.htm,.pdf"
+              hidden>
+          </div>
+        </div>
+
+        <div class="guan_panel">
+          <div class="guan_side_title" style="margin-bottom:10px;">
+            上传队列
+            <strong id="guan_queue_count">0 / 0</strong>
+          </div>
+          <div class="guan_queue" id="guan_queue">
+            <div class="guan_queue_empty" id="guan_queue_empty">还没有上传任务，选择文件后会在这里显示进度</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="guan_panel">
+        <div class="guan_toolbar">
+          <div class="guan_search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+            <input id="guan_search_input" type="search" placeholder="搜索文档名称…" autocomplete="off">
+          </div>
+          <button class="guan_btn" id="guan_refresh_btn" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 1 1-3-6.7L21 8"></path>
+              <path d="M21 3v5h-5"></path>
+            </svg>
+            刷新
+          </button>
+          <span class="guan_toolbar_note" id="guan_list_note">正在加载…</span>
+        </div>
+
+        <div class="guan_doc_list" id="guan_doc_list"></div>
+        <div class="guan_empty" id="guan_doc_empty" hidden>知识库中还没有文档，请先上传一份 txt / md / pdf 文件</div>
+      </section>
+    </main>
+
+    <footer class="guan_footer">
+      <p>© 2026 关泉才 · 学号 24001010301 · 《高级网页设计 I》LLM 应用设计 · 知识库（RAG）</p>
+    </footer>
+  </div>
+
+  <!-- 片段抽屉 -->
+  <div class="guan_drawer_mask" id="guan_drawer_mask"></div>
+  <aside class="guan_drawer" id="guan_drawer" aria-hidden="true">
+    <div class="guan_drawer_head">
+      <div>
+        <h2 class="guan_drawer_title" id="guan_drawer_title">文档片段</h2>
+        <p class="guan_drawer_sub" id="guan_drawer_sub">—</p>
+      </div>
+      <button class="guan_btn guan_btn_ghost" id="guan_drawer_close" type="button">关闭</button>
+    </div>
+    <div class="guan_drawer_body" id="guan_drawer_body"></div>
+  </aside>
+
+  <script src="./js/guan_bg.js"></script>
+  <script src="./js/guan_knowledge.js"></script>
+</body>
+
+</html>

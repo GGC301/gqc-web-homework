@@ -1,0 +1,187 @@
+/**
+ * 姓名：关泉才 | 学号：24001010301 |
+ * 时间：2026-11-19 | 大模型：deepseek-v4.1-flash
+ * 说明：基础 AI 聊天页与识图页共用的骨架样式（深色玻璃拟态）：顶栏、导航、面板、按钮、输入框、页脚。
+ */
+
+:root {
+  --guan_bg: #060a15;
+  --guan_ink: #e9eefc;
+  --guan_muted: #93a3c4;
+  --guan_line: rgba(126, 158, 214, 0.18);
+  --guan_cyan: #56d8ff;
+  --guan_violet: #a37bff;
+  --guan_green: #3ee097;
+  --guan_amber: #ffc65c;
+  --guan_red: #ff7b93;
+  --guan_card: rgba(14, 22, 41, 0.66);
+  --guan_radius: 18px;
+  --guan_shell: 1240px;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; padding: 0; }
+
+body.guan_app_body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 640px at 8% -8%, rgba(86, 216, 255, 0.15), transparent 62%),
+    radial-gradient(1000px 620px at 96% 6%, rgba(163, 123, 255, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--guan_bg) 0%, #050813 58%, #04060f 100%);
+  color: var(--guan_ink);
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Segoe UI", sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button, input, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+
+.guan_app_canvas {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 0; opacity: 0.5; pointer-events: none;
+}
+
+.guan_app_aurora {
+  position: fixed; z-index: 0; width: 42vw; height: 42vw; border-radius: 50%;
+  filter: blur(90px); opacity: 0.26; pointer-events: none;
+}
+
+.guan_app_aurora_a { top: -14vw; left: -12vw; background: radial-gradient(circle, rgba(86, 216, 255, 0.5), transparent 68%); }
+.guan_app_aurora_b { right: -14vw; bottom: -18vw; background: radial-gradient(circle, rgba(163, 123, 255, 0.46), transparent 68%); }
+
+.guan_app_shell { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ========== 顶栏 ========== */
+.guan_app_topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  padding: 12px clamp(16px, 3.4vw, 40px);
+  background: rgba(6, 10, 21, 0.72);
+  border-bottom: 1px solid var(--guan_line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.guan_app_brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit; min-width: 0; }
+
+.guan_app_mark {
+  display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 auto;
+  border-radius: 11px; font-size: 13px; font-weight: 700; color: #04101f;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+  box-shadow: 0 10px 22px rgba(86, 216, 255, 0.26);
+}
+
+.guan_app_brand_text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.guan_app_brand_title { font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.guan_app_brand_sub { font-size: 11px; color: var(--guan_muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+.guan_app_nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+.guan_app_nav_link {
+  padding: 7px 13px; border-radius: 999px; font-size: 13.5px;
+  color: var(--guan_muted); text-decoration: none; border: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.guan_app_nav_link:hover { color: var(--guan_ink); border-color: var(--guan_line); background: rgba(86, 216, 255, 0.08); }
+
+.guan_app_nav_active {
+  color: #04101f; font-weight: 600; border-color: transparent;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+}
+
+/* ========== 主体 ========== */
+.guan_app_page {
+  width: min(var(--guan_shell), 100% - 32px);
+  margin: 0 auto; padding: 26px 0 40px;
+  display: flex; flex-direction: column; gap: 18px;
+  flex: 1;
+}
+
+.guan_app_head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.guan_app_tag {
+  display: inline-flex; align-items: center; margin: 0 0 10px; padding: 4px 12px;
+  border-radius: 999px; font-size: 12px; letter-spacing: 0.04em; color: var(--guan_cyan);
+  border: 1px solid rgba(86, 216, 255, 0.35); background: rgba(86, 216, 255, 0.08);
+}
+.guan_app_h1 { margin: 0 0 10px; font-size: clamp(24px, 3.2vw, 33px); line-height: 1.28; letter-spacing: -0.01em; }
+.guan_app_h1_strong {
+  background: linear-gradient(120deg, var(--guan_cyan), var(--guan_violet) 70%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.guan_app_lead { margin: 0; color: var(--guan_muted); font-size: 14px; max-width: 780px; }
+
+.guan_app_panel {
+  padding: 18px; border-radius: var(--guan_radius);
+  border: 1px solid var(--guan_line); background: var(--guan_card);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 22px 56px rgba(2, 6, 18, 0.42);
+}
+
+.guan_app_panel_head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin-bottom: 12px; flex-wrap: wrap;
+}
+
+.guan_app_title { margin: 0; font-size: 16px; font-weight: 600; }
+.guan_app_note { font-size: 12.5px; color: var(--guan_muted); }
+
+/* ========== 通用控件 ========== */
+.guan_app_btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px 14px; border-radius: 11px; font-size: 13.5px; text-decoration: none;
+  color: var(--guan_ink); cursor: pointer; border: 1px solid var(--guan_line);
+  background: rgba(14, 22, 41, 0.7);
+  transition: transform 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+}
+
+.guan_app_btn:hover { transform: translateY(-1px); border-color: rgba(86, 216, 255, 0.5); }
+.guan_app_btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.guan_app_btn_primary {
+  color: #04101f; font-weight: 600; border-color: transparent;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+  box-shadow: 0 10px 24px rgba(86, 216, 255, 0.22);
+}
+
+.guan_app_btn_ghost { background: transparent; padding: 6px 10px; font-size: 12.5px; }
+.guan_app_btn_danger { color: var(--guan_red); border-color: rgba(255, 123, 147, 0.35); background: rgba(255, 123, 147, 0.08); }
+
+.guan_app_input,
+.guan_app_textarea {
+  width: 100%; padding: 10px 12px; border-radius: 11px; font-size: 14px;
+  border: 1px solid var(--guan_line); background: rgba(6, 10, 21, 0.62);
+  outline: none; transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.guan_app_input:focus,
+.guan_app_textarea:focus { border-color: rgba(86, 216, 255, 0.6); box-shadow: 0 0 0 3px rgba(86, 216, 255, 0.13); }
+
+.guan_app_empty {
+  padding: 24px 14px; text-align: center; font-size: 13px; color: var(--guan_muted);
+  border-radius: 12px; border: 1px dashed var(--guan_line);
+}
+
+.guan_app_chip {
+  display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px;
+  font-size: 11.5px; color: var(--guan_muted);
+  border: 1px solid var(--guan_line); background: rgba(126, 158, 214, 0.08);
+}
+
+.guan_app_chip_ok { color: var(--guan_green); border-color: rgba(62, 224, 151, 0.35); background: rgba(62, 224, 151, 0.1); }
+.guan_app_chip_warn { color: var(--guan_amber); border-color: rgba(255, 198, 92, 0.35); background: rgba(255, 198, 92, 0.1); }
+.guan_app_chip_bad { color: var(--guan_red); border-color: rgba(255, 123, 147, 0.35); background: rgba(255, 123, 147, 0.1); }
+
+.guan_app_footer {
+  margin-top: auto; padding: 16px clamp(16px, 3.4vw, 40px) 24px;
+  text-align: center; font-size: 12.5px; color: var(--guan_muted);
+  border-top: 1px solid var(--guan_line);
+}
+
+.guan_app_footer p { margin: 0; }
+
+@media (max-width: 720px) {
+  .guan_app_topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+}

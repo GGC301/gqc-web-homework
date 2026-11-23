@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关泉才的《高级网页设计》课堂实践 | LLM 应用设计</title>
+<meta name="description" content="关泉才（学号 24001010301）《高级网页设计 I》课堂实践：LLM 应用设计四个方向（基础聊天、知识库 RAG、商业评论结构化、识图）与页面导航。">
+<link rel="stylesheet" href="./css/guan_index.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-23 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_body">
+
+<canvas id="guan_canvas_bg" class="guan_canvas_bg" aria-hidden="true"></canvas>
+<div class="guan_aurora guan_aurora_a" aria-hidden="true"></div>
+<div class="guan_aurora guan_aurora_b" aria-hidden="true"></div>
+
+<div class="guan_shell">
+
+  <header class="guan_header">
+    <a class="guan_brand" href="./index.html">
+      <span class="guan_brand_mark">GQ</span>
+      <span class="guan_brand_text">
+        <span class="guan_brand_title">关泉才 · 课堂实践</span>
+        <span class="guan_brand_sub">高级网页设计 I · LLM 应用设计</span>
+      </span>
+    </a>
+    <nav class="guan_nav" aria-label="主导航">
+      <a class="guan_nav_link guan_nav_link_active" href="#guan_hero">概览</a>
+      <a class="guan_nav_link" href="#guan_pages_section">页面导航</a>
+      <a class="guan_nav_link" href="#guan_about_section">关于项目</a>
+      <a class="guan_nav_link" href="./chat.html">AI 聊天</a>
+      <a class="guan_nav_link" href="./vision.html">识图</a>
+      <a class="guan_nav_link" href="./login.html">登录 / 注册</a>
+    </nav>
+  </header>
+
+  <main class="guan_main">
+
+    <section class="guan_hero" id="guan_hero">
+      <p class="guan_tag">高级网页设计 I · 课堂实践 · LLM 应用设计</p>
+      <h1 class="guan_hero_title">关泉才的<span class="guan_hero_strong">《高级网页设计》</span>课堂实践</h1>
+      <p class="guan_hero_desc">
+        这里汇集了课堂实践的全部页面。前端为手写原生 HTML / CSS / JavaScript（零第三方库、零 CDN），
+        后端为 Node.js + Express + SQLite，密钥与 token 只保存在服务端 .env；
+        四个方向分别是基础 AI 聊天、知识库 RAG、商业评论结构化输出与识图 OCR。
+      </p>
+
+      <ul class="guan_meta">
+        <li class="guan_meta_item">
+          <span class="guan_meta_key">姓名</span>
+          <span class="guan_meta_val">guan quancai（关泉才）</span>
+        </li>
+        <li class="guan_meta_item">
+          <span class="guan_meta_key">学号</span>
+          <span class="guan_meta_val">24001010301</span>
+        </li>
+        <li class="guan_meta_item">
+          <span class="guan_meta_key">项目名称</span>
+          <span class="guan_meta_val">关泉才的《高级网页设计》课堂实践</span>
+        </li>
+        <li class="guan_meta_item">
+          <span class="guan_meta_key">项目类别</span>
+          <span class="guan_meta_val">四方向 · 聊天 / RAG / 结构化 / 识图</span>
+        </li>
+      </ul>
+
+      <div class="guan_actions">
+        <a class="guan_btn guan_btn_primary" href="#guan_pages_section">查看页面导航</a>
+        <a class="guan_btn" href="./chat.html">打开 AI 聊天</a>
+        <a class="guan_btn" href="./review.html">评论分析</a>
+        <a class="guan_btn" href="#guan_about_section">项目说明</a>
+      </div>
+
+      <p class="guan_status" id="guan_api_status" data-guan_state="pending">
+        <span class="guan_status_dot"></span>
+        <span class="guan_status_text">正在检测后端接口…</span>
+      </p>
+    </section>
+
+    <section class="guan_section" id="guan_pages_section">
+      <div class="guan_section_head">
+        <h2 class="guan_section_title">页面导航</h2>
+        <p class="guan_section_desc">
+          已完成页面 <strong class="guan_count">9</strong> 个（5 个 AI 功能页 + 登录注册 + 首页与两个练习页）；任意页面之间跳转不超过两次点击。
+        </p>
+      </div>
+
+      <div class="guan_grid">
+        <a class="guan_card" href="./index.html">
+          <span class="guan_card_no">01</span>
+          <h3 class="guan_card_title">首页</h3>
+          <p class="guan_card_desc">站点入口：canvas 粒子背景动画、项目信息、后端状态检测与页面导航卡片。</p>
+          <span class="guan_card_file">index.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./chat.html">
+          <span class="guan_card_no">02</span>
+          <h3 class="guan_card_title">基础 AI 聊天</h3>
+          <p class="guan_card_desc">多轮上下文对话：会话新建/删除/切换、Enter 发送、长历史自动压缩为摘要、简易 Markdown 渲染。</p>
+          <span class="guan_card_file">chat.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./knowledge.html">
+          <span class="guan_card_no">03</span>
+          <h3 class="guan_card_title">知识库管理（RAG）</h3>
+          <p class="guan_card_desc">上传 TXT / MD / CSV / PDF 等文档，完成解析、切分与向量化入库，支持片段查看与删除。</p>
+          <span class="guan_card_file">knowledge.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./rag.html">
+          <span class="guan_card_no">04</span>
+          <h3 class="guan_card_title">RAG 智能问答</h3>
+          <p class="guan_card_desc">先按向量 70% + 关键词 30% 检索 Top-K 片段，再交给大模型作答，回答标注可展开的 [1][2] 引用。</p>
+          <span class="guan_card_file">rag.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./review.html">
+          <span class="guan_card_no">05</span>
+          <h3 class="guan_card_title">商业评论分析</h3>
+          <p class="guan_card_desc">上传评论 Excel，大模型逐条判定好评 / 中评 / 差评并输出五字段 JSON，饼图展示分布并挑出精选评论。</p>
+          <span class="guan_card_file">review.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./vision.html">
+          <span class="guan_card_no">06</span>
+          <h3 class="guan_card_title">识图（OCR）</h3>
+          <p class="guan_card_desc">上传票据或截图，视觉模型 Qwen3-VL 识别全文并抽取类型、标题、金额、日期与关键词。</p>
+          <span class="guan_card_file">vision.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./login.html">
+          <span class="guan_card_no">07</span>
+          <h3 class="guan_card_title">登录 / 注册</h3>
+          <p class="guan_card_desc">用户注册与登录：密码经 scrypt 加盐哈希入库，服务端签发 HMAC-SHA256 token 并可校验。</p>
+          <span class="guan_card_file">login.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./database.html">
+          <span class="guan_card_no">08</span>
+          <h3 class="guan_card_title">数据库连接测试</h3>
+          <p class="guan_card_desc">输入用户名与密码测试后端数据库连通性，返回版本号与表内记录数，成功失败均有提示。</p>
+          <span class="guan_card_file">database.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="guan_card" href="./runoob.html">
+          <span class="guan_card_no">09</span>
+          <h3 class="guan_card_title">菜鸟教程（模仿页）</h3>
+          <p class="guan_card_desc">模仿教程站首页版式：分类导航、教程索引、搜索筛选与右侧学习路线，练习纯 CSS 布局。</p>
+          <span class="guan_card_file">runoob.html</span>
+          <span class="guan_card_arrow" aria-hidden="true">→</span>
+        </a>
+
+        <div class="guan_card guan_card_soon">
+          <span class="guan_card_no">10</span>
+          <h3 class="guan_card_title">列表 / 详情页</h3>
+          <p class="guan_card_desc">数据列表与详情页，数据来自后端 /api 接口。</p>
+          <span class="guan_card_file">detail-*.html · 规划中</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="guan_section" id="guan_about_section">
+      <div class="guan_section_head">
+        <h2 class="guan_section_title">关于项目</h2>
+        <p class="guan_section_desc">开发约定与运行方式，详见根目录 AGENTS.md 与 readme.md。</p>
+      </div>
+
+      <div class="guan_info">
+        <article class="guan_info_card">
+          <h3 class="guan_info_title">技术栈</h3>
+          <ul class="guan_info_list">
+            <li>前端：原生 HTML / CSS / JavaScript，零第三方库、零 CDN</li>
+            <li>后端：Node.js 24 + Express 5，RESTful + MVC 分层，端口 8301</li>
+            <li>数据库：SQLite（node:sqlite 内置驱动），10 张表，脚本可重建</li>
+            <li>模型：DeepSeek-V4-Flash（对话）+ BAAI/bge-m3（向量）+ Qwen3-VL-8B（识图）</li>
+          </ul>
+        </article>
+
+        <article class="guan_info_card">
+          <h3 class="guan_info_title">AI 功能（四个方向）</h3>
+          <ul class="guan_info_list">
+            <li>基础聊天：messages 携带历史，超预算时把早期消息压成摘要继续对话</li>
+            <li>知识库 RAG：解析 → 480 字切分 → 向量化 → 混合检索 Top-K → 带 [编号] 引用作答</li>
+            <li>评论结构化：Excel 每 8 条一批判定好评/中评/差评，五字段 JSON + 饼图 + 精选</li>
+            <li>识图 OCR：图片 base64 → 视觉模型 → 文档类型、金额、日期、关键词与全文</li>
+          </ul>
+        </article>
+
+        <article class="guan_info_card">
+          <h3 class="guan_info_title">开发约定</h3>
+          <ul class="guan_info_list">
+            <li>CSS 类名、JS 变量/函数、数据库表名字段统一以 guan_ 开头</li>
+            <li>接口统一前缀 /api，响应统一为 { code, msg, data }</li>
+            <li>密钥与 token 签名密钥只存 backend/.env，前端不接触</li>
+            <li>提示词、接口与建表 SQL 分别追加到 guanquancai_prompt.md、guan_interface.md、guan_database.md</li>
+          </ul>
+        </article>
+
+        <article class="guan_info_card">
+          <h3 class="guan_info_title">运行方式</h3>
+          <ul class="guan_info_list">
+            <li>安装依赖：cnpm i（失败改用 npm i），启动：npm start</li>
+            <li>初始化：npm run initdb / initkb / initreview / inituser</li>
+            <li>生成评论模拟数据：npm run genreview（写入项目根目录）</li>
+            <li>访问 http://localhost:8301 ；测试账号 guanquancai / abc123456</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="guan_footer">
+    <p class="guan_footer_main">© 2026 关泉才 ·《高级网页设计 I》课堂实践 · 学号 24001010301</p>
+    <p class="guan_footer_sub">原生 HTML / CSS / JavaScript + Node.js Express + SQLite，四个 LLM 应用方向，全部资源本地化，无 CDN。</p>
+  </footer>
+
+</div>
+
+<script src="./js/guan_bg.js"></script>
+<script src="./js/guan_index.js"></script>
+</body>
+</html>

@@ -348,3 +348,182 @@ http://jsonplaceholder.typicode.com/users17-1.html 展示 JSON17-2.html fetch �
 ```text
 帮我上传githup
 ```
+
+---
+
+## 2026-11-05 14:52:21
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+地址打不开
+```
+
+---
+
+## 2026-11-09 13:53:07 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+全栈提示词.docx  做完给我放在guanquancai
+
+（docx 正文：在当前项目根目录创建 AGENTS.md，写入以下规则：项目结构与技术栈（frontend/ 原生 HTML/CSS/JS、backend/ Node.js+Express RESTful+MVC、/api/ 前缀、端口 8325301、express.static 托管 frontend/、支持跨域、优先 cnpm i 失败用 npm i、SQLite 数据库、凭据写入 backend/.env 并入 .gitignore、每张表插入至少 8 条真实业务测试数据）；命名与注释（guan_ 前缀、文件头注释块含姓名学号时间模型）；记录文件（guanquancai_prompt.md、backend/guan_interface.md、backend/guan_database.md 一律追加写入）；统一 JSON 响应 {code,msg,data}；前端约定（数据与错误输出到控制台、新建页面在 frontend/index.html 追加超链接，文件名含 detail 的除外）。）
+```
+
+---
+
+## 2026-11-09 13:59:10 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+请初始化本项目：
+1、git init + .gitignore（排除 node_modules、.env）+ 首次提交
+2、按 AGENTS.md 规则创建前后端目录骨架、安装依赖、
+3、创建前端首页index.html，包括姓名guan quancai、学号24001010301、项目名称、项目类别（自选、模仿），所有完成的html页面的超链接。有canvas背景动画。主体是页面链接导航。页面美观。
+4、创建readme.md，在根目录下，包括学号、姓名。
+```
+
+---
+
+## 2026-11-09 14:04:21 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+所有接口以 /api/ 为前缀，端口固定为 8301
+```
+
+---
+
+## 2026-11-09 14:24:54 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+（三）运行和查看项目。
+创建运行后台的bat文件，在根目录下。
+（四）测试数据库链接（mysql数据库需要，sqlite不需要）。
+创建database.html页面，输入用户名，密码，链接数据库，成功和错误都有提示。
+```
+
+---
+
+## 2026-11-09 14:34:03 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+菜鸟教程官网
+
+（追问确认：按照这个菜鸟教程官网给我做）
+```
+
+---
+
+## 2026-11-09 14:39:15 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+yuan_prompt.md给我改成guan_prompt.md
+```
+
+
+---
+
+## 2026-11-09 15:00:36 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+这俩报告的代码都上传到githup
+```
+
+---
+
+## 2026-11-12 13:55:53 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+完成一个chat.html,内容是调用llm的接口完成聊天功能，发送的提示词和接收到的数据都在控制台输出Api-key：sk-uxdjlakwkdnnhtdsoiawellpnmpjrmfvikayhdjgcbjkzrua
+  --url https://api.siliconflow.cn/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "deepseek-ai/DeepSeek-V4-Flash",
+    "messages": [
+      {"role": "system", "content": "你是一个有用的助手"},
+      {"role": "user", "content": "你好，请介绍一下你自己"}
+    ]
+  }'
+```
+
+---
+
+## 2026-11-12 14:19:06 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+@C:/Users/GGC/Desktop/LLM应用设计-实验指导书.docx  @C:/Users/GGC/Desktop/LLM应用设计-项目报告.doc  知识库管理（RAG）
+```
+
+---
+
+## 2026-11-12 14:40:43 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+项目报告呢？
+```
+
+---
+
+## 2026-11-12 14:51:39 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+@C:/Users/GGC/Desktop/LLM应用设计-项目报告.doc  不要改动报告格式按照这个格式填写
+```
+
+---
+
+## 2026-11-16 14:08:25 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+@C:\Users\GGC\Desktop\LLM应用设计-项目报告.doc  给我做一下不要改格式
+```
+
+> 依据该 .doc 模板撰写「商业评论情感分析（Harness Engineering）」项目的实验报告：保持原有标题、提示语、编号与版式不变，填入项目需求、功能实现、真实截图、提示词与返回记录、测试与总结。
+
+---
+
+## 2026-11-16 14:20:44 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+项目报告给我放在桌面上
+```
+
+> 把已生成的《商业评论情感分析》项目报告按模板要求的「学号-姓名」命名后复制到桌面。
+
+---
+
+## 2026-11-16 14:39:34 +08:00
+- 模型 (model): deepseek/deepseek-v4.1-flash
+- 提示词 (prompt):
+
+```text
+项目报告做这俩个2、知识库管理（RAG）：基于本地文件（如 PDF、TXT）的上传与解析，构建专属自动客服或问答系统，其中必须包含知识库文件上传模块。
+3、Harness Engineering：完成商业评论情感分类、实体抽取等任务，将自然语言转化为结构化 JSON 数据；要求先设计返回的 JSON 数据结构，再实现提示词与解析校验。
+```
+
+> 报告改为「第二类 + 第三类」双主线：新增双主线架构图、知识库/RAG 截图与提示词返回截图，功能概述扩为 6 条，测试合并为 22 项，总结补写不少于 100 字的提示词优化说明。

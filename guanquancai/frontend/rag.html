@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG 智能问答 | 关泉才 · 课堂实践</title>
+  <meta name="description" content="基于知识库检索增强（RAG）的智能问答页：先检索 Top-K 片段，再由大模型生成带引用来源的回答。">
+  <link rel="stylesheet" href="./css/guan_kb.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-12 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_kb_body">
+
+  <canvas id="guan_canvas_bg" class="guan_canvas_bg" aria-hidden="true"></canvas>
+  <div class="guan_aurora guan_aurora_a" aria-hidden="true"></div>
+  <div class="guan_aurora guan_aurora_b" aria-hidden="true"></div>
+
+  <div class="guan_shell">
+    <header class="guan_topbar">
+      <a class="guan_brand" href="./index.html">
+        <span class="guan_brand_mark">GQ</span>
+        <span class="guan_brand_text">
+          <span class="guan_brand_title">关泉才 · 课堂实践</span>
+          <span class="guan_brand_sub">RAG Assistant</span>
+        </span>
+      </a>
+      <nav class="guan_nav" aria-label="主导航">
+        <a class="guan_nav_link" href="./index.html">首页</a>
+        <a class="guan_nav_link" href="./knowledge.html">知识库管理</a>
+        <a class="guan_nav_link guan_nav_link_active" href="./rag.html">RAG 智能问答</a>
+        <a class="guan_nav_link" href="./review.html">商业评论分析</a>
+        <a class="guan_nav_link" href="./chat.html">AI 聊天</a>
+        <a class="guan_nav_link" href="./vision.html">识图</a>
+        <a class="guan_nav_link" href="./login.html">登录 / 注册</a>
+        <a class="guan_nav_link" href="./database.html">数据库测试</a>
+      </nav>
+    </header>
+
+    <main class="guan_page">
+      <div class="guan_head_row">
+        <div>
+          <p class="guan_tag">检索增强生成 · Top-K 检索 + 引用来源标注</p>
+          <h1 class="guan_h1">基于知识库的<span class="guan_h1_strong">智能问答</span></h1>
+          <p class="guan_lead">
+            提问后服务端先向量检索最相关的片段，把片段拼进提示词再交给大模型作答；回答中的 [1][2] 与下方引用来源一一对应，
+            点击引用可查看命中的原文片段。提示词与模型返回都会打印到浏览器控制台与后端终端。
+          </p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="guan_btn" href="./knowledge.html">管理知识库</a>
+          <button class="guan_btn guan_btn_danger" id="guan_clear_btn" type="button">清空会话</button>
+        </div>
+      </div>
+
+      <div class="guan_chat_layout">
+        <aside class="guan_side">
+          <div class="guan_side_group">
+            <div class="guan_side_title">检索文档范围 <strong id="guan_doc_count">0</strong></div>
+            <label class="guan_check">
+              <input type="checkbox" id="guan_check_all" checked>
+              <span>全部文档</span>
+            </label>
+            <div class="guan_doc_filter" id="guan_doc_filter">
+              <p class="guan_side_note">正在加载知识库文档…</p>
+            </div>
+          </div>
+
+          <div class="guan_side_group">
+            <div class="guan_side_title">检索片段数 Top-K <strong id="guan_topk_val">4</strong></div>
+            <input class="guan_range" id="guan_topk" type="range" min="1" max="8" step="1" value="4">
+            <p class="guan_side_note">片段越多上下文越全，但耗时与 Token 消耗同步增加。</p>
+          </div>
+
+          <div class="guan_side_group">
+            <div class="guan_side_title">会话信息</div>
+            <p class="guan_side_note">
+              会话 ID：<code id="guan_session_id">—</code><br>
+              对话模型：<code id="guan_model_name">—</code><br>
+              向量模型：<code id="guan_embed_name">—</code><br>
+              命中状态：<code id="guan_hit_state">待提问</code>
+            </p>
+          </div>
+
+          <p class="guan_side_note">
+            页面所有请求与响应都输出在控制台（F12 → Console），后端终端同时打印发送给大模型的完整提示词。
+          </p>
+        </aside>
+
+        <section class="guan_chat_panel">
+          <div class="guan_chat_head">
+            <span class="guan_chat_head_dot" id="guan_state_dot"></span>
+            <span class="guan_chat_head_title">知识库助手 · RAG</span>
+            <span class="guan_chat_head_meta" id="guan_chat_meta">model / TopK=4</span>
+          </div>
+
+          <div class="guan_chat_body" id="guan_chat_body">
+            <div class="guan_welcome" id="guan_welcome">
+              <span class="guan_brand_mark" style="width:54px;height:54px;border-radius:16px;font-size:15px;">AI</span>
+              <h2 class="guan_welcome_title">问点什么吧</h2>
+              <p class="guan_welcome_text">
+                我会先从知识库检索相关片段，再依据片段回答，并在末尾标注引用来源。
+                如果知识库没有相关内容，我会直接告诉你，而不是编造答案。
+              </p>
+              <div class="guan_chips" id="guan_chips">
+                <button class="guan_chip" type="button" data-guan-question="售后可以几天无理由退换？">售后几天无理由退换</button>
+                <button class="guan_chip" type="button" data-guan-question="电子发票什么时候发到邮箱？">发票什么时候发</button>
+                <button class="guan_chip" type="button" data-guan-question="会员积分怎么抵扣？">会员积分怎么抵扣</button>
+                <button class="guan_chip" type="button" data-guan-question="知识库都支持哪些文件格式？">支持哪些文件格式</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="guan_composer">
+            <div class="guan_composer_row">
+              <textarea class="guan_textarea" id="guan_input" rows="1"
+                placeholder="输入关于知识库内容的问题，Enter 发送，Shift + Enter 换行…"></textarea>
+              <button class="guan_send" id="guan_send" type="button" title="发送">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="guan_composer_bar">
+              <span>发送的提示词与返回数据已在控制台输出（F12 → Console）</span>
+              <span><span class="guan_kbd">Enter</span> 发送 · <span class="guan_kbd">Shift + Enter</span> 换行</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="guan_footer">
+      <p>© 2026 关泉才 · 学号 24001010301 · 《高级网页设计 I》LLM 应用设计 · 知识库（RAG）</p>
+    </footer>
+  </div>
+
+  <script src="./js/guan_bg.js"></script>
+  <script src="./js/guan_rag.js"></script>
+</body>
+
+</html>

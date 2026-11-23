@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菜鸟教程（模仿练习）| 关泉才 · 课堂实践</title>
+<meta name="description" content="模仿菜鸟教程官网首页布局的练习页面：分类导航、教程索引、搜索与侧栏。">
+<link rel="stylesheet" href="./css/guan_runoob.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-09 | 大模型：deepseek-v4.1-flash -->
+<!-- 说明：本页为模仿 runoob.com 首页布局的课程练习页面，图文内容均为本项目自行编写，非官方网站。 -->
+<body class="guan_rb_body">
+
+<header class="guan_rb_top">
+  <div class="guan_rb_top_inner">
+    <a class="guan_rb_logo" href="./runoob.html">
+      <span class="guan_rb_logo_mark">菜</span>
+      <span class="guan_rb_logo_text">菜鸟教程<em class="guan_rb_logo_em">模仿练习</em></span>
+    </a>
+
+    <div class="guan_rb_search">
+      <input class="guan_rb_search_input" id="guan_rb_search" type="search"
+             placeholder="搜索教程，如：CSS 盒模型 / Node.js" autocomplete="off">
+      <button class="guan_rb_search_btn" id="guan_rb_search_btn" type="button">搜索</button>
+    </div>
+
+    <nav class="guan_rb_topnav" aria-label="站点导航">
+      <a href="./index.html">返回作品站</a>
+      <a href="./database.html">数据库测试</a>
+      <a href="./runoob.html" class="guan_rb_topnav_active">教程首页</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="guan_rb_catbar" id="guan_rb_catbar" aria-label="教程分类">
+  <div class="guan_rb_catbar_inner">
+    <button class="guan_rb_chip guan_rb_chip_active" type="button" data-guan-cat="all">全部教程</button>
+    <button class="guan_rb_chip" type="button" data-guan-cat="html-css">HTML / CSS</button>
+    <button class="guan_rb_chip" type="button" data-guan-cat="javascript">JavaScript</button>
+    <button class="guan_rb_chip" type="button" data-guan-cat="server">服务端</button>
+    <button class="guan_rb_chip" type="button" data-guan-cat="database">数据库</button>
+    <button class="guan_rb_chip" type="button" data-guan-cat="framework">前端框架</button>
+    <button class="guan_rb_chip" type="button" data-guan-cat="tool">工具</button>
+  </div>
+</nav>
+
+<main class="guan_rb_main">
+
+  <!-- 左侧：分类目录 -->
+  <aside class="guan_rb_side">
+    <h2 class="guan_rb_side_title">教程目录</h2>
+    <ul class="guan_rb_side_list">
+      <li><a href="#guan_rb_g_html">HTML / CSS</a></li>
+      <li><a href="#guan_rb_g_js">JavaScript</a></li>
+      <li><a href="#guan_rb_g_server">服务端</a></li>
+      <li><a href="#guan_rb_g_db">数据库</a></li>
+      <li><a href="#guan_rb_g_fw">前端框架</a></li>
+      <li><a href="#guan_rb_g_tool">工具</a></li>
+    </ul>
+    <p class="guan_rb_side_tip">6 个分类 · 24 篇教程</p>
+
+    <div class="guan_rb_side_box">
+      <h3 class="guan_rb_side_box_title">本项目信息</h3>
+      <p class="guan_rb_side_box_text">关泉才 · 24001010301<br>项目类别：自选（含模仿练习页）</p>
+    </div>
+  </aside>
+
+  <!-- 中间：教程列表 -->
+  <section class="guan_rb_content">
+
+    <div class="guan_rb_banner">
+      <p class="guan_rb_banner_tag">从零开始 · 一步一步</p>
+      <h1 class="guan_rb_banner_title">学的不仅是技术，更是把想法做出来的能力</h1>
+      <p class="guan_rb_banner_desc">
+        按分类浏览教程：结构、样式、脚本、服务端、数据存储一次打通。
+        点击教程卡片可查看当前状态（本模仿页暂未展开具体章节）。
+      </p>
+    </div>
+
+    <p class="guan_rb_empty" id="guan_rb_empty" hidden>没有找到匹配的教程，换个关键词试试。</p>
+
+    <section class="guan_rb_group" id="guan_rb_g_html" data-guan-group="html-css">
+      <h2 class="guan_rb_group_title"><span>HTML / CSS</span><em>4 篇</em></h2>
+      <div class="guan_rb_items">
+        <a class="guan_rb_item" href="#" data-guan-cat="html-css" data-guan-name="HTML 教程">
+          <h3 class="guan_rb_item_name">HTML 教程</h3>
+          <p class="guan_rb_item_desc">标签、语义化结构与文档骨架，网页的第一块积木。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="html-css" data-guan-name="CSS 教程">
+          <h3 class="guan_rb_item_name">CSS 教程</h3>
+          <p class="guan_rb_item_desc">选择器、盒模型、层叠与优先级，样式的基本规则。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="html-css" data-guan-name="Flex 与 Grid 布局">
+          <h3 class="guan_rb_item_name">Flex 与 Grid 布局</h3>
+          <p class="guan_rb_item_desc">一维与二维布局方案，页面骨架的高效写法。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="html-css" data-guan-name="响应式设计">
+          <h3 class="guan_rb_item_name">响应式设计</h3>
+          <p class="guan_rb_item_desc">媒体查询与相对单位，让页面在手机上同样好用。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="guan_rb_group" id="guan_rb_g_js" data-guan-group="javascript">
+      <h2 class="guan_rb_group_title"><span>JavaScript</span><em>4 篇</em></h2>
+      <div class="guan_rb_items">
+        <a class="guan_rb_item" href="#" data-guan-cat="javascript" data-guan-name="JavaScript 基础">
+          <h3 class="guan_rb_item_name">JavaScript 基础</h3>
+          <p class="guan_rb_item_desc">变量、函数、对象与数组，脚本语言的起点。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="javascript" data-guan-name="DOM 与事件">
+          <h3 class="guan_rb_item_name">DOM 与事件</h3>
+          <p class="guan_rb_item_desc">查找节点、修改内容、绑定事件，让页面动起来。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="javascript" data-guan-name="异步与 fetch">
+          <h3 class="guan_rb_item_name">异步与 fetch</h3>
+          <p class="guan_rb_item_desc">Promise、async/await 与接口请求的完整流程。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="javascript" data-guan-name="Canvas 绘图">
+          <h3 class="guan_rb_item_name">Canvas 绘图</h3>
+          <p class="guan_rb_item_desc">2D 绘图 API 与逐帧动画，本首页背景动画即出自此。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="guan_rb_group" id="guan_rb_g_server" data-guan-group="server">
+      <h2 class="guan_rb_group_title"><span>服务端</span><em>4 篇</em></h2>
+      <div class="guan_rb_items">
+        <a class="guan_rb_item" href="#" data-guan-cat="server" data-guan-name="Node.js 教程">
+          <h3 class="guan_rb_item_name">Node.js 教程</h3>
+          <p class="guan_rb_item_desc">运行时、内置模块与 npm 包管理。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="server" data-guan-name="Express 教程">
+          <h3 class="guan_rb_item_name">Express 教程</h3>
+          <p class="guan_rb_item_desc">路由、中间件、静态托管与错误处理。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="server" data-guan-name="RESTful 接口设计">
+          <h3 class="guan_rb_item_name">RESTful 接口设计</h3>
+          <p class="guan_rb_item_desc">资源命名、状态码与统一响应格式。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="server" data-guan-name="环境变量与配置">
+          <h3 class="guan_rb_item_name">环境变量与配置</h3>
+          <p class="guan_rb_item_desc">用 .env 管理凭据，敏感信息不进代码库。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="guan_rb_group" id="guan_rb_g_db" data-guan-group="database">
+      <h2 class="guan_rb_group_title"><span>数据库</span><em>4 篇</em></h2>
+      <div class="guan_rb_items">
+        <a class="guan_rb_item" href="#" data-guan-cat="database" data-guan-name="SQLite 教程">
+          <h3 class="guan_rb_item_name">SQLite 教程</h3>
+          <p class="guan_rb_item_desc">零配置嵌入式数据库，适合课程项目快速落地。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="database" data-guan-name="SQL 基础">
+          <h3 class="guan_rb_item_name">SQL 基础</h3>
+          <p class="guan_rb_item_desc">建表、增删改查与条件筛选。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="database" data-guan-name="表设计与索引">
+          <h3 class="guan_rb_item_name">表设计与索引</h3>
+          <p class="guan_rb_item_desc">字段类型、范式与查询性能的取舍。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="database" data-guan-name="数据备份与重建">
+          <h3 class="guan_rb_item_name">数据备份与重建</h3>
+          <p class="guan_rb_item_desc">用 SQL 脚本记录结构，换机器也能一键复原。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="guan_rb_group" id="guan_rb_g_fw" data-guan-group="framework">
+      <h2 class="guan_rb_group_title"><span>前端框架</span><em>4 篇</em></h2>
+      <div class="guan_rb_items">
+        <a class="guan_rb_item" href="#" data-guan-cat="framework" data-guan-name="组件化思维">
+          <h3 class="guan_rb_item_name">组件化思维</h3>
+          <p class="guan_rb_item_desc">把界面拆成可复用单元，先理解再选框架。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="framework" data-guan-name="单向数据流">
+          <h3 class="guan_rb_item_name">单向数据流</h3>
+          <p class="guan_rb_item_desc">状态从哪里来、往哪里去，减少页面状态混乱。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="framework" data-guan-name="路由与页面切换">
+          <h3 class="guan_rb_item_name">路由与页面切换</h3>
+          <p class="guan_rb_item_desc">前后端路由的差别与常见切换方式。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="framework" data-guan-name="打包与构建">
+          <h3 class="guan_rb_item_name">打包与构建</h3>
+          <p class="guan_rb_item_desc">依赖、压缩与产物目录，构建流程总览。</p>
+          <span class="guan_rb_item_tag">高阶</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="guan_rb_group" id="guan_rb_g_tool" data-guan-group="tool">
+      <h2 class="guan_rb_group_title"><span>工具</span><em>4 篇</em></h2>
+      <div class="guan_rb_items">
+        <a class="guan_rb_item" href="#" data-guan-cat="tool" data-guan-name="Git 版本管理">
+          <h3 class="guan_rb_item_name">Git 版本管理</h3>
+          <p class="guan_rb_item_desc">提交、分支与回退，代码的安全网。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="tool" data-guan-name="命令行入门">
+          <h3 class="guan_rb_item_name">命令行入门</h3>
+          <p class="guan_rb_item_desc">目录切换、查看文件与常用快捷操作。</p>
+          <span class="guan_rb_item_tag">入门</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="tool" data-guan-name="接口调试">
+          <h3 class="guan_rb_item_name">接口调试</h3>
+          <p class="guan_rb_item_desc">请求方法、请求体与响应结构的排查思路。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+        <a class="guan_rb_item" href="#" data-guan-cat="tool" data-guan-name="本地预览与部署">
+          <h3 class="guan_rb_item_name">本地预览与部署</h3>
+          <p class="guan_rb_item_desc">本地静态服务器、端口与上线前检查清单。</p>
+          <span class="guan_rb_item_tag">进阶</span>
+        </a>
+      </div>
+    </section>
+
+  </section>
+
+  <!-- 右侧：学习路线 / 热门 / 数据 -->
+  <aside class="guan_rb_right">
+    <section class="guan_rb_panel">
+      <h2 class="guan_rb_panel_title">学习路线</h2>
+      <ol class="guan_rb_route">
+        <li>
+          <span class="guan_rb_route_no">01</span>
+          <div class="guan_rb_route_body"><strong>打基础</strong><p>HTML 结构 + CSS 布局</p></div>
+        </li>
+        <li>
+          <span class="guan_rb_route_no">02</span>
+          <div class="guan_rb_route_body"><strong>能交互</strong><p>JavaScript 与 DOM 事件</p></div>
+        </li>
+        <li>
+          <span class="guan_rb_route_no">03</span>
+          <div class="guan_rb_route_body"><strong>连后端</strong><p>Express 接口与 fetch</p></div>
+        </li>
+        <li>
+          <span class="guan_rb_route_no">04</span>
+          <div class="guan_rb_route_body"><strong>存数据</strong><p>SQLite 建表与读写</p></div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="guan_rb_panel">
+      <h2 class="guan_rb_panel_title">热门排行</h2>
+      <ol class="guan_rb_hot">
+        <li><span class="guan_rb_hot_no guan_rb_hot_top">1</span><a href="#" data-guan-name="HTML 教程">HTML 教程</a></li>
+        <li><span class="guan_rb_hot_no guan_rb_hot_top">2</span><a href="#" data-guan-name="CSS 教程">CSS 教程</a></li>
+        <li><span class="guan_rb_hot_no guan_rb_hot_top">3</span><a href="#" data-guan-name="JavaScript 基础">JavaScript 基础</a></li>
+        <li><span class="guan_rb_hot_no">4</span><a href="#" data-guan-name="Node.js 教程">Node.js 教程</a></li>
+        <li><span class="guan_rb_hot_no">5</span><a href="#" data-guan-name="Express 教程">Express 教程</a></li>
+        <li><span class="guan_rb_hot_no">6</span><a href="#" data-guan-name="SQLite 教程">SQLite 教程</a></li>
+      </ol>
+    </section>
+
+    <section class="guan_rb_panel">
+      <h2 class="guan_rb_panel_title">本站数据</h2>
+      <ul class="guan_rb_stats">
+        <li><span>已完成页面</span><strong>3</strong></li>
+        <li><span>接口页面记录</span><strong id="guan_rb_page_total">—</strong></li>
+        <li><span>教程篇数</span><strong>24</strong></li>
+        <li><span>接口耗时</span><strong id="guan_rb_load_ms">—</strong></li>
+      </ul>
+    </section>
+  </aside>
+
+</main>
+
+<footer class="guan_rb_footer">
+  <div class="guan_rb_footer_inner">
+    <p class="guan_rb_footer_main">菜鸟教程 · 模仿练习页（非官方网站） | 关泉才 · 学号 24001010301</p>
+    <p class="guan_rb_footer_sub">
+      本页为高级网页设计课程练习，模仿 runoob.com 首页的版式结构，全部文字与代码为本人手写；
+      页面不使用任何第三方库与 CDN。
+    </p>
+  </div>
+</footer>
+
+<div class="guan_rb_toast" id="guan_rb_toast" role="status" aria-live="polite" hidden></div>
+
+<script src="./js/guan_runoob.js"></script>
+</body>
+</html>

@@ -29,7 +29,7 @@ Consequence when adding a page inside `tupian/`: also add a card link in `tupian
 ## Naming & logging rules (user-mandated)
 
 - **Every CSS class name, every `id`, and every JS variable must start with `yuan_`** (e.g. `class="yuan_card"`, `id="yuan_grid"`, `let yuan_count`). No exceptions in code you write or edit. Existing pre-2026-10 pages predate this rule and have not been renamed — do not mass-rename unless asked, but never add a new unprefixed name.
-- **Before executing any prompt, append an entry to `yuan_prompt.md`** (append mode, UTF-8, never rewrite existing entries) containing: local timestamp, model ID (e.g. `opencode/mimo-v2.6-flash-free`), and the verbatim prompt text in a fenced block. `yuan_prompt.md` already exists — append, don't overwrite.
+- **Before executing any prompt, append an entry to `guan_prompt.md`** (append mode, UTF-8, never rewrite existing entries) containing: local timestamp, model ID (e.g. `opencode/mimo-v2.6-flash-free`), and the verbatim prompt text in a fenced block. `guan_prompt.md` already exists — append, don't overwrite.
 
 ## Known defects (fix, don't propagate)
 

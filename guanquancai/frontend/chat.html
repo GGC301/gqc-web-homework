@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基础 AI 聊天 · 多轮对话与历史压缩 | 关泉才 · 课堂实践</title>
+  <meta name="description" content="基础 AI 聊天：多轮对话上下文、会话持久化与历史消息压缩（摘要）演示。">
+  <link rel="stylesheet" href="./css/guan_app.css">
+  <link rel="stylesheet" href="./css/guan_chat.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-19 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_app_body">
+
+  <canvas id="guan_canvas_bg" class="guan_app_canvas" aria-hidden="true"></canvas>
+  <div class="guan_app_aurora guan_app_aurora_a" aria-hidden="true"></div>
+  <div class="guan_app_aurora guan_app_aurora_b" aria-hidden="true"></div>
+
+  <div class="guan_app_shell">
+    <header class="guan_app_topbar">
+      <a class="guan_app_brand" href="./index.html">
+        <span class="guan_app_mark">GQ</span>
+        <span class="guan_app_brand_text">
+          <span class="guan_app_brand_title">关泉才 · 课堂实践</span>
+          <span class="guan_app_brand_sub">Chat · Multi-turn</span>
+        </span>
+      </a>
+      <nav class="guan_app_nav" aria-label="主导航">
+        <a class="guan_app_nav_link" href="./index.html">首页</a>
+        <a class="guan_app_nav_link" href="./knowledge.html">知识库管理</a>
+        <a class="guan_app_nav_link" href="./rag.html">RAG 智能问答</a>
+        <a class="guan_app_nav_link" href="./review.html">商业评论分析</a>
+        <a class="guan_app_nav_link guan_app_nav_active" href="./chat.html">AI 聊天</a>
+        <a class="guan_app_nav_link" href="./vision.html">识图</a>
+        <a class="guan_app_nav_link" href="./login.html">登录 / 注册</a>
+      </nav>
+    </header>
+
+    <main class="guan_app_page">
+      <section class="guan_app_head">
+        <div>
+          <p class="guan_app_tag">选题一 · 基础 AI 聊天</p>
+          <h1 class="guan_app_h1">多轮对话，<span class="guan_app_h1_strong">长历史自动压缩</span></h1>
+          <p class="guan_app_lead">
+            模型按 messages 数组记住上下文：保留最近若干条原文，当条数或字符数超过预算时，把更早的对话交给模型
+            压成一段摘要写回会话表，从而在窗口内留住关键信息。所有请求与响应都会打印到浏览器控制台。
+          </p>
+        </div>
+        <div class="guan_app_head_actions">
+          <button class="guan_app_btn guan_app_btn_primary" id="guan_chat_new_btn" type="button">+ 新建对话</button>
+        </div>
+      </section>
+
+      <section class="guan_chat_layout">
+        <aside class="guan_app_panel">
+          <div class="guan_app_panel_head">
+            <h2 class="guan_app_title">会话</h2>
+            <span class="guan_app_note" id="guan_chat_talk_note">—</span>
+          </div>
+          <div class="guan_chat_talk_list" id="guan_chat_talk_list">
+            <div class="guan_app_empty">正在加载会话…</div>
+          </div>
+          <p class="guan_chat_budget" id="guan_chat_budget">压缩阈值：条数与字符数</p>
+        </aside>
+
+        <section class="guan_app_panel guan_chat_main">
+          <div class="guan_app_panel_head">
+            <h2 class="guan_app_title" id="guan_chat_title">未选择会话</h2>
+            <span class="guan_app_note" id="guan_chat_meta">—</span>
+          </div>
+
+          <div class="guan_chat_messages" id="guan_chat_messages">
+            <div class="guan_app_empty">新建一个对话，或选择左侧已有会话开始聊天</div>
+          </div>
+
+          <form class="guan_chat_composer" id="guan_chat_form">
+            <textarea class="guan_app_textarea" id="guan_chat_input" rows="2"
+              placeholder="输入问题后按 Enter 发送，Shift + Enter 换行"></textarea>
+            <div class="guan_chat_composer_foot">
+              <span class="guan_app_note" id="guan_chat_tip">Enter 发送 · Shift + Enter 换行</span>
+              <button class="guan_app_btn guan_app_btn_primary" id="guan_chat_send_btn" type="submit">发送</button>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <footer class="guan_app_footer">
+      <p>© 2026 关泉才 · 学号 24001010301 · 《高级网页设计 I》LLM 应用设计 · 基础 AI 聊天</p>
+    </footer>
+  </div>
+
+  <script src="./js/guan_bg.js"></script>
+  <script src="./js/guan_chat.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,995 @@
+/**
+ * 姓名：关泉才 | 学号：24001010301 |
+ * 时间：2026-11-16 | 大模型：deepseek-v4.1-flash
+ * 说明：商业评论情感分析页样式（深色玻璃拟态），包含上传区、饼图、精选评论与判定明细。
+ */
+
+:root {
+  --guan_bg: #060a15;
+  --guan_ink: #e9eefc;
+  --guan_muted: #93a3c4;
+  --guan_line: rgba(126, 158, 214, 0.18);
+  --guan_cyan: #56d8ff;
+  --guan_violet: #a37bff;
+  --guan_green: #3ee097;
+  --guan_amber: #ffc65c;
+  --guan_red: #ff7b93;
+  --guan_card: rgba(14, 22, 41, 0.64);
+  --guan_radius: 18px;
+  --guan_shell: 1240px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body.guan_review_body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 640px at 8% -8%, rgba(86, 216, 255, 0.15), transparent 62%),
+    radial-gradient(1000px 620px at 96% 6%, rgba(163, 123, 255, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--guan_bg) 0%, #050813 58%, #04060f 100%);
+  color: var(--guan_ink);
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Segoe UI", sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* ========== 背景 ========== */
+.guan_review_canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.guan_review_aurora {
+  position: fixed;
+  z-index: 0;
+  width: 42vw;
+  height: 42vw;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.guan_review_aurora_a {
+  top: -14vw;
+  left: -12vw;
+  background: radial-gradient(circle, rgba(86, 216, 255, 0.5), transparent 68%);
+}
+
+.guan_review_aurora_b {
+  right: -14vw;
+  bottom: -18vw;
+  background: radial-gradient(circle, rgba(163, 123, 255, 0.46), transparent 68%);
+}
+
+/* ========== 骨架 ========== */
+.guan_review_shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.guan_review_topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px clamp(16px, 3.4vw, 40px);
+  background: rgba(6, 10, 21, 0.72);
+  border-bottom: 1px solid var(--guan_line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.guan_review_brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.guan_review_mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #04101f;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+  box-shadow: 0 10px 22px rgba(86, 216, 255, 0.26);
+}
+
+.guan_review_brand_text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.guan_review_brand_title {
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guan_review_brand_sub {
+  font-size: 11px;
+  color: var(--guan_muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.guan_review_nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.guan_review_nav_link {
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  color: var(--guan_muted);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.guan_review_nav_link:hover {
+  color: var(--guan_ink);
+  border-color: var(--guan_line);
+  background: rgba(86, 216, 255, 0.08);
+}
+
+.guan_review_nav_active {
+  color: #04101f;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+  border-color: transparent;
+}
+
+.guan_review_page {
+  width: min(var(--guan_shell), 100% - 32px);
+  margin: 0 auto;
+  padding: 34px 0 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========== 页头 ========== */
+.guan_review_head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.guan_review_head_main {
+  max-width: 760px;
+}
+
+.guan_review_tag {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--guan_cyan);
+  border: 1px solid rgba(86, 216, 255, 0.35);
+  background: rgba(86, 216, 255, 0.08);
+}
+
+.guan_review_h1 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3.6vw, 38px);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.guan_review_h1_strong {
+  background: linear-gradient(120deg, var(--guan_cyan), var(--guan_violet) 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.guan_review_lead {
+  margin: 0;
+  color: var(--guan_muted);
+  font-size: 14.5px;
+}
+
+.guan_review_head_actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.guan_review_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  text-decoration: none;
+  color: var(--guan_ink);
+  border: 1px solid var(--guan_line);
+  background: rgba(14, 22, 41, 0.7);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.guan_review_btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(86, 216, 255, 0.5);
+}
+
+.guan_review_btn_primary {
+  color: #04101f;
+  font-weight: 600;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+  box-shadow: 0 12px 26px rgba(86, 216, 255, 0.22);
+}
+
+.guan_review_btn_ghost {
+  padding: 6px 11px;
+  font-size: 12.5px;
+  background: transparent;
+}
+
+/* ========== 面板 ========== */
+.guan_review_layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.guan_review_panel {
+  padding: 20px;
+  border-radius: var(--guan_radius);
+  border: 1px solid var(--guan_line);
+  background: var(--guan_card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 24px 60px rgba(2, 6, 18, 0.45);
+}
+
+.guan_review_result {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.guan_review_panel_head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.guan_review_panel_title {
+  margin: 0;
+  font-size: 16.5px;
+  font-weight: 600;
+}
+
+.guan_review_title_sub {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--guan_muted);
+}
+
+.guan_review_panel_note {
+  font-size: 12.5px;
+  color: var(--guan_muted);
+}
+
+/* ========== 上传区 ========== */
+.guan_review_dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 30px 22px;
+  border-radius: 16px;
+  border: 1.5px dashed rgba(126, 158, 214, 0.4);
+  background: rgba(86, 216, 255, 0.04);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.guan_review_dropzone:hover,
+.guan_review_dropzone:focus-visible {
+  outline: none;
+  border-color: var(--guan_cyan);
+  background: rgba(86, 216, 255, 0.1);
+}
+
+.guan_review_dropzone_active {
+  border-color: var(--guan_green);
+  background: rgba(62, 224, 151, 0.12);
+  transform: scale(1.005);
+}
+
+.guan_review_dropzone_busy {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.guan_review_drop_icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: var(--guan_cyan);
+  background: rgba(86, 216, 255, 0.12);
+  margin-bottom: 4px;
+}
+
+.guan_review_drop_icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.guan_review_drop_title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.guan_review_drop_desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--guan_muted);
+}
+
+.guan_review_drop_meta {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: rgba(147, 163, 196, 0.85);
+}
+
+.guan_review_upload_bar {
+  margin-top: 14px;
+}
+
+.guan_review_progress_track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(126, 158, 214, 0.16);
+  overflow: hidden;
+}
+
+.guan_review_progress_bar {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--guan_cyan), var(--guan_violet));
+  transition: width 0.3s ease;
+}
+
+.guan_review_progress_text {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--guan_muted);
+}
+
+.guan_review_samples {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--guan_line);
+}
+
+.guan_review_samples_title {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--guan_muted);
+}
+
+.guan_review_sample_list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.guan_review_sample_link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  text-decoration: none;
+  color: var(--guan_cyan);
+  border: 1px solid rgba(86, 216, 255, 0.3);
+  background: rgba(86, 216, 255, 0.07);
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.guan_review_sample_link:hover {
+  background: rgba(86, 216, 255, 0.16);
+  border-color: var(--guan_cyan);
+}
+
+.guan_review_samples_note {
+  font-size: 12.5px;
+  color: var(--guan_muted);
+}
+
+/* ========== 历史批次 ========== */
+.guan_review_batch_list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 372px;
+  overflow-y: auto;
+}
+
+.guan_review_batch_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 13px;
+  border-radius: 13px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.6);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.guan_review_batch_row:hover {
+  border-color: rgba(86, 216, 255, 0.45);
+  transform: translateX(2px);
+}
+
+.guan_review_batch_row_active {
+  border-color: rgba(86, 216, 255, 0.65);
+  background: rgba(86, 216, 255, 0.1);
+}
+
+.guan_review_batch_bar {
+  display: flex;
+  width: 54px;
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  background: rgba(126, 158, 214, 0.15);
+}
+
+.guan_review_batch_bar i {
+  display: block;
+  height: 100%;
+}
+
+.guan_review_batch_bar .guan_review_bar_good {
+  background: var(--guan_green);
+}
+
+.guan_review_batch_bar .guan_review_bar_neutral {
+  background: var(--guan_amber);
+}
+
+.guan_review_batch_bar .guan_review_bar_bad {
+  background: var(--guan_red);
+}
+
+.guan_review_batch_main {
+  min-width: 0;
+  flex: 1;
+}
+
+.guan_review_batch_name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guan_review_batch_meta {
+  display: block;
+  font-size: 11.5px;
+  color: var(--guan_muted);
+}
+
+.guan_review_batch_del {
+  padding: 4px 9px;
+  font-size: 11.5px;
+  border-radius: 8px;
+  color: var(--guan_red);
+  border: 1px solid rgba(255, 123, 147, 0.35);
+  background: rgba(255, 123, 147, 0.08);
+  cursor: pointer;
+}
+
+.guan_review_batch_del:hover {
+  background: rgba(255, 123, 147, 0.18);
+}
+
+.guan_review_empty {
+  padding: 26px 14px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--guan_muted);
+  border-radius: 13px;
+  border: 1px dashed var(--guan_line);
+}
+
+/* ========== 饼图 ========== */
+.guan_review_chart_grid {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+}
+
+.guan_review_donut_box {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto;
+}
+
+.guan_review_donut {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.guan_review_donut_track {
+  fill: none;
+  stroke: rgba(126, 158, 214, 0.14);
+  stroke-width: 26;
+}
+
+.guan_review_donut_seg {
+  fill: none;
+  stroke-width: 26;
+  stroke-linecap: butt;
+  transition: stroke-dasharray 0.8s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.guan_review_donut_center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.guan_review_donut_center strong {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.guan_review_donut_center span {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--guan_muted);
+}
+
+.guan_review_legend {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.guan_review_legend_item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.5);
+}
+
+.guan_review_legend_dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.guan_review_legend_name {
+  font-size: 13.5px;
+  flex: 1;
+}
+
+.guan_review_legend_val {
+  font-size: 13px;
+  color: var(--guan_muted);
+}
+
+.guan_review_legend_val strong {
+  font-size: 15px;
+  color: var(--guan_ink);
+  margin-right: 6px;
+}
+
+.guan_review_summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.guan_review_summary_card {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.45);
+}
+
+.guan_review_summary_key {
+  display: block;
+  font-size: 11.5px;
+  color: var(--guan_muted);
+}
+
+.guan_review_summary_val {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* ========== 精选评论 ========== */
+.guan_review_featured_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.guan_review_featured_card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.62);
+  overflow: hidden;
+}
+
+.guan_review_featured_card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+}
+
+.guan_review_featured_card[data-guan-label="good"]::before {
+  background: var(--guan_green);
+}
+
+.guan_review_featured_card[data-guan-label="neutral"]::before {
+  background: var(--guan_amber);
+}
+
+.guan_review_featured_card[data-guan-label="bad"]::before {
+  background: var(--guan_red);
+}
+
+.guan_review_featured_top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.guan_review_badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.guan_review_badge_good {
+  color: var(--guan_green);
+  background: rgba(62, 224, 151, 0.13);
+  border: 1px solid rgba(62, 224, 151, 0.35);
+}
+
+.guan_review_badge_neutral {
+  color: var(--guan_amber);
+  background: rgba(255, 198, 92, 0.13);
+  border: 1px solid rgba(255, 198, 92, 0.35);
+}
+
+.guan_review_badge_bad {
+  color: var(--guan_red);
+  background: rgba(255, 123, 147, 0.13);
+  border: 1px solid rgba(255, 123, 147, 0.35);
+}
+
+.guan_review_badge_value {
+  color: var(--guan_cyan);
+  background: rgba(86, 216, 255, 0.12);
+  border: 1px solid rgba(86, 216, 255, 0.3);
+}
+
+.guan_review_featured_author {
+  font-size: 12px;
+  color: var(--guan_muted);
+  margin-left: auto;
+}
+
+.guan_review_featured_text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.72;
+}
+
+.guan_review_featured_reason {
+  margin: 0;
+  font-size: 12px;
+  color: var(--guan_muted);
+  padding-top: 8px;
+  border-top: 1px dashed var(--guan_line);
+}
+
+.guan_review_tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.guan_review_tag_item {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--guan_muted);
+  border: 1px solid var(--guan_line);
+  background: rgba(126, 158, 214, 0.08);
+}
+
+/* ========== 明细 ========== */
+.guan_review_toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.guan_review_filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.guan_review_filter {
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--guan_muted);
+  border: 1px solid var(--guan_line);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.guan_review_filter:hover {
+  color: var(--guan_ink);
+  border-color: rgba(86, 216, 255, 0.4);
+}
+
+.guan_review_filter_active {
+  color: #04101f;
+  font-weight: 600;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--guan_cyan), var(--guan_violet));
+}
+
+.guan_review_search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--guan_line);
+  background: rgba(6, 10, 21, 0.55);
+  min-width: 240px;
+}
+
+.guan_review_search svg {
+  width: 15px;
+  height: 15px;
+  color: var(--guan_muted);
+  flex: 0 0 auto;
+}
+
+.guan_review_search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+}
+
+.guan_review_items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.guan_review_item_row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 132px;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  border: 1px solid var(--guan_line);
+  background: rgba(10, 17, 33, 0.5);
+}
+
+.guan_review_item_no {
+  font-size: 12.5px;
+  color: var(--guan_muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.guan_review_item_main {
+  min-width: 0;
+}
+
+.guan_review_item_text {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+.guan_review_item_foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11.5px;
+  color: var(--guan_muted);
+}
+
+.guan_review_item_side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.guan_review_score {
+  font-size: 12px;
+  color: var(--guan_muted);
+}
+
+.guan_review_score strong {
+  color: var(--guan_ink);
+  font-size: 14px;
+}
+
+.guan_review_score_meter {
+  width: 118px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(126, 158, 214, 0.16);
+  overflow: hidden;
+}
+
+.guan_review_score_meter i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.guan_review_footer {
+  margin-top: auto;
+  padding: 18px clamp(16px, 3.4vw, 40px) 26px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--guan_muted);
+  border-top: 1px solid var(--guan_line);
+}
+
+.guan_review_footer p {
+  margin: 0;
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 1000px) {
+  .guan_review_layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guan_review_chart_grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guan_review_donut_box {
+    width: 210px;
+    height: 210px;
+  }
+}
+
+@media (max-width: 720px) {
+  .guan_review_topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .guan_review_item_row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guan_review_item_side {
+    align-items: flex-start;
+  }
+
+  .guan_review_search {
+    min-width: 0;
+    width: 100%;
+  }
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据库连接测试 | 关泉才 · 课堂实践</title>
+<meta name="description" content="数据库连接测试页面：输入用户名与密码，检测后端数据库连通性。">
+<link rel="stylesheet" href="./css/guan_index.css">
+<link rel="stylesheet" href="./css/guan_database.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-09 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_body">
+
+<canvas id="guan_canvas_bg" class="guan_canvas_bg" aria-hidden="true"></canvas>
+<div class="guan_aurora guan_aurora_a" aria-hidden="true"></div>
+<div class="guan_aurora guan_aurora_b" aria-hidden="true"></div>
+
+<div class="guan_shell">
+
+  <header class="guan_header">
+    <a class="guan_brand" href="./index.html">
+      <span class="guan_brand_mark">GQ</span>
+      <span class="guan_brand_text">
+        <span class="guan_brand_title">关泉才 · 课堂实践</span>
+        <span class="guan_brand_sub">Guanquancai Full-Stack Project</span>
+      </span>
+    </a>
+    <nav class="guan_nav" aria-label="主导航">
+      <a class="guan_nav_link" href="./index.html">首页</a>
+      <a class="guan_nav_link" href="./review.html">商业评论分析</a>
+        <a class="guan_nav_link" href="./chat.html">AI 聊天</a>
+        <a class="guan_nav_link" href="./vision.html">识图</a>
+      <a class="guan_nav_link" href="./login.html">登录 / 注册</a>
+      <a class="guan_nav_link guan_nav_link_active" href="./database.html">数据库测试</a>
+      <a class="guan_nav_link" href="http://localhost:8301/api/pages" target="_blank" rel="noopener">页面接口</a>
+    </nav>
+  </header>
+
+  <main class="guan_main">
+
+    <section class="guan_hero guan_hero_compact" id="guan_db_hero">
+      <p class="guan_tag">学号 24001010301 · 数据库连接测试</p>
+      <h1 class="guan_hero_title">数据库<span class="guan_hero_strong">连接测试</span></h1>
+      <p class="guan_hero_desc">
+        本项目使用 SQLite，正常运行时无需手动连接；本页面用于验证后端能否正常访问数据库。
+        用户名与密码由后端读取 <code>backend/.env</code> 中的 <code>DB_USER</code> / <code>DB_PASSWORD</code> 后比对。
+      </p>
+    </section>
+
+    <section class="guan_db_layout">
+
+      <form class="guan_db_card" id="guan_db_form" autocomplete="off">
+        <h2 class="guan_db_card_title">连接信息</h2>
+
+        <label class="guan_db_field" for="guan_db_user">
+          <span class="guan_db_label">用户名</span>
+          <input class="guan_db_input" id="guan_db_user" name="guan_user" type="text"
+                 placeholder="请输入数据库用户名" required>
+        </label>
+
+        <label class="guan_db_field" for="guan_db_password">
+          <span class="guan_db_label">密码</span>
+          <input class="guan_db_input" id="guan_db_password" name="guan_password" type="password"
+                 placeholder="请输入数据库密码" required>
+        </label>
+
+        <div class="guan_db_actions">
+          <button class="guan_btn guan_btn_primary guan_db_submit" id="guan_db_submit" type="submit">连接数据库</button>
+          <button class="guan_btn guan_db_reset" id="guan_db_reset" type="reset">重置</button>
+        </div>
+
+        <p class="guan_db_tip">
+          提示：凭据仅保存在本机 <code>backend/.env</code> 中，不会出现在前端代码或接口返回里。
+        </p>
+      </form>
+
+      <div class="guan_db_panel">
+        <div class="guan_db_result" id="guan_db_result" data-guan_state="idle">
+          <span class="guan_db_result_dot" aria-hidden="true"></span>
+          <div class="guan_db_result_body">
+            <h2 class="guan_db_result_title" id="guan_db_result_title">等待测试</h2>
+            <p class="guan_db_result_desc" id="guan_db_result_desc">请输入用户名和密码后点击“连接数据库”。</p>
+            <ul class="guan_db_result_list" id="guan_db_result_list"></ul>
+          </div>
+        </div>
+
+        <div class="guan_db_env" id="guan_db_env">
+          <h3 class="guan_db_env_title">当前数据库配置</h3>
+          <ul class="guan_db_env_list" id="guan_db_env_list">
+            <li><span>状态</span><strong>正在读取…</strong></li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="guan_section">
+      <div class="guan_section_head">
+        <h2 class="guan_section_title">相关接口</h2>
+        <p class="guan_section_desc">接口明细见 <code>backend/guan_interface.md</code>，统一返回 { code, msg, data }。</p>
+      </div>
+      <div class="guan_info">
+        <article class="guan_info_card">
+          <h3 class="guan_info_title">POST /api/db/test</h3>
+          <ul class="guan_info_list">
+            <li>请求体：{ "guan_user": "root", "guan_password": "******" }</li>
+            <li>成功：code = 0，返回数据库类型、版本与表内记录数</li>
+            <li>失败：code = 4011（用户名或密码错误）/ 5003（连接失败）</li>
+          </ul>
+        </article>
+        <article class="guan_info_card">
+          <h3 class="guan_info_title">GET /api/db/info</h3>
+          <ul class="guan_info_list">
+            <li>返回数据库类型、库名、主机与用户名（不含密码）</li>
+            <li>用于本页下方“当前数据库配置”区域展示</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="guan_footer">
+    <p class="guan_footer_main">© 2026 关泉才 · 学号 24001010301 · 高级网页设计课程项目</p>
+    <p class="guan_footer_sub">原生 HTML / CSS / JavaScript + Node.js Express + SQLite，全部资源本地化，无 CDN。</p>
+  </footer>
+
+</div>
+
+<script src="./js/guan_bg.js"></script>
+<script src="./js/guan_database.js"></script>
+</body>
+</html>

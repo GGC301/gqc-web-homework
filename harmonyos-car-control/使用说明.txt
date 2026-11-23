@@ -1,0 +1,35 @@
+实验指导书《车门控制功能实现》代码使用说明
+关泉才  建立时间: 2026-11-04  使用大模型: codebuddy/auto
+
+一、文件对应位置（放入你的车主 APP 项目）
+  1. viewmodel/CarVinInfo.ets -> entry/src/main/ets/viewmodel/CarVinInfo.ets
+  2. view/ControlView.ets     -> entry/src/main/ets/view/ControlView.ets
+  3. tabs-integration.ets     -> 参考文件，按注释把 ControlView 接入主页 Tabs（步骤 9）
+
+二、实验步骤对照
+  步骤 1  viewmodel/CarVinInfo.ets：网络请求返回信息的数据封装
+  步骤 2  ControlView.getCarFunction()：GET /cockpit/state/{carVin}，
+          请求头带 Authorization: token，code===200 时 resolve
+  步骤 3  ControlView.controlDoor()：POST /cockpit/control/door，
+          请求体 { carId, door: state?'1':'0' }
+  步骤 4  @State isDoorLocked + toggleDoorState()
+  步骤 5  getBackgroundImage()：根据 isDoorLocked / areLightsOn 切换 4 张车状态图
+  步骤 6  aboutToAppear() 调用 getCarFunction 更新 door/light 状态
+  步骤 7  车图片 onClick -> toggleDoorState()
+  步骤 8  Image(this.getBackgroundImage())
+  步骤 9  主页 Tabs index===1 时渲染 ControlView（见 tabs-integration.ets）
+  第 3 条 车灯状态、车辆移动：controlLight() / controlCarMove()，
+          仿照 controlDoor 实现
+
+三、需要手工修改/准备的内容
+  1. BASE_URL：ControlView.ets 顶部，替换为后端服务器实际地址
+  2. 车灯/车辆移动接口路径：按《鸿蒙智能座舱系统接口文档 V1.3》4.8.x
+     确认实际路径与参数名（当前为 /cockpit/control/light、/cockpit/control/move）
+  3. AppStorage 数据：登录成功后写入 token / carVin / carId（见 tabs-integration.ets）
+  4. 图片资源：准备 4 张车状态图放入 resources/base/media/
+     bg_owner_normal / bg_owner_open_door / bg_owner_open_light / bg_owner_all_open
+  5. 网络权限：module.json5 中确保已有
+     "requestPermissions": [{ "name": "ohos.permission.INTERNET" }]
+
+四、实验考核
+  课后提交项目报告；UI 样式可按个人审美继续优化（实验课后任务 1）。

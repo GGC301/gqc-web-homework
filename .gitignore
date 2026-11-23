@@ -1,0 +1,27 @@
+# IDE / 编辑器
+.codebuddy/
+.vscode/
+.idea/
+
+# 依赖与临时文件
+node_modules/
+_t.txt
+*.log
+*.bak
+*.tmp
+
+# 环境变量与数据库（含密钥，禁止提交）
+.env
+**/.env
+*.db
+*.db-wal
+*.db-shm
+
+# 报告与构建产物（体积大，按需单独提交）
+guanquancai/report/
+guanquancai/*.docx
+guanquancai/*.pdf
+
+# 系统文件
+.DS_Store
+Thumbs.db

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商业评论分析 · LLM 情感判定 | 关泉才 · 课堂实践</title>
+  <meta name="description" content="上传商业评论 Excel，由大模型逐条判定好评 / 中评 / 差评，饼图展示分布并挑出有价值的精选评论。">
+  <link rel="stylesheet" href="./css/guan_review.css">
+</head>
+<!-- 姓名：关泉才 | 学号：24001010301 | 时间：2026-11-16 | 大模型：deepseek-v4.1-flash -->
+<body class="guan_review_body">
+
+  <canvas id="guan_canvas_bg" class="guan_review_canvas" aria-hidden="true"></canvas>
+  <div class="guan_review_aurora guan_review_aurora_a" aria-hidden="true"></div>
+  <div class="guan_review_aurora guan_review_aurora_b" aria-hidden="true"></div>
+
+  <div class="guan_review_shell">
+    <header class="guan_review_topbar">
+      <a class="guan_review_brand" href="./index.html">
+        <span class="guan_review_mark">GQ</span>
+        <span class="guan_review_brand_text">
+          <span class="guan_review_brand_title">关泉才 · 课堂实践</span>
+          <span class="guan_review_brand_sub">Review Insight · LLM</span>
+        </span>
+      </a>
+      <nav class="guan_review_nav" aria-label="主导航">
+        <a class="guan_review_nav_link" href="./index.html">首页</a>
+        <a class="guan_review_nav_link" href="./knowledge.html">知识库管理</a>
+        <a class="guan_review_nav_link" href="./rag.html">RAG 智能问答</a>
+        <a class="guan_review_nav_link guan_review_nav_active" href="./review.html">商业评论分析</a>
+        <a class="guan_review_nav_link" href="./chat.html">AI 聊天</a>
+        <a class="guan_review_nav_link" href="./vision.html">识图</a>
+        <a class="guan_review_nav_link" href="./login.html">登录 / 注册</a>
+        <a class="guan_review_nav_link" href="./database.html">数据库测试</a>
+      </nav>
+    </header>
+
+    <main class="guan_review_page">
+      <section class="guan_review_head">
+        <div class="guan_review_head_main">
+          <p class="guan_review_tag">LLM 应用设计 · 商业评论情感分析</p>
+          <h1 class="guan_review_h1">上传评论 Excel，<span class="guan_review_h1_strong">让大模型逐条打分</span></h1>
+          <p class="guan_review_lead">
+            上传一份包含若干条商业评论的 Excel（.xlsx），后端解析表格后把每条评论交给大模型判定「好评 / 中评 / 差评」，
+            并给出情感分、信息价值分与判定理由；页面用饼图展示分布，并挑出有参考价值的精选评论。
+          </p>
+        </div>
+        <div class="guan_review_head_actions">
+          <a class="guan_review_btn guan_review_btn_primary" href="./api/review/template" download>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v12"></path>
+              <path d="m7 10 5 5 5-5"></path>
+              <path d="M5 21h14"></path>
+            </svg>
+            下载 Excel 模板
+          </a>
+          <a class="guan_review_btn" href="./knowledge.html">返回知识库</a>
+        </div>
+      </section>
+
+      <section class="guan_review_layout">
+        <div class="guan_review_panel">
+          <div class="guan_review_panel_head">
+            <h2 class="guan_review_panel_title">上传商业评论</h2>
+            <span class="guan_review_panel_note">仅支持 .xlsx，单次 ≤ 200 条</span>
+          </div>
+
+          <div class="guan_review_dropzone" id="guan_review_dropzone" role="button" tabindex="0"
+            aria-label="选择或拖拽 Excel 文件上传">
+            <div class="guan_review_drop_icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                <path d="M14 3v5h5"></path>
+                <path d="M9 13h6"></path>
+                <path d="M9 17h4"></path>
+              </svg>
+            </div>
+            <p class="guan_review_drop_title">点击选择 Excel，或把文件拖到这里</p>
+            <p class="guan_review_drop_desc">必需列：评论内容；可选列：序号、用户昵称、星级、评论时间</p>
+            <p class="guan_review_drop_meta" id="guan_review_drop_meta">等待上传 · 上传后自动逐条判定并生成饼图</p>
+            <input type="file" id="guan_review_file_input" accept=".xlsx" hidden>
+          </div>
+
+          <div class="guan_review_upload_bar" id="guan_review_progress" hidden>
+            <div class="guan_review_progress_track">
+              <div class="guan_review_progress_bar" id="guan_review_progress_bar"></div>
+            </div>
+            <p class="guan_review_progress_text" id="guan_review_progress_text">正在上传…</p>
+          </div>
+
+          <div class="guan_review_samples">
+            <p class="guan_review_samples_title">没有数据？下载模拟数据试试（每份 20 条评论）</p>
+            <div class="guan_review_sample_list" id="guan_review_sample_list">
+              <span class="guan_review_samples_note">正在读取样例清单…</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="guan_review_panel">
+          <div class="guan_review_panel_head">
+            <h2 class="guan_review_panel_title">历史分析批次</h2>
+            <span class="guan_review_panel_note" id="guan_review_batch_note">—</span>
+          </div>
+          <div class="guan_review_batch_list" id="guan_review_batch_list">
+            <div class="guan_review_empty">正在加载历史批次…</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="guan_review_result" id="guan_review_result" hidden>
+        <div class="guan_review_panel">
+          <div class="guan_review_panel_head">
+            <h2 class="guan_review_panel_title">情感分布<span class="guan_review_title_sub"
+                id="guan_review_result_file"></span></h2>
+            <span class="guan_review_panel_note" id="guan_review_result_meta">—</span>
+          </div>
+
+          <div class="guan_review_chart_grid">
+            <div class="guan_review_donut_box">
+              <svg class="guan_review_donut" viewBox="0 0 200 200" role="img" aria-label="评论情感分布饼图">
+                <circle class="guan_review_donut_track" cx="100" cy="100" r="70"></circle>
+                <g id="guan_review_donut_segments"></g>
+              </svg>
+              <div class="guan_review_donut_center">
+                <strong id="guan_review_total">0</strong>
+                <span>条评论</span>
+              </div>
+            </div>
+
+            <div class="guan_review_legend_box">
+              <ul class="guan_review_legend" id="guan_review_legend"></ul>
+              <div class="guan_review_summary" id="guan_review_summary"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="guan_review_panel">
+          <div class="guan_review_panel_head">
+            <h2 class="guan_review_panel_title">精选评论
+              <span class="guan_review_title_sub">按信息价值分挑选，覆盖三类情绪</span>
+            </h2>
+            <span class="guan_review_panel_note" id="guan_review_featured_note">—</span>
+          </div>
+          <div class="guan_review_featured_grid" id="guan_review_featured"></div>
+        </div>
+
+        <div class="guan_review_panel">
+          <div class="guan_review_panel_head">
+            <h2 class="guan_review_panel_title">逐条判定明细</h2>
+            <span class="guan_review_panel_note" id="guan_review_item_note">—</span>
+          </div>
+
+          <div class="guan_review_toolbar">
+            <div class="guan_review_filters" id="guan_review_filters">
+              <button class="guan_review_filter guan_review_filter_active" type="button" data-guan-filter="all">全部</button>
+              <button class="guan_review_filter" type="button" data-guan-filter="good">好评</button>
+              <button class="guan_review_filter" type="button" data-guan-filter="neutral">中评</button>
+              <button class="guan_review_filter" type="button" data-guan-filter="bad">差评</button>
+            </div>
+            <div class="guan_review_search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-3.5-3.5"></path>
+              </svg>
+              <input id="guan_review_search_input" type="search" placeholder="搜索评论内容 / 昵称 / 标签…" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="guan_review_items" id="guan_review_items"></div>
+          <div class="guan_review_empty" id="guan_review_items_empty" hidden>没有符合条件的评论</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="guan_review_footer">
+      <p>© 2026 关泉才 · 学号 24001010301 · 《高级网页设计 I》LLM 应用设计 · 商业评论情感分析</p>
+    </footer>
+  </div>
+
+  <script src="./js/guan_bg.js"></script>
+  <script src="./js/guan_review.js"></script>
+</body>
+
+</html>

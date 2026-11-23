@@ -1,0 +1,289 @@
+/**
+ * 姓名：关泉才 | 学号：24001010301 |
+ * 时间：2026-11-09 | 大模型：deepseek-v4.1-flash
+ * 说明：数据库连接测试页样式（复用 guan_index.css 的基础变量、导航与页脚）。
+ */
+
+.guan_hero_compact {
+  padding-bottom: clamp(22px, 4vw, 38px);
+}
+
+.guan_db_layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) minmax(280px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+/* 左侧表单卡片 */
+.guan_db_card {
+  padding: 24px;
+  border-radius: var(--guan_radius);
+  background: var(--guan_card);
+  border: 1px solid var(--guan_line);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 18px 40px rgba(3, 8, 18, 0.45);
+}
+
+.guan_db_card_title {
+  margin: 0 0 18px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.guan_db_field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.guan_db_label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--guan_muted);
+}
+
+.guan_db_input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14.5px;
+  font-family: inherit;
+  color: var(--guan_ink);
+  background: rgba(6, 11, 22, 0.72);
+  border: 1px solid var(--guan_line);
+  outline: none;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.guan_db_input::placeholder {
+  color: rgba(147, 163, 196, 0.55);
+}
+
+.guan_db_input:focus {
+  border-color: rgba(86, 216, 255, 0.6);
+  background: rgba(8, 15, 29, 0.9);
+  box-shadow: 0 0 0 4px rgba(86, 216, 255, 0.12);
+}
+
+.guan_db_actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.guan_db_submit,
+.guan_db_reset {
+  flex: 1;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.guan_db_submit[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.guan_db_reset {
+  flex: 0 0 auto;
+  padding: 12px 18px;
+}
+
+.guan_db_tip {
+  margin: 16px 0 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--guan_muted);
+}
+
+.guan_db_card code,
+.guan_hero code,
+.guan_section code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.92em;
+  font-family: Consolas, "Courier New", monospace;
+  color: var(--guan_cyan);
+  background: rgba(86, 216, 255, 0.1);
+}
+
+/* 右侧结果面板 */
+.guan_db_panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guan_db_result {
+  display: flex;
+  gap: 14px;
+  padding: 22px;
+  border-radius: var(--guan_radius);
+  background: rgba(11, 18, 36, 0.62);
+  border: 1px solid var(--guan_line);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.guan_db_result_dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: #7a8bab;
+  box-shadow: 0 0 0 5px rgba(122, 139, 171, 0.16);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.guan_db_result_body {
+  min-width: 0;
+}
+
+.guan_db_result_title {
+  margin: 0 0 8px;
+  font-size: 16.5px;
+  font-weight: 700;
+}
+
+.guan_db_result_desc {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.72;
+  color: var(--guan_muted);
+  word-break: break-word;
+}
+
+.guan_db_result_list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.guan_db_result_list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  background: rgba(126, 158, 214, 0.08);
+  border: 1px solid rgba(126, 158, 214, 0.12);
+}
+
+.guan_db_result_list span {
+  color: var(--guan_muted);
+}
+
+.guan_db_result_list strong {
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* 成功 */
+.guan_db_result[data-guan_state="ok"] {
+  border-color: rgba(62, 224, 151, 0.45);
+  background: linear-gradient(160deg, rgba(27, 74, 56, 0.5), rgba(11, 18, 36, 0.72));
+}
+
+.guan_db_result[data-guan_state="ok"] .guan_db_result_dot {
+  background: #3ee097;
+  box-shadow: 0 0 0 5px rgba(62, 224, 151, 0.18);
+}
+
+.guan_db_result[data-guan_state="ok"] .guan_db_result_title {
+  color: #7ff0c0;
+}
+
+/* 失败 */
+.guan_db_result[data-guan_state="fail"] {
+  border-color: rgba(255, 107, 129, 0.45);
+  background: linear-gradient(160deg, rgba(84, 27, 38, 0.45), rgba(11, 18, 36, 0.72));
+}
+
+.guan_db_result[data-guan_state="fail"] .guan_db_result_dot {
+  background: #ff6b81;
+  box-shadow: 0 0 0 5px rgba(255, 107, 129, 0.18);
+}
+
+.guan_db_result[data-guan_state="fail"] .guan_db_result_title {
+  color: #ff9aa6;
+}
+
+/* 加载中 */
+.guan_db_result[data-guan_state="loading"] .guan_db_result_dot {
+  background: var(--guan_cyan);
+  box-shadow: 0 0 0 5px rgba(86, 216, 255, 0.18);
+  animation: guan_db_pulse 1s ease-in-out infinite;
+}
+
+@keyframes guan_db_pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.35);
+  }
+}
+
+/* 配置信息 */
+.guan_db_env {
+  padding: 20px 22px;
+  border-radius: var(--guan_radius);
+  background: rgba(11, 18, 36, 0.55);
+  border: 1px solid var(--guan_line);
+}
+
+.guan_db_env_title {
+  margin: 0 0 12px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--guan_ink);
+}
+
+.guan_db_env_list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.guan_db_env_list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 13px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(126, 158, 214, 0.16);
+}
+
+.guan_db_env_list li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.guan_db_env_list span {
+  color: var(--guan_muted);
+}
+
+.guan_db_env_list strong {
+  font-weight: 600;
+  word-break: break-all;
+  text-align: right;
+}
+
+@media (max-width: 860px) {
+  .guan_db_layout {
+    grid-template-columns: 1fr;
+  }
+}
